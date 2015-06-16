@@ -14,7 +14,6 @@ void check_mpi(const int err, const char *msg)
 }
 
 
-
 int main(int argc, char **argv)
 {
     int mpi_err = MPI_Init(&argc, &argv);
@@ -32,7 +31,11 @@ int main(int argc, char **argv)
     if (rank == 0)
     {
         // Check for two files on CLI
-        // TODO
+        if (argc != 3)
+        {
+            fprintf(stderr, "Usage: ./snap snap.in snap.out\n");
+            exit(-1);
+        }
         read_input(argv[1]);
     }
 
