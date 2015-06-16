@@ -40,6 +40,9 @@ int main(int argc, char **argv)
         }
         read_input(argv[1], &globals);
     }
+    // Broadcast the global variables
+    broadcast_problem(&globals, rank);
+
 
     mpi_err = MPI_Finalize();
     check_mpi(mpi_err, "MPI_Finalize");

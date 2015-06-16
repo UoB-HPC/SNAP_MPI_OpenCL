@@ -1,5 +1,6 @@
 
 #include <stdio.h>
+#include <mpi.h>
 
 #include "problem.h"
 
@@ -138,4 +139,46 @@ void read_input(char *file, struct problem *globals)
         }
     }
     free(line);
+}
+
+void broadcast_problem(struct problem *globals, int rank)
+{
+    unsigned int ints[] = {
+        globals->nx,
+        globals->ny,
+        globals->nz,
+        globals->ng,
+        globals->nang,
+        globals->nmom,
+        globals->iitm,
+        globals->oitm,
+        globals->nsteps,
+    };
+    double doubles[] = {
+        globals->lx,
+        globals->ly,
+        globals->lz,
+        globals->tf,
+        globals->epsi
+    };
+    MPI_Bcast(ints, 9, MPI_UNSIGNED, 0, MPI_COMM_WORLD);
+    MPI_Bcast(doubles, 5, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+    if (rank != 0)
+    {
+        globals->nx = ints[0];
+        globals->ny = ints[1];
+        globals->nz = ints[2];
+        globals->ng = ints[3];
+        globals->nang = ints[4];
+        globals->nmom = ints[5];
+        globals->iitm = ints[6];
+        globals->oitm = ints[7];
+        globals->nsteps = ints[8];
+
+        globals->lx = doubles[0];
+        globals->ly = doubles[1];
+        globals->lz = doubles[2];
+        globals->tf = doubles[3];
+        globals->epsi = doubles[4];
+    }
 }
