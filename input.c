@@ -3,7 +3,7 @@
 
 #include "problem.h"
 
-void read_input(char *file)
+void read_input(char *file, struct problem *globals)
 {
     FILE *fp;
     fp = fopen(file, "r");
@@ -15,8 +15,6 @@ void read_input(char *file)
     char *line = NULL;
     ssize_t read;
     size_t len = 0;
-
-    struct problem globals;
 
     // Read the lines in the file
     while ((read = getline(&line, &len, fp)) != -1)
@@ -32,7 +30,7 @@ void read_input(char *file)
             // Cycle to after the equals
             while (isspace(line[i]) || line[i] == '=')
                 i++;
-            globals.nx = atoi(line+i);
+            globals->nx = atoi(line+i);
         }
         else if (strncmp(line+i, "ny", strlen("ny")) == 0)
         {
@@ -40,7 +38,7 @@ void read_input(char *file)
             // Cycle to after the equals
             while (isspace(line[i]) || line[i] == '=')
                 i++;
-            globals.ny = atoi(line+i);
+            globals->ny = atoi(line+i);
         }
         else if (strncmp(line+i, "nz", strlen("nz")) == 0)
         {
@@ -48,7 +46,7 @@ void read_input(char *file)
             // Cycle to after the equals
             while (isspace(line[i]) || line[i] == '=')
                 i++;
-            globals.nz = atoi(line+i);
+            globals->nz = atoi(line+i);
         }
         else if (strncmp(line+i, "lx", strlen("lx")) == 0)
         {
@@ -56,7 +54,7 @@ void read_input(char *file)
             // Cycle to after the equals
             while (isspace(line[i]) || line[i] == '=')
                 i++;
-            globals.lx = atoi(line+i);
+            globals->lx = atoi(line+i);
         }
         else if (strncmp(line+i, "ly", strlen("ly")) == 0)
         {
@@ -64,7 +62,7 @@ void read_input(char *file)
             // Cycle to after the equals
             while (isspace(line[i]) || line[i] == '=')
                 i++;
-            globals.ly = atoi(line+i);
+            globals->ly = atoi(line+i);
         }
         else if (strncmp(line+i, "lz", strlen("lz")) == 0)
         {
@@ -72,7 +70,7 @@ void read_input(char *file)
             // Cycle to after the equals
             while (isspace(line[i]) || line[i] == '=')
                 i++;
-            globals.lz = atoi(line+i);
+            globals->lz = atoi(line+i);
         }
         else if (strncmp(line+i, "ng", strlen("ng")) == 0)
         {
@@ -80,7 +78,7 @@ void read_input(char *file)
             // Cycle to after the equals
             while (isspace(line[i]) || line[i] == '=')
                 i++;
-            globals.ng = atoi(line+i);
+            globals->ng = atoi(line+i);
         }
         else if (strncmp(line+i, "nang", strlen("nang")) == 0)
         {
@@ -88,7 +86,7 @@ void read_input(char *file)
             // Cycle to after the equals
             while (isspace(line[i]) || line[i] == '=')
                 i++;
-            globals.nang = atoi(line+i);
+            globals->nang = atoi(line+i);
         }
         else if (strncmp(line+i, "nmom", strlen("nmom")) == 0)
         {
@@ -96,7 +94,7 @@ void read_input(char *file)
             // Cycle to after the equals
             while (isspace(line[i]) || line[i] == '=')
                 i++;
-            globals.nmom = atoi(line+i);
+            globals->nmom = atoi(line+i);
         }
         else if (strncmp(line+i, "iitm", strlen("iitm")) == 0)
         {
@@ -104,7 +102,7 @@ void read_input(char *file)
             // Cycle to after the equals
             while (isspace(line[i]) || line[i] == '=')
                 i++;
-            globals.iitm = atoi(line+i);
+            globals->iitm = atoi(line+i);
         }
         else if (strncmp(line+i, "oitm", strlen("oitm")) == 0)
         {
@@ -112,7 +110,7 @@ void read_input(char *file)
             // Cycle to after the equals
             while (isspace(line[i]) || line[i] == '=')
                 i++;
-            globals.oitm = atoi(line+i);
+            globals->oitm = atoi(line+i);
         }
         else if (strncmp(line+i, "nsteps", strlen("nsteps")) == 0)
         {
@@ -120,7 +118,15 @@ void read_input(char *file)
             // Cycle to after the equals
             while (isspace(line[i]) || line[i] == '=')
                 i++;
-            globals.nsteps = atoi(line+i);
+            globals->nsteps = atoi(line+i);
+        }
+        else if (strncmp(line+i, "tf", strlen("tf")) == 0)
+        {
+            i += strlen("tf");
+            // Cycle to after the equals
+            while (isspace(line[i]) || line[i] == '=')
+                i++;
+            globals->tf = atof(line+i);
         }
         else if (strncmp(line+i, "epsi", strlen("epsi")) == 0)
         {
@@ -128,7 +134,7 @@ void read_input(char *file)
             // Cycle to after the equals
             while (isspace(line[i]) || line[i] == '=')
                 i++;
-            globals.epsi = atof(line+i);
+            globals->epsi = atof(line+i);
         }
     }
     free(line);

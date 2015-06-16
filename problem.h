@@ -17,10 +17,13 @@ struct problem
     // Number of expansion moments
     unsigned int nmom;
 
-    // Iteration limits (inner, outer, time)
+    // Iteration limits (inner, outer)
     unsigned int iitm;
     unsigned int oitm;
+
+    // Timestep details
     unsigned int nsteps;
+    double tf;
 
     // Convergence criteria
     double epsi;

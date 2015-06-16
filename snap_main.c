@@ -28,6 +28,8 @@ int main(int argc, char **argv)
 
     printf("%d %d\n", rank, size);
 
+    struct problem globals;
+
     if (rank == 0)
     {
         // Check for two files on CLI
@@ -36,7 +38,7 @@ int main(int argc, char **argv)
             fprintf(stderr, "Usage: ./snap snap.in snap.out\n");
             exit(-1);
         }
-        read_input(argv[1]);
+        read_input(argv[1], &globals);
     }
 
     mpi_err = MPI_Finalize();
