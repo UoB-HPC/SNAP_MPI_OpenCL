@@ -137,6 +137,30 @@ void read_input(char *file, struct problem *globals)
                 i++;
             globals->epsi = atof(line+i);
         }
+        else if (strncmp(line+i, "npex", strlen("npex")) == 0)
+        {
+            i += strlen("npex");
+            // Cycle to after the equals
+            while (isspace(line[i]) || line[i] == '=')
+                i++;
+            globals->npex = atoi(line+i);
+        }
+            else if (strncmp(line+i, "npey", strlen("npey")) == 0)
+        {
+            i += strlen("npey");
+            // Cycle to after the equals
+            while (isspace(line[i]) || line[i] == '=')
+                i++;
+            globals->npey = atoi(line+i);
+        }
+            else if (strncmp(line+i, "npez", strlen("npez")) == 0)
+        {
+            i += strlen("npez");
+            // Cycle to after the equals
+            while (isspace(line[i]) || line[i] == '=')
+                i++;
+            globals->npez = atoi(line+i);
+        }
     }
     free(line);
 }
@@ -153,6 +177,9 @@ void broadcast_problem(struct problem *globals, int rank)
         globals->iitm,
         globals->oitm,
         globals->nsteps,
+        globals->npex,
+        globals->npey,
+        globals->npez
     };
     double doubles[] = {
         globals->lx,
@@ -161,7 +188,7 @@ void broadcast_problem(struct problem *globals, int rank)
         globals->tf,
         globals->epsi
     };
-    MPI_Bcast(ints, 9, MPI_UNSIGNED, 0, MPI_COMM_WORLD);
+    MPI_Bcast(ints, 12, MPI_UNSIGNED, 0, MPI_COMM_WORLD);
     MPI_Bcast(doubles, 5, MPI_DOUBLE, 0, MPI_COMM_WORLD);
     if (rank != 0)
     {
@@ -174,6 +201,9 @@ void broadcast_problem(struct problem *globals, int rank)
         globals->iitm = ints[6];
         globals->oitm = ints[7];
         globals->nsteps = ints[8];
+        globals->npex = ints[9];
+        globals->npey = ints[10];
+        globals->npez = ints[11];
 
         globals->lx = doubles[0];
         globals->ly = doubles[1];

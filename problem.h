@@ -27,4 +27,7 @@ struct problem
 
     // Convergence criteria
     double epsi;
+
+    // Number of MPI tasks in each direction
+    unsigned int npex, npey, npez;
 };
