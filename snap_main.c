@@ -43,6 +43,13 @@ int main(int argc, char **argv)
     // Broadcast the global variables
     broadcast_problem(&globals, rank);
 
+    // Create the MPI Cartesian topology
+    MPI_Comm snap_comms;
+    int dims[] = {globals.npex, globals.npey, globals.npez};
+    int periods[] = {0, 0, 0};
+    mpi_err = MPI_Cart_create(MPI_COMM_WORLD, 3, dims, periods, 0, &snap_comms);
+    check_mpi(mpi_err, "Creating MPI Cart");
+
 
     mpi_err = MPI_Finalize();
     check_mpi(mpi_err, "MPI_Finalize");
