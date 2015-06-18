@@ -38,6 +38,12 @@ int main(int argc, char **argv)
             exit(-1);
         }
         read_input(argv[1], &globals);
+        if ((globals.npex * globals.npey * globals.npez) != size)
+        {
+            fprintf(stderr, "Input error: wanted %d ranks but executing with %d\n", globals.npex*globals.npey*globals.npez, size);
+            exit(-1);
+        }
+
     }
     // Broadcast the global variables
     broadcast_problem(&globals, rank);
