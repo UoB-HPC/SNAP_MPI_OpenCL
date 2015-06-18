@@ -3,21 +3,7 @@
 #include <mpi.h>
 
 #include "problem.h"
-
-struct rankinfo
-{
-
-    // MPI Cartesian co-ordinate ranks
-    int ranks[3];
-
-    // Local grid size
-    unsigned int nx, ny, nz;
-
-    // Global grid corners of MPI partition
-    unsigned int ilb, iub;
-    unsigned int jlb, jub;
-    unsigned int klb, kub;
-};
+#include "allocate.h"
 
 void check_mpi(const int err, const char *msg)
 {

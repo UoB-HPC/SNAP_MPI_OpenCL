@@ -1,4 +1,5 @@
 
+// Problem dimensions from input file
 struct problem
 {
     // Global grid size
@@ -33,4 +34,21 @@ struct problem
 
     // Number of MPI tasks in each direction
     unsigned int npex, npey, npez;
+};
+
+
+// Holds local information about tile size and MPI rank
+struct rankinfo
+{
+
+    // MPI Cartesian co-ordinate ranks
+    int ranks[3];
+
+    // Local grid size
+    unsigned int nx, ny, nz;
+
+    // Global grid corners of MPI partition
+    unsigned int ilb, iub;
+    unsigned int jlb, jub;
+    unsigned int klb, kub;
 };
