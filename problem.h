@@ -17,6 +17,9 @@ struct problem
     // Number of expansion moments
     unsigned int nmom;
 
+    // Number of computational moments = nmom*nmom
+    unsigned int cmom;
+
     // Iteration limits (inner, outer)
     unsigned int iitm;
     unsigned int oitm;

@@ -211,4 +211,5 @@ void broadcast_problem(struct problem *globals, int rank)
         globals->tf = doubles[3];
         globals->epsi = doubles[4];
     }
+    globals->cmom = globals->nmom * globals->nmom;
 }
