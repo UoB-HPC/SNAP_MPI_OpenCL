@@ -4,6 +4,21 @@
 
 #include "problem.h"
 
+struct rankinfo
+{
+
+    // MPI Cartesian co-ordinate ranks
+    int ranks[3];
+
+    // Local grid size
+    unsigned int nx, ny, nz;
+
+    // Global grid corners of MPI partition
+    unsigned int ilb, iub;
+    unsigned int jlb, jub;
+    unsigned int klb, kub;
+};
+
 void check_mpi(const int err, const char *msg)
 {
     if (err != MPI_SUCCESS)
@@ -25,8 +40,6 @@ int main(int argc, char **argv)
 
     mpi_err = MPI_Comm_size(MPI_COMM_WORLD, &size);
     check_mpi(mpi_err, "Getting MPI size");
-
-    printf("%d %d\n", rank, size);
 
     struct problem globals;
 
@@ -50,6 +63,26 @@ int main(int argc, char **argv)
     mpi_err = MPI_Cart_create(MPI_COMM_WORLD, 3, dims, periods, 0, &snap_comms);
     check_mpi(mpi_err, "Creating MPI Cart");
 
+    // Get my ranks in x, y and z
+    struct rankinfo local;
+    mpi_err = MPI_Cart_coords(snap_comms, rank, 3, local.ranks);
+    check_mpi(mpi_err, "Getting Cart co-ordinates");
+
+    // Note: The following assumes one tile per MPI rank
+    // TODO: Change to allow for tiling
+
+    // Calculate local sizes
+    local.nx = globals.nx / globals.npex;
+    local.ny = globals.ny / globals.npey;
+    local.nz = globals.nz / globals.npez;
+
+    // Calculate i,j,k lower and upper bounds in terms of global grid
+    local.ilb = local.ranks[0]*local.nx;
+    local.iub = (local.ranks[0]+1)*local.nx;
+    local.jlb = local.ranks[1]*local.ny;
+    local.jub = (local.ranks[1]+1)*local.ny;
+    local.klb = local.ranks[2]*local.nz;
+    local.kub = (local.ranks[2]+1)*local.nz;
 
     mpi_err = MPI_Finalize();
     check_mpi(mpi_err, "MPI_Finalize");
