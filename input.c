@@ -142,7 +142,7 @@ void read_input(char *file, struct problem *globals)
                 i++;
             globals->npex = atoi(line+i);
         }
-            else if (strncmp(line+i, "npey", strlen("npey")) == 0)
+        else if (strncmp(line+i, "npey", strlen("npey")) == 0)
         {
             i += strlen("npey");
             // Cycle to after the equals
@@ -150,7 +150,7 @@ void read_input(char *file, struct problem *globals)
                 i++;
             globals->npey = atoi(line+i);
         }
-            else if (strncmp(line+i, "npez", strlen("npez")) == 0)
+        else if (strncmp(line+i, "npez", strlen("npez")) == 0)
         {
             i += strlen("npez");
             // Cycle to after the equals
