@@ -1,8 +1,5 @@
 
-#include <stdio.h>
-#include <mpi.h>
-
-#include "problem.h"
+#include "input.h"
 
 void read_input(char *file, struct problem *globals)
 {
@@ -213,3 +210,48 @@ void broadcast_problem(struct problem *globals, int rank)
     }
     globals->cmom = globals->nmom * globals->nmom;
 }
+
+void check_decomposition(struct problem * input)
+{
+    bool err = false;
+
+    // Check we have at least a 1x1x1 processor array
+    if (input->npex < 1)
+    {
+        fprintf(stderr, "Input error: npex must be >= 1\n");
+        err = true;
+    }
+    if (input->npey < 1)
+    {
+        fprintf(stderr, "Input error: npey must be >= 1\n");
+        err = true;
+    }
+
+    // Check npez = 1 (regular KBA for now)
+    if (input->npez != 1)
+    {
+        fprintf(stderr, "Input error: npez must equal 1 (for KBA)\n");
+        err = true;
+    }
+
+    // Check grid divides across processor array
+    if (input->nx % input->npex != 0)
+    {
+        fprintf(stderr, "Input error: npex should divide nx\n");
+        err = true;
+    }
+    if (input->ny % input->npey != 0)
+    {
+        fprintf(stderr, "Input error: npey should divide ny\n");
+        err = true;
+    }
+    if (input->nz % input->npez != 0)
+    {
+        fprintf(stderr, "Input error: npez should divide nz\n");
+        err = true;
+    }
+
+    if (err)
+        exit(-1);
+}
+

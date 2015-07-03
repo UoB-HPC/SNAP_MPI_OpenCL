@@ -1,7 +1,9 @@
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <mpi.h>
 
+#include "input.h"
 #include "problem.h"
 #include "allocate.h"
 
@@ -43,6 +45,7 @@ int main(int argc, char **argv)
             fprintf(stderr, "Input error: wanted %d ranks but executing with %d\n", globals.npex*globals.npey*globals.npez, size);
             exit(-1);
         }
+        check_decomposition(&globals);
 
     }
     // Broadcast the global variables
@@ -75,6 +78,19 @@ int main(int argc, char **argv)
     local.jub = (local.ranks[1]+1)*local.ny;
     local.klb = local.ranks[2]*local.nz;
     local.kub = (local.ranks[2]+1)*local.nz;
+
+
+    // Allocate the problem arrays
+    struct mem memory;
+    allocate_memory(globals, local, &memory);
+
+    // Set up problem
+
+    // Halo exchange routines
+
+
+
+    free_memory(&memory);
 
     mpi_err = MPI_Finalize();
     check_mpi(mpi_err, "MPI_Finalize");

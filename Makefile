@@ -19,5 +19,6 @@ MPI_COMPILER 	= mpicc
 
 snap: \
 	snap_main.c \
-	input.c
+	input.c \
+	allocate.c
 	$(MPI_COMPILER) $^ $(CFLAGS_$(COMPILER)) $(OMP) -o $@

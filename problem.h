@@ -1,4 +1,6 @@
 
+#pragma once
+
 // Problem dimensions from input file
 struct problem
 {
