@@ -259,6 +259,13 @@ void check_decomposition(struct problem * input)
         err = true;
     }
 
+    // Check chunk size divides nz
+    if (input->nz % input->chunk != 0)
+    {
+        fprintf(stderr, "Input error: chunk should divide nz\n");
+        err = true;
+    }
+
     if (err)
         exit(-1);
 }
