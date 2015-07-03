@@ -158,6 +158,14 @@ void read_input(char *file, struct problem *globals)
                 i++;
             globals->npez = atoi(line+i);
         }
+        else if (strncmp(line+i, "chunk", strlen("chunk")) == 0)
+        {
+            i += strlen("chunk");
+            // Cycle to after the equals
+            while (isspace(line[i]) || line[i] == '=')
+                i++;
+            globals->chunk = atoi(line+i);
+        }
     }
     free(line);
 }

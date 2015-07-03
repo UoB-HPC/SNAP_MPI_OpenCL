@@ -36,6 +36,9 @@ struct problem
 
     // Number of MPI tasks in each direction
     unsigned int npex, npey, npez;
+
+    // KBA chunk size
+    unsigned int chunk;
 };
 
 
