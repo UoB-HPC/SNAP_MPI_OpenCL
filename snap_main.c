@@ -91,7 +91,45 @@ int main(int argc, char **argv)
 
     // Halo exchange routines
 
-    // Do an inner
+    // Loop over octants
+    int istep, jstep, kstep;
+    for (unsigned int OmZ = 0; OmZ < 2; OmZ++)
+        for (unsigned int OmY = 0; OmY < 2; OmY++)
+            for (unsigned int OmX = 0; OmX < 2; OmX++)
+            {
+                istep = (OmX == 0)? -1 : 1;
+                jstep = (OmY == 0)? -1 : 1;
+                kstep = (OmZ == 0)? -1 : 1;
+
+                // Calculate neighbours
+                int idown, jdown, kdown;
+                idown = local.ranks[0] + istep;
+                jdown = local.ranks[1] + jstep;
+                kdown = local.ranks[2] + kstep;
+
+                // If off the processor grid, use your own rank
+                if (idown < 0) idown = local.ranks[0];
+                if (idown >= globals.npex) idown = local.ranks[0];
+
+                if (jdown < 0) jdown = local.ranks[1];
+                if (jdown >= globals.npey) jdown = local.ranks[1];
+
+                if (kdown < 0) kdown = local.ranks[2];
+                if (kdown >= globals.npez) kdown = local.ranks[2];
+    
+                printf("i am %d %d %d, %d\n", local.ranks[0], local.ranks[1], local.ranks[2], rank);
+
+                // Send to X neighbour
+                if (idown != local.ranks[0])
+                {
+                    int xrank;
+                    int coords[3] = {idown, local.ranks[1], local.ranks[2]};
+                    MPI_Cart_rank(snap_comms, coords, &xrank);
+                    printf("my x neighbour is %d %d %d, %d\n", idown, local.ranks[1], local.ranks[2], xrank);
+                }
+
+
+            }
     // Receive data from neighbours
 
     // Sweep chunk
