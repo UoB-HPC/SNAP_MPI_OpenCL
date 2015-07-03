@@ -6,6 +6,7 @@
 #include "input.h"
 #include "problem.h"
 #include "allocate.h"
+#include "halos.h"
 
 void check_mpi(const int err, const char *msg)
 {
@@ -83,13 +84,22 @@ int main(int argc, char **argv)
     // Allocate the problem arrays
     struct mem memory;
     allocate_memory(globals, local, &memory);
+    struct halo halos;
+    allocate_halos(&globals, &local, &halos);
 
     // Set up problem
 
     // Halo exchange routines
 
+    // Do an inner
+    // Receive data from neighbours
+
+    // Sweep chunk
+    // Send data to neighbours
 
 
+
+    free_halos(&halos);
     free_memory(&memory);
 
     mpi_err = MPI_Finalize();

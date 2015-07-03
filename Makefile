@@ -11,7 +11,7 @@ OMP_GNU		= -fopenmp
 OMP=$(OMP_$(COMPILER))
 
 CFLAGS_			= -O3
-CFLAGS_INTEL	= -O3 -std=c99
+CFLAGS_INTEL	= -O0 -std=c99 -g
 CFLAGS_CRAY		= -O3
 CFLAGS_GNU		= -O3 -std=c99
 
@@ -20,5 +20,6 @@ MPI_COMPILER 	= mpicc
 snap: \
 	snap_main.c \
 	input.c \
-	allocate.c
+	allocate.c \
+	halos.c
 	$(MPI_COMPILER) $^ $(CFLAGS_$(COMPILER)) $(OMP) -o $@
