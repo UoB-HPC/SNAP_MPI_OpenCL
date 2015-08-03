@@ -13,7 +13,6 @@ void check_mpi(const int err, const char *msg)
 
 void setup_comms(struct problem * global, struct rankinfo * local)
 {
-
     // Create the MPI Cartesian topology
     int dims[] = {global->npex, global->npey, global->npez};
     int periods[] = {0, 0, 0};
@@ -21,8 +20,7 @@ void setup_comms(struct problem * global, struct rankinfo * local)
     check_mpi(mpi_err, "Creating MPI Cart");
 
     // Get my ranks in x, y and z
-    int rank;
-    mpi_err = MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+    mpi_err = MPI_Comm_rank(MPI_COMM_WORLD, &local->rank);
     check_mpi(mpi_err, "Getting MPI rank");
     mpi_err = MPI_Cart_coords(snap_comms, rank, 3, local->ranks);
     check_mpi(mpi_err, "Getting Cart co-ordinates");

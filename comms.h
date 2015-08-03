@@ -9,6 +9,8 @@
 // Holds local information about tile size and MPI rank
 struct rankinfo
 {
+    // My WORLD rank
+    int rank;
 
     // My MPI Cartesian co-ordinate ranks
     int ranks[3];
