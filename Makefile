@@ -21,5 +21,6 @@ snap: \
 	snap_main.c \
 	input.c \
 	allocate.c \
-	halos.c
+	halos.c \
+	comms.c
 	$(MPI_COMPILER) $^ $(CFLAGS_$(COMPILER)) $(OMP) -o $@

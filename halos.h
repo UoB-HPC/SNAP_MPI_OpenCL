@@ -2,6 +2,7 @@
 #pragma once
 
 #include "problem.h"
+#include "comms.h"
 #include <stdlib.h>
 
 

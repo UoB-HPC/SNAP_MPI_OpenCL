@@ -1,6 +1,8 @@
 
 #pragma once
 
+#include "comms.h"
+
 // Struct to hold the buffers
 struct mem
 {

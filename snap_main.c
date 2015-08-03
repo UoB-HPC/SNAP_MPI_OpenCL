@@ -3,19 +3,11 @@
 #include <stdlib.h>
 #include <mpi.h>
 
+#include "comms.h"
 #include "input.h"
 #include "problem.h"
 #include "allocate.h"
 #include "halos.h"
-
-void check_mpi(const int err, const char *msg)
-{
-    if (err != MPI_SUCCESS)
-    {
-        fprintf(stderr, "MPI Error: %d. %s\n", err, msg);
-        exit(err);
-    }
-}
 
 
 int main(int argc, char **argv)
@@ -52,33 +44,10 @@ int main(int argc, char **argv)
     // Broadcast the global variables
     broadcast_problem(&globals, rank);
 
-    // Create the MPI Cartesian topology
-    MPI_Comm snap_comms;
-    int dims[] = {globals.npex, globals.npey, globals.npez};
-    int periods[] = {0, 0, 0};
-    mpi_err = MPI_Cart_create(MPI_COMM_WORLD, 3, dims, periods, 0, &snap_comms);
-    check_mpi(mpi_err, "Creating MPI Cart");
 
-    // Get my ranks in x, y and z
+    // Set up communication neighbours
     struct rankinfo local;
-    mpi_err = MPI_Cart_coords(snap_comms, rank, 3, local.ranks);
-    check_mpi(mpi_err, "Getting Cart co-ordinates");
-
-    // Note: The following assumes one tile per MPI rank
-    // TODO: Change to allow for tiling
-
-    // Calculate local sizes
-    local.nx = globals.nx / globals.npex;
-    local.ny = globals.ny / globals.npey;
-    local.nz = globals.nz / globals.npez;
-
-    // Calculate i,j,k lower and upper bounds in terms of global grid
-    local.ilb = local.ranks[0]*local.nx;
-    local.iub = (local.ranks[0]+1)*local.nx;
-    local.jlb = local.ranks[1]*local.ny;
-    local.jub = (local.ranks[1]+1)*local.ny;
-    local.klb = local.ranks[2]*local.nz;
-    local.kub = (local.ranks[2]+1)*local.nz;
+    setup_comms(&globals, &local);
 
 
     // Allocate the problem arrays
@@ -101,32 +70,6 @@ int main(int argc, char **argv)
                 jstep = (OmY == 0)? -1 : 1;
                 kstep = (OmZ == 0)? -1 : 1;
 
-                // Calculate neighbours
-                int idown, jdown, kdown;
-                idown = local.ranks[0] + istep;
-                jdown = local.ranks[1] + jstep;
-                kdown = local.ranks[2] + kstep;
-
-                // If off the processor grid, use your own rank
-                if (idown < 0) idown = local.ranks[0];
-                if (idown >= globals.npex) idown = local.ranks[0];
-
-                if (jdown < 0) jdown = local.ranks[1];
-                if (jdown >= globals.npey) jdown = local.ranks[1];
-
-                if (kdown < 0) kdown = local.ranks[2];
-                if (kdown >= globals.npez) kdown = local.ranks[2];
-    
-                printf("i am %d %d %d, %d\n", local.ranks[0], local.ranks[1], local.ranks[2], rank);
-
-                // Send to X neighbour
-                if (idown != local.ranks[0])
-                {
-                    int xrank;
-                    int coords[3] = {idown, local.ranks[1], local.ranks[2]};
-                    MPI_Cart_rank(snap_comms, coords, &xrank);
-                    printf("my x neighbour is %d %d %d, %d\n", idown, local.ranks[1], local.ranks[2], xrank);
-                }
 
 
             }
@@ -140,6 +83,5 @@ int main(int argc, char **argv)
     free_halos(&halos);
     free_memory(&memory);
 
-    mpi_err = MPI_Finalize();
-    check_mpi(mpi_err, "MPI_Finalize");
+    finish_comms();
 }
