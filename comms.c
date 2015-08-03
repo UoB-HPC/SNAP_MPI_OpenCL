@@ -22,7 +22,7 @@ void setup_comms(struct problem * global, struct rankinfo * local)
     // Get my ranks in x, y and z
     mpi_err = MPI_Comm_rank(MPI_COMM_WORLD, &local->rank);
     check_mpi(mpi_err, "Getting MPI rank");
-    mpi_err = MPI_Cart_coords(snap_comms, rank, 3, local->ranks);
+    mpi_err = MPI_Cart_coords(snap_comms, local->rank, 3, local->ranks);
     check_mpi(mpi_err, "Getting Cart co-ordinates");
 
     // Note: The following assumes one tile per MPI rank
