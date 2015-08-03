@@ -80,7 +80,7 @@ int main(int argc, char **argv)
 
 
 
-    free_halos(&halos);
+    free_halos(&globals, &halos);
     free_memory(&memory);
 
     finish_comms();
