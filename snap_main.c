@@ -57,6 +57,7 @@ int main(int argc, char **argv)
     allocate_halos(&globals, &local, &halos);
 
     // Set up problem
+    calculate_cosine_coefficients(&globals, memory.mu, memory.eta, memory.xi);
 
     // Halo exchange routines
 

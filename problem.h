@@ -42,3 +42,4 @@ struct problem
 };
 
 
+void calculate_cosine_coefficients(const struct problem * global,double * restrict mu, double * restrict eta, double * restrict xi);

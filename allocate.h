@@ -18,6 +18,11 @@ struct mem
 	// Scalar flux
 	double *scalar_flux_in;
 	double *scalar_flux_out;
+
+	// Cosine coefficients
+	double *mu;
+	double *eta;
+	double *xi;
 };
 
 void allocate_memory(struct problem globals, struct rankinfo local, struct mem * memory);
