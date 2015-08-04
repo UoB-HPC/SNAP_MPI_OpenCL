@@ -26,6 +26,8 @@ void allocate_memory(struct problem globals, struct rankinfo local, struct mem *
 	memory->eta = malloc(sizeof(double)*globals.nang);
 	memory->xi = malloc(sizeof(double)*globals.nang);
 
+	// Scattering coefficient
+	memory->scat_coeff = malloc(sizeof(double)*globals.nang*globals.cmom*8);
 
 }
 

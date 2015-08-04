@@ -24,3 +24,43 @@ void calculate_cosine_coefficients(
         xi[a] = sqrt(1.0 - t);
     }
 }
+
+void calculate_scattering_coefficients(
+    const struct problem * global,
+    double * restrict scat_coef,
+    const double * restrict mu,
+    const double * restrict eta,
+    const double * restrict xi
+    )
+{
+    // (mu*eta*xi)^l starting at 0
+    for (int kd = 0; kd < 2; kd++)
+    {
+        double ks = (kd == 1) ? 1.0 : -1.0;
+        for (int jd = 0; jd < 2; jd++)
+        {
+            double js = (jd == 1) ? 1.0 : -1.0;
+            for (int id = 0; id < 2; id++)
+            {
+                double is = (id == 1) ? 1.0 : -1.0;
+                int oct = 4*kd + 2*jd + id;
+                // Init first moment
+                for (unsigned int a = 0; a < global->nang; a++)
+                    scat_coef[SCAT_COEFF_INDEX(a,0,oct,global->nang,global->cmom)] = 1.0;
+                // Init other moments
+                int mom = 1;
+                for (int l = 1; l < global->nmom; l++)
+                {
+                    for (int m = 0; m < 2*l+1; m++)
+                    {
+                        for (unsigned int a = 0; a < global->nang; a++)
+                        {
+                            scat_coef[SCAT_COEFF_INDEX(a,mom,oct,global->nang,global->cmom)] = pow(is*mu[a], 2.0*l-1.0) * pow(ks*xi[a]*js*eta[a], m);
+                        }
+                        mom += 1;
+                    }
+                }
+            }
+        }
+    }
+}

@@ -58,6 +58,7 @@ int main(int argc, char **argv)
 
     // Set up problem
     calculate_cosine_coefficients(&globals, memory.mu, memory.eta, memory.xi);
+    calculate_scattering_coefficients(&globals, memory.scat_coeff, memory.mu, memory.eta, memory.xi);
 
     // Halo exchange routines
 

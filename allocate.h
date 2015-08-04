@@ -23,6 +23,9 @@ struct mem
 	double *mu;
 	double *eta;
 	double *xi;
+
+	// Scattering coefficient
+	double *scat_coeff;
 };
 
 void allocate_memory(struct problem globals, struct rankinfo local, struct mem * memory);
