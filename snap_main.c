@@ -71,6 +71,9 @@ int main(int argc, char **argv)
     init_scattering_matrix(&globals, memory.mat_cross_section, memory.scattering_matrix);
 
 
+    // Outers
+    calculate_dd_coefficients(&globals, memory.eta, memory.xi, memory.dd_i, memory.dd_j, memory.dd_k);
+
     // Halo exchange routines
 
     // Loop over octants

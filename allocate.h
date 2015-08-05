@@ -38,6 +38,12 @@ struct mem
 
 	// Scattering matrix
 	double *scattering_matrix;
+
+	// Diamond difference co-efficients
+	double *dd_i;
+	double *dd_j;
+	double *dd_k;
+
 };
 
 void allocate_memory(struct problem globals, struct rankinfo local, struct mem * memory);

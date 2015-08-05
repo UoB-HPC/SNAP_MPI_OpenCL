@@ -168,3 +168,21 @@ void init_scattering_matrix(
         }
     }
 }
+
+void calculate_dd_coefficients(
+    const struct problem * global,
+    const double * restrict eta,
+    const double * restrict xi,
+    double * restrict dd_i,
+    double * restrict dd_j,
+    double * restrict dd_k
+    )
+{
+    dd_i[0] = 2.0 / global->dx;
+    for (unsigned int a = 0; a < global->nang; a++)
+    {
+        dd_j[a] = (2.0 / global->dy) * eta[a];
+        dd_k[a] = (2.0 / global->dz) * xi[a];
+    }
+}
+

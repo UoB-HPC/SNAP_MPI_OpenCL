@@ -41,6 +41,11 @@ void allocate_memory(struct problem globals, struct rankinfo local, struct mem *
 	// Scattering matrix
 	memory->scattering_matrix = malloc(sizeof(double)*globals.nmom*globals.ng*globals.ng);
 
+	// Diamon difference co-efficients
+	memory->dd_i = malloc(sizeof(double));
+	memory->dd_j = malloc(sizeof(double)*globals.nang);
+	memory->dd_k = malloc(sizeof(double)*globals.nang);
+
 }
 
 void free_memory(struct mem * memory)
