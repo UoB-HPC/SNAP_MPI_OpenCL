@@ -4,30 +4,8 @@
 #include <mpi.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "problem.h"
+#include "global.h"
 
-// Holds local information about tile size and MPI rank
-struct rankinfo
-{
-    // My WORLD rank
-    int rank;
-
-    // My MPI Cartesian co-ordinate ranks
-    int ranks[3];
-
-    // Local grid size
-    unsigned int nx, ny, nz;
-
-    // Global grid corners of MPI partition
-    unsigned int ilb, iub;
-    unsigned int jlb, jub;
-    unsigned int klb, kub;
-
-    // My neighbours
-    int xup, xdown;
-    int yup, ydown;
-    int zup, zdown;
-};
 
 // Cartesian communicator
 MPI_Comm snap_comms;
