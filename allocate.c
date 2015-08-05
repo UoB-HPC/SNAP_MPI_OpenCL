@@ -29,6 +29,9 @@ void allocate_memory(struct problem globals, struct rankinfo local, struct mem *
 	// Scattering coefficient
 	memory->scat_coeff = malloc(sizeof(double)*globals.nang*globals.cmom*8);
 
+	// Material cross section
+	memory->mat_cross_section = malloc(sizeof(double)*globals.ng);
+
 }
 
 void free_memory(struct mem * memory)

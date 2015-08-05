@@ -64,3 +64,15 @@ void calculate_scattering_coefficients(
         }
     }
 }
+
+void init_material_data(
+    const struct problem * global,
+    double * restrict mat_cross_section
+    )
+{
+    mat_cross_section[0] = 1.0;
+    for (unsigned int g = 1; g < global->ng; g++)
+    {
+        mat_cross_section[g] = mat_cross_section[g-1] + 0.01;
+    }
+}

@@ -26,6 +26,9 @@ struct mem
 
 	// Scattering coefficient
 	double *scat_coeff;
+
+	// Material cross sections - ASSUME ONE MATERIAL
+	double *mat_cross_section;
 };
 
 void allocate_memory(struct problem globals, struct rankinfo local, struct mem * memory);
