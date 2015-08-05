@@ -60,6 +60,8 @@ int main(int argc, char **argv)
     calculate_cosine_coefficients(&globals, memory.mu, memory.eta, memory.xi);
     calculate_scattering_coefficients(&globals, memory.scat_coeff, memory.mu, memory.eta, memory.xi);
     init_material_data(&globals, memory.mat_cross_section);
+    init_fixed_source(&globals, &local, memory.fixed_source);
+    init_scattering_matrix(&globals, memory.mat_cross_section, memory.scattering_matrix);
 
     // Halo exchange routines
 

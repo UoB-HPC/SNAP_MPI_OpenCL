@@ -29,6 +29,12 @@ struct mem
 
 	// Material cross sections - ASSUME ONE MATERIAL
 	double *mat_cross_section;
+
+	// Fixed source
+	double *fixed_source;
+
+	// Scattering matrix
+	double *scattering_matrix;
 };
 
 void allocate_memory(struct problem globals, struct rankinfo local, struct mem * memory);
