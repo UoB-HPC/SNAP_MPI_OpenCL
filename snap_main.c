@@ -41,6 +41,12 @@ int main(int argc, char **argv)
         check_decomposition(&globals);
 
     }
+
+    // Set dx, dy, dz values
+    globals.dx = globals.lx / (double)globals.nx;
+    globals.dy = globals.ly / (double)globals.ny;
+    globals.dz = globals.lz / (double)globals.nz;
+
     // Broadcast the global variables
     broadcast_problem(&globals, rank);
 

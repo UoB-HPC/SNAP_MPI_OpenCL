@@ -10,6 +10,9 @@ struct problem
     // Physical grid size
     double lx, ly, lz;
 
+    // Width of spatial cells
+    double dx, dy, dz;
+
     // Energy groups
     unsigned int ng;
 
