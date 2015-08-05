@@ -52,7 +52,7 @@ void read_input(char *file, struct problem *globals)
             // Cycle to after the equals
             while (isspace(line[i]) || line[i] == '=')
                 i++;
-            globals->lx = atoi(line+i);
+            globals->lx = atof(line+i);
         }
         else if (strncmp(line+i, "ly", strlen("ly")) == 0)
         {
@@ -60,7 +60,7 @@ void read_input(char *file, struct problem *globals)
             // Cycle to after the equals
             while (isspace(line[i]) || line[i] == '=')
                 i++;
-            globals->ly = atoi(line+i);
+            globals->ly = atof(line+i);
         }
         else if (strncmp(line+i, "lz", strlen("lz")) == 0)
         {
@@ -68,7 +68,7 @@ void read_input(char *file, struct problem *globals)
             // Cycle to after the equals
             while (isspace(line[i]) || line[i] == '=')
                 i++;
-            globals->lz = atoi(line+i);
+            globals->lz = atof(line+i);
         }
         else if (strncmp(line+i, "ng", strlen("ng")) == 0)
         {
