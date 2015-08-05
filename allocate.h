@@ -19,6 +19,9 @@ struct mem
 	double *scalar_flux_in;
 	double *scalar_flux_out;
 
+	// Quadrature weights
+	double *quad_weights;
+
 	// Cosine coefficients
 	double *mu;
 	double *eta;

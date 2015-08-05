@@ -2,6 +2,18 @@
 #include "problem.h"
 #include <math.h>
 
+void init_quadrature_weights(
+    const struct problem * global,
+    double * restrict quad_weights
+    )
+{
+    // Uniform weights
+    for (unsigned int a = 0; a < global->nang; a++)
+    {
+        quad_weights[a] = 0.125 / (double)(global->nang);
+    }
+}
+
 void calculate_cosine_coefficients(
     const struct problem * global,
     double * restrict mu,

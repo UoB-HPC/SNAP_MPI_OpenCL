@@ -21,6 +21,9 @@ void allocate_memory(struct problem globals, struct rankinfo local, struct mem *
 	memory->scalar_flux_in = malloc(sizeof(double)*local.nx*local.ny*local.nz*globals.ng);
 	memory->scalar_flux_out = malloc(sizeof(double)*local.nx*local.ny*local.nz*globals.ng);
 
+	// Quadrature weights
+	memory->quad_weights = malloc(sizeof(double)*globals.nang);
+
 	// Cosine coefficients
 	memory->mu = malloc(sizeof(double)*globals.nang);
 	memory->eta = malloc(sizeof(double)*globals.nang);
