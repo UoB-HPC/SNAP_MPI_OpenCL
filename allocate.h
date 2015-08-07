@@ -50,6 +50,9 @@ struct mem
 	// Time absorption coefficient
 	double *velocity_delta;
 
+	// Denominator array
+	double *denominator;
+
 };
 
 void allocate_memory(struct problem globals, struct rankinfo local, struct mem * memory);

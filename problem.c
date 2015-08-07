@@ -204,3 +204,24 @@ void calculate_dd_coefficients(
     }
 }
 
+void calculate_denominator(
+    const struct problem * global,
+    const struct rankinfo * local,
+    const double * restrict dd_i,
+    const double * restrict dd_j,
+    const double * restrict dd_k,
+    const double * restrict mu,
+    const double * restrict mat_cross_section,
+    const double * restrict velocity_delta,
+    double * restrict denominator
+    )
+{
+    for (unsigned int k = 0; k < local->nz; k++)
+        for (unsigned int j = 0; j < local->ny; j++)
+            for (unsigned int i = 0; i < local->nx; i++)
+                for (unsigned int g = 0; g < global->ng; g++)
+                    for (unsigned int a = 0; a < global->nang; a++)
+                    {
+                        denominator[DENOMINATOR_INDEX(a,g,i,j,k,global->nang,global->ng,local->nx,local->ny)] = 1.0 / (mat_cross_section[g] + velocity_delta[g] + mu[a]*dd_i[0] + dd_j[a] + dd_k[a]);
+                    }
+}

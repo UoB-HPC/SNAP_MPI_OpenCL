@@ -75,6 +75,9 @@ int main(int argc, char **argv)
 
     // Outers
     calculate_dd_coefficients(&globals, memory.eta, memory.xi, memory.dd_i, memory.dd_j, memory.dd_k);
+    calculate_denominator(&globals, &local, memory.dd_i, memory.dd_j, memory.dd_k, memory.mu, memory.mat_cross_section, memory.velocity_delta, memory.denominator);
+
+
 
     // Halo exchange routines
 

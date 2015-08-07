@@ -52,6 +52,8 @@ void allocate_memory(struct problem globals, struct rankinfo local, struct mem *
 	// Time absorption coefficient
 	memory->velocity_delta = malloc(sizeof(double)*globals.ng);
 
+	// Denominator array
+	memory->denominator = malloc(sizeof(double)*globals.nang*globals.ng*local.nx*local.ny*local.nz);
 
 }
 
