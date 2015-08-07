@@ -1,7 +1,7 @@
 
 #pragma once
 
-/** Problem dimensions
+/** \brief Problem dimensions
 *
 * Read in from input file or calculated from those inputs
 */
@@ -62,25 +62,31 @@ struct problem
 };
 
 
-// Holds local information about tile size and MPI rank
+/** \brief MPI Information
+*
+* Holds local information about tile size and MPI rank
+*/
 struct rankinfo
 {
-    // My WORLD rank
+    /**  \brief My WORLD rank */
     int rank;
 
-    // My MPI Cartesian co-ordinate ranks
+    /** \brief My MPI Cartesian co-ordinate ranks */
     int ranks[3];
 
-    // Local grid size
+    /**@{ \brief Local grid size */
     unsigned int nx, ny, nz;
+    /**@}*/
 
-    // Global grid corners of MPI partition
+    /**@{ \brief Global grid corners of MPI partition */
     unsigned int ilb, iub;
     unsigned int jlb, jub;
     unsigned int klb, kub;
+    /**@}*/
 
-    // My neighbours
+    /**@{ \brief Global ranks of my neighbours */
     int xup, xdown;
     int yup, ydown;
     int zup, zdown;
+    /**@}*/
 };
