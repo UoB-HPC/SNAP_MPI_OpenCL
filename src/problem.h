@@ -1,5 +1,11 @@
 
-/** @file */
+/** \file
+* \brief Calculate "static" problem data
+*
+* Routines to initilise the data arrays based on the problem inputs.
+* Also contains data calculated every outer, which could only be done once
+* per timestep.
+*/
 
 #pragma once
 
