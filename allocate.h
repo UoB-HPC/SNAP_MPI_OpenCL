@@ -47,6 +47,9 @@ struct mem
 	// Mock velocities array
 	double *velocities;
 
+	// Time absorption coefficient
+	double *velocity_delta;
+
 };
 
 void allocate_memory(struct problem globals, struct rankinfo local, struct mem * memory);

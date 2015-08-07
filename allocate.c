@@ -49,6 +49,9 @@ void allocate_memory(struct problem globals, struct rankinfo local, struct mem *
 	// Mock velocities array
 	memory->velocities = malloc(sizeof(double)*globals.ng);
 
+	// Time absorption coefficient
+	velocity_delta = malloc(sizeof(double)*globals.ng);
+
 }
 
 void free_memory(struct mem * memory)

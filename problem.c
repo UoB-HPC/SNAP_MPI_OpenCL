@@ -177,6 +177,16 @@ void init_velocities(
         velocities[g] = (double)(global->ng - g);
 }
 
+void init_velocity_delta(
+    const struct problem * global,
+    const double * restrict velocities,
+    double * restrict velocity_delta
+    )
+{
+    for (unsigned int g = 0; g < global->ng; g++)
+        velocity_delta[g] = 2.0 / (global->dt * velocities[g]);
+}
+
 void calculate_dd_coefficients(
     const struct problem * global,
     const double * restrict eta,

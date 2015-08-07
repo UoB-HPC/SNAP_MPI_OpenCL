@@ -15,5 +15,6 @@ void init_material_data(const struct problem * global, double * restrict mat_cro
 void init_fixed_source(const struct problem * global, const struct rankinfo * local, double * restrict fixed_source);
 void init_scattering_matrix(const struct problem * global, const double * restrict mat_cross_section, double * restrict scattering_matrix);
 void init_velocities(const struct problem * global, double * restrict velocities);
+void init_velocity_delta(const struct problem * global, const double * restrict velocities, double * restrict velocity_delta);
 
 void calculate_dd_coefficients(const struct problem * global, const double * restrict eta, const double * restrict xi, double * restrict dd_i, double * restrict dd_j, double * restrict dd_k);
