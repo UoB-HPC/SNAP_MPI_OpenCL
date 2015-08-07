@@ -33,6 +33,8 @@ struct problem
     // Timestep details
     unsigned int nsteps;
     double tf;
+    // Time domain stride
+    double dt;
 
     // Convergence criteria
     double epsi;

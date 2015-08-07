@@ -42,10 +42,11 @@ int main(int argc, char **argv)
 
     }
 
-    // Set dx, dy, dz values
+    // Set dx, dy, dz, dt values
     globals.dx = globals.lx / (double)globals.nx;
     globals.dy = globals.ly / (double)globals.ny;
     globals.dz = globals.lz / (double)globals.nz;
+    globals.dt = globals.tf / (double)globals.nsteps;
 
     // Broadcast the global variables
     broadcast_problem(&globals, rank);
