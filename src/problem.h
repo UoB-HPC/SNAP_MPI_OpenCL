@@ -23,14 +23,63 @@
 /**@}*/
 
 
+/** \brief Initilise quadrature weights
+*
+* Set to uniform weights: nuber of angles divided by eight.
+*/
 void init_quadrature_weights(const struct problem * global, double * restrict quad_weights);
+
+/** \brief Calculate cosine coefficients
+*
+* Populates the \a mu, \a eta and \a xi arrays.
+*/
 void calculate_cosine_coefficients(const struct problem * global, double * restrict mu, double * restrict eta, double * restrict xi);
+
+/** \brief Calculate the scattering coefficients
+*
+* Populates the \a scat_coef array based on the cosine coefficients.
+* Set as \f$(\mu*\eta*\xi)^l\f$ starting at 0, for the lth moment.
+*/
 void calculate_scattering_coefficients(const struct problem * global, double * restrict scat_coef, const double * restrict mu, const double * restrict eta, const double * restrict xi);
+
+/** \brief Set material cross sections
+*
+* We one have one material across the whole grid. Set to 1.0 for the first group, and + 0.01 for each subsequent group.
+*/
 void init_material_data(const struct problem * global, double * restrict mat_cross_section);
+
+/** /brief Set fixed source data
+*
+* Source is applied everywhere, set at strenght 1.0.
+* This is fixed src_opt == 0 in original SNAP
+*/
 void init_fixed_source(const struct problem * global, const struct rankinfo * local, double * restrict fixed_source);
+
+/** \brief Setup group to group scattering information
+*
+* Scattering is 10% upscattering, 20% in group and 70% down scattering in every group,
+* except first and last which have no up/down scattering.
+* Data is initilised for all moments.
+*/
 void init_scattering_matrix(const struct problem * global, const double * restrict mat_cross_section, double * restrict scattering_matrix);
+
+/** \brief Set velocities array
+*
+* Fake data on group velocity.
+*/
 void init_velocities(const struct problem * global, double * restrict velocities);
+
+/** \brief Set velocity time delta array */
 void init_velocity_delta(const struct problem * global, const double * restrict velocities, double * restrict velocity_delta);
 
+/** \brief Calculate the spatial diamond difference coefficients
+*
+* Called every outer. Includes the cosine coefficient terms.
+*/
 void calculate_dd_coefficients(const struct problem * global, const double * restrict eta, const double * restrict xi, double * restrict dd_i, double * restrict dd_j, double * restrict dd_k);
+
+/** \brief Calculate the denominator to the transport equation update
+*
+* Called every outer.
+*/
 void calculate_denominator(const struct problem * global, const struct rankinfo * local, const double * restrict dd_i, const double * restrict dd_j, const double * restrict dd_k, const double * restrict mu, const double * restrict mat_cross_section, const double * restrict velocity_delta, double * restrict denominator);
