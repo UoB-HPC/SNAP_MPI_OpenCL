@@ -193,11 +193,12 @@ void broadcast_problem(struct problem *globals, int rank)
         globals->dx,
         globals->dy,
         globals->dz,
+        globals->dt,
         globals->tf,
         globals->epsi
     };
     MPI_Bcast(ints, 12, MPI_UNSIGNED, 0, MPI_COMM_WORLD);
-    MPI_Bcast(doubles, 8, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+    MPI_Bcast(doubles, 9, MPI_DOUBLE, 0, MPI_COMM_WORLD);
     if (rank != 0)
     {
         globals->nx = ints[0];
@@ -219,8 +220,9 @@ void broadcast_problem(struct problem *globals, int rank)
         globals->dx = doubles[3];
         globals->dy = doubles[4];
         globals->dz = doubles[5];
-        globals->tf = doubles[6];
-        globals->epsi = doubles[7];
+        globals->dt = doubles[6];
+        globals->tf = doubles[7];
+        globals->epsi = doubles[8];
     }
     globals->cmom = globals->nmom * globals->nmom;
 }
