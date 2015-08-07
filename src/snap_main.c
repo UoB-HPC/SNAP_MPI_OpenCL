@@ -9,6 +9,16 @@
 #include "allocate.h"
 #include "halos.h"
 
+/** \mainpage
+* SNAP-MPI is a cut down version of the SNAP mini-app which allows us to
+* investigate MPI decomposition schemes with various node-level implementations.
+* In particular, this code will allow:
+* \li Flat MPI
+* \li Hybrid MPI+OpenMP (For CPU and larger core counts)
+* \li OpenCL
+*
+* The MPI scheme used is KBA, expending into hybrid-KBA.
+*/
 
 int main(int argc, char **argv)
 {
