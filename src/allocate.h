@@ -3,54 +3,65 @@
 
 #include "comms.h"
 
-// Struct to hold the buffers
+/** \brief Struct to hold the buffers
+*
+* All the memory arrays are stored here
+*/
 struct mem
 {
-	// Angular flux
+	/**@{ \brief Angular flux */
 	double *angular_flux_in;
 	double *angular_flux_out;
+	/**@}*/
 
-	// Edge flux arrays
+	/**@{ \brief Edge flux arrays */
 	double *flux_i;
 	double *flux_j;
 	double *flux_k;
+	/**@}*/
 
-	// Scalar flux
+	/**@{ \brief Scalar flux */
 	double *scalar_flux_in;
 	double *scalar_flux_out;
+	/**@}*/
 
-	// Quadrature weights
+	/** \brief Quadrature weights */
 	double *quad_weights;
 
-	// Cosine coefficients
+	/**@{ \brief Cosine coefficients */
 	double *mu;
 	double *eta;
 	double *xi;
+	/**@}*/
 
-	// Scattering coefficient
+	/** \brief Scattering coefficient */
 	double *scat_coeff;
 
-	// Material cross sections - ASSUME ONE MATERIAL
+	/** \brief Material cross sections
+	*
+	* ASSUME ONE MATERIAL
+	*/
 	double *mat_cross_section;
 
-	// Fixed source
+	/** \brief Fixed source */
 	double *fixed_source;
 
-	// Scattering matrix
+	/** \brief Scattering matrix */
 	double *scattering_matrix;
 
-	// Diamond difference co-efficients
+	/**@{ \brief Diamond difference co-efficients */
 	double *dd_i;
 	double *dd_j;
 	double *dd_k;
+	/**@}*/
 
-	// Mock velocities array
+	/** \brief Mock velocities array */
 	double *velocities;
 
-	// Time absorption coefficient
+	/** \brief Time absorption coefficient */
 	double *velocity_delta;
 
-	// Denominator array
+	/** \brief Denominator array */
 	double *denominator;
 
 };
