@@ -50,7 +50,8 @@ void allocate_memory(struct problem globals, struct rankinfo local, struct mem *
 	memory->velocities = malloc(sizeof(double)*globals.ng);
 
 	// Time absorption coefficient
-	velocity_delta = malloc(sizeof(double)*globals.ng);
+	memory->velocity_delta = malloc(sizeof(double)*globals.ng);
+
 
 }
 
