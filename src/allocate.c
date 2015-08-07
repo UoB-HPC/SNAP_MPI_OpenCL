@@ -35,8 +35,10 @@ void allocate_memory(struct problem globals, struct rankinfo local, struct mem *
 	// Material cross section
 	memory->mat_cross_section = malloc(sizeof(double)*globals.ng);
 
-	// Fixed source
+	// Sources
 	memory->fixed_source = malloc(sizeof(double)*globals.ng*local.nx*local.ny*local.nz);
+	memory->outer_source = malloc(sizeof(double)*globals.cmom*globals.ng*local.nx*local.ny*local.nz);
+	memory->inner_source = malloc(sizeof(double)*globals.cmom*globals.ng*local.nx*local.ny*local.nz);
 
 	// Scattering matrix
 	memory->scattering_matrix = malloc(sizeof(double)*globals.nmom*globals.ng*globals.ng);

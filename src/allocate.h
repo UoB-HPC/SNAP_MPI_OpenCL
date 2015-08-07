@@ -49,8 +49,14 @@ struct mem
 	*/
 	double *mat_cross_section;
 
+	/**@{
 	/** \brief Fixed source */
 	double *fixed_source;
+	/** \brief Outer source: group-to-group scattering plus fixed source */
+	double *outer_source;
+	/** \brief Inner (total) source: outer source plus with-group source */
+	double *inner_source;
+	/**@}*/
 
 	/** \brief Scattering matrix */
 	double *scattering_matrix;
