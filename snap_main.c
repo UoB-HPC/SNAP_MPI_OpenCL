@@ -71,6 +71,7 @@ int main(int argc, char **argv)
     init_fixed_source(&globals, &local, memory.fixed_source);
     init_scattering_matrix(&globals, memory.mat_cross_section, memory.scattering_matrix);
     init_velocities(&globals, memory.velocities);
+    init_velocity_delta(&globals, memory.velocities, memory.velocity_delta);
 
     // Outers
     calculate_dd_coefficients(&globals, memory.eta, memory.xi, memory.dd_i, memory.dd_j, memory.dd_k);
