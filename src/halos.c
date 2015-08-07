@@ -40,4 +40,10 @@ void free_halos(struct problem * globals, struct halo * halos)
     }
 }
 
-
+void send_halo(int rank_to, struct rankinfo * local)
+{
+    // Don't need to do an MPI communication here
+    if (rank_to == local->rank)
+        return;
+    
+}

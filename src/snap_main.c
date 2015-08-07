@@ -73,10 +73,15 @@ int main(int argc, char **argv)
     init_velocities(&globals, memory.velocities);
     init_velocity_delta(&globals, memory.velocities, memory.velocity_delta);
 
+    // Time loop
+    // TODO
+    // swap angluar flux pointers
+
+
     // Outers
     calculate_dd_coefficients(&globals, memory.eta, memory.xi, memory.dd_i, memory.dd_j, memory.dd_k);
     calculate_denominator(&globals, &local, memory.dd_i, memory.dd_j, memory.dd_k, memory.mu, memory.mat_cross_section, memory.velocity_delta, memory.denominator);
-
+    // Calculate outer source
 
 
     // Halo exchange routines
