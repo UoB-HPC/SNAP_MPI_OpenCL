@@ -1,13 +1,27 @@
 
+/** @file */
+
 #pragma once
 
 #include "global.h"
 
-// Memory access patterns
+/** @defgroup MEM Memory access patterns
+* \brief Macros for indexing multi-dimensional arrays
+* @{*/
+
+/** \brief Index for scattering coefficient array */
 #define SCAT_COEFF_INDEX(a,m,o,nang,cmom) ((a)+((nang)*(m))+((nang)*(cmom)*o))
+
+/** \brief Index for fixed source array */
 #define FIXED_SOURCE_INDEX(g,i,j,k,ng,nx,ny) ((g)+((ng)*(i))+((ng)*(nx)*(j))+((ng)*(nx)*(ny)*(k)))
+
+/** \brief Index for scattering matrix array */
 #define SCATTERING_MATRIX_INDEX(m,g1,g2,nmom,ng) ((m)+((nmom)*(g1))+((nmom)*(ng)*(g2)))
+
+/** \brief Index for transport denominator array */
 #define DENOMINATOR_INDEX(a,g,i,j,k,nang,ng,nx,ny) ((a)+((nang)*(g))+((nang)*(ng)*(i))+((nang)*(ng)*(nx)*(j))+((nang)*(ng)*(nx)*(ny)*(k)))
+/**@}*/
+
 
 void init_quadrature_weights(const struct problem * global, double * restrict quad_weights);
 void calculate_cosine_coefficients(const struct problem * global, double * restrict mu, double * restrict eta, double * restrict xi);
