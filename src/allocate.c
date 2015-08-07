@@ -1,16 +1,9 @@
 
-/** \file
-* \brief Manage the allocation of arrays
-*
-* All problem scope arrays are allocated in the host DRAM using these functions calls.
-*/
-
 #include <stdlib.h>
 
 #include "problem.h"
 #include "allocate.h"
 
-/** \brief Allocate the problem arrays */
 void allocate_memory(struct problem globals, struct rankinfo local, struct mem * memory)
 {
 	// Allocate two copies of the angular flux
@@ -64,7 +57,6 @@ void allocate_memory(struct problem globals, struct rankinfo local, struct mem *
 
 }
 
-/** \brief Free the arrays sroted in the \a mem struct */
 void free_memory(struct mem * memory)
 {
 	free(memory->angular_flux_in);
