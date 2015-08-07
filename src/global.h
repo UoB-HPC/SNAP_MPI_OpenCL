@@ -1,6 +1,11 @@
 
 #pragma once
 
+/** \file
+* \brief Structures containing problem sizes and MPI information
+*/
+
+
 /** \brief Problem dimensions
 *
 * Read in from input file or calculated from those inputs
