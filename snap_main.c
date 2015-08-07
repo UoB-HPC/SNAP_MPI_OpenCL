@@ -69,7 +69,7 @@ int main(int argc, char **argv)
     init_material_data(&globals, memory.mat_cross_section);
     init_fixed_source(&globals, &local, memory.fixed_source);
     init_scattering_matrix(&globals, memory.mat_cross_section, memory.scattering_matrix);
-
+    init_velocities(&globals, memory.velocities);
 
     // Outers
     calculate_dd_coefficients(&globals, memory.eta, memory.xi, memory.dd_i, memory.dd_j, memory.dd_k);

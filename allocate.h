@@ -44,6 +44,9 @@ struct mem
 	double *dd_j;
 	double *dd_k;
 
+	// Mock velocities array
+	double *velocities;
+
 };
 
 void allocate_memory(struct problem globals, struct rankinfo local, struct mem * memory);

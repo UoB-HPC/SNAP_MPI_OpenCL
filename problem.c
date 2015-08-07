@@ -169,6 +169,14 @@ void init_scattering_matrix(
     }
 }
 
+void init_velocities(
+    const struct problem * global,
+    double * restrict velocities)
+{
+    for (unsigned int g = 0; g < global->ng; g++)
+        velocities[g] = (double)(global->ng - g);
+}
+
 void calculate_dd_coefficients(
     const struct problem * global,
     const double * restrict eta,

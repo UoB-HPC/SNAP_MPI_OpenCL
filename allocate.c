@@ -46,6 +46,9 @@ void allocate_memory(struct problem globals, struct rankinfo local, struct mem *
 	memory->dd_j = malloc(sizeof(double)*globals.nang);
 	memory->dd_k = malloc(sizeof(double)*globals.nang);
 
+	// Mock velocities array
+	memory->velocities = malloc(sizeof(double)*globals.ng);
+
 }
 
 void free_memory(struct mem * memory)
