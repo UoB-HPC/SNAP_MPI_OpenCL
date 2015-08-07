@@ -68,7 +68,20 @@ void free_memory(struct mem * memory)
 	free(memory->flux_k);
 	free(memory->scalar_flux_in);
 	free(memory->scalar_flux_out);
+	free(memory->quad_weights);
 	free(memory->mu);
 	free(memory->eta);
 	free(memory->xi);
+	free(memory->scat_coeff);
+	free(memory->mat_cross_section);
+	free(memory->fixed_source);
+	free(memory->outer_source);
+	free(memory->inner_source);
+	free(memory->scattering_matrix);
+	free(memory->dd_i);
+	free(memory->dd_j);
+	free(memory->dd_k);
+	free(memory->velocities);
+	free(memory->velocity_delta);
+	free(memory->denominator);
 }
