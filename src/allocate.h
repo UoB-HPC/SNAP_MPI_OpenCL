@@ -56,6 +56,15 @@ struct mem
 	double *scalar_flux_out;
 	/**@}*/
 
+	/**@{*/
+	/** \brief Scalar flux moments */
+	/** Size: (cmom-1, ng, nx, ny, nz)
+	*
+	* Note, local spatial dimensions
+	*/
+	double *scalar_flux_moments;
+	/**@}*/
+
 	/** \brief Quadrature weights */
 	/** Size: (ng) */
 	double *quad_weights;

@@ -21,6 +21,9 @@ void allocate_memory(struct problem globals, struct rankinfo local, struct mem *
     memory->scalar_flux_in = malloc(sizeof(double)*local.nx*local.ny*local.nz*globals.ng);
     memory->scalar_flux_out = malloc(sizeof(double)*local.nx*local.ny*local.nz*globals.ng);
 
+    //Scalar flux moments
+    memory->scalar_flux_moments = malloc(sizeof(double)*(globals.cmom-1)*globals.ng*local.nx*local.ny*local.nz);
+
     // Quadrature weights
     memory->quad_weights = malloc(sizeof(double)*globals.nang);
 
@@ -68,6 +71,7 @@ void free_memory(struct mem * memory)
     free(memory->flux_k);
     free(memory->scalar_flux_in);
     free(memory->scalar_flux_out);
+    free(memory->scalar_flux_moments);
     free(memory->quad_weights);
     free(memory->mu);
     free(memory->eta);
