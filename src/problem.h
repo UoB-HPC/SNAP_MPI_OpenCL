@@ -28,6 +28,14 @@
 #define DENOMINATOR_INDEX(a,g,i,j,k,nang,ng,nx,ny) ((a)+((nang)*(g))+((nang)*(ng)*(i))+((nang)*(ng)*(nx)*(j))+((nang)*(ng)*(nx)*(ny)*(k)))
 /**@}*/
 
+/** \brief Index for scalar flux array */
+#define SCALAR_FLUX_INDEX(g,i,j,k,ng,nx,ny) ((g)+((ng)*(i))+((ng)*(nx)*(j))+((ng)*(nx)*(ny)*(k)))
+
+/** \brief Index for scalar flux moments array */
+#define SCALAR_FLUX_MOMENTS_INDEX(m,g,i,j,k,cmom,ng,nx,ny) ((m)+(((cmom)-1)*(g))+(((cmom)-1)*(ng)*(i))+(((cmom)-1)*(ng)*(nx)*(j))+(((cmom)-1)*(ng)*(nx)*(ny)*(k)))
+
+/**@}*/
+
 
 /** \brief Initilise quadrature weights
 *
