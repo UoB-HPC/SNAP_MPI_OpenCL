@@ -8,6 +8,7 @@
 #include "problem.h"
 #include "allocate.h"
 #include "halos.h"
+#include "source.h"
 
 /** \mainpage
 * SNAP-MPI is a cut down version of the SNAP mini-app which allows us to
@@ -92,6 +93,10 @@ int main(int argc, char **argv)
     calculate_dd_coefficients(&globals, memory.eta, memory.xi, memory.dd_i, memory.dd_j, memory.dd_k);
     calculate_denominator(&globals, &local, memory.dd_i, memory.dd_j, memory.dd_k, memory.mu, memory.mat_cross_section, memory.velocity_delta, memory.denominator);
     // Calculate outer source
+    for (unsigned int i = 0; i < globals.ng*local.nx*local.ny*local.nz; i++)
+        memory.scalar_flux_in[i] = 0.0;
+    compute_outer_source(&globals, &local, memory.fixed_source, memory.scattering_matrix, memory.scalar_flux_in, memory.scalar_flux_moments, memory.outer_source);
+
 
 
     // Halo exchange routines
