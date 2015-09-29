@@ -25,4 +25,4 @@ snap: \
 	comms.c \
 	problem.c \
 	source.c
-	$(MPI_COMPILER) $^ $(CFLAGS_$(COMPILER)) $(OMP) -o $@
+	$(MPI_COMPILER) $^ $(CFLAGS_$(COMPILER)) $(OMP) $(OPTIONS) -o $@
