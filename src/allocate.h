@@ -144,7 +144,7 @@ struct mem
 };
 
 /** \brief Allocate the problem arrays */
-void allocate_memory(struct problem globals, struct rankinfo local, struct mem * memory);
+void allocate_memory(struct problem * problem, struct rankinfo local, struct mem * memory);
 
 /** \brief Free the arrays sroted in the \a mem struct */
 void free_memory(struct mem * memory);

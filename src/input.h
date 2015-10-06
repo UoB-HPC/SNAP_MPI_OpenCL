@@ -36,10 +36,10 @@
 * \param npez MPI decomposition: number of processors in z direction
 * \param chunk Number of x-y planes to calculate before communication
 */
-void read_input(char *file, struct problem *globals);
+void read_input(char *file, struct problem *problem);
 
 /** \brief Send problem data from master to all MPI ranks */
-void broadcast_problem(struct problem *globals, int rank);
+void broadcast_problem(struct problem *problem, int rank);
 
 /** \brief Check MPI decomposition is valid */
 void check_decomposition(struct problem * input);

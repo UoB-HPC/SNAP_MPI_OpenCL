@@ -3,32 +3,32 @@
 #include <math.h>
 
 void init_quadrature_weights(
-    const struct problem * global,
+    const struct problem * problem,
     double * restrict quad_weights
     )
 {
     // Uniform weights
-    for (unsigned int a = 0; a < global->nang; a++)
+    for (unsigned int a = 0; a < problem->nang; a++)
     {
-        quad_weights[a] = 0.125 / (double)(global->nang);
+        quad_weights[a] = 0.125 / (double)(problem->nang);
     }
 }
 
 void calculate_cosine_coefficients(
-    const struct problem * global,
+    const struct problem * problem,
     double * restrict mu,
     double * restrict eta,
     double * restrict xi
     )
 {
-    double dm = 1.0 / global->nang;
+    double dm = 1.0 / problem->nang;
 
     mu[0] = 0.5 * dm;
     eta[0] = 1.0 - 0.5 * dm;
     double t = mu[0] * mu[0] + eta[0] * eta[0];
     xi[0] = sqrt(1.0 - t);
 
-    for (unsigned int a = 1; a < global->nang; a++)
+    for (unsigned int a = 1; a < problem->nang; a++)
     {
         mu[a] = mu[a-1] + dm;
         eta[a] = eta[a-1] - dm;
@@ -38,7 +38,7 @@ void calculate_cosine_coefficients(
 }
 
 void calculate_scattering_coefficients(
-    const struct problem * global,
+    const struct problem * problem,
     double * restrict scat_coef,
     const double * restrict mu,
     const double * restrict eta,
@@ -57,17 +57,17 @@ void calculate_scattering_coefficients(
                 double is = (id == 1) ? 1.0 : -1.0;
                 int oct = 4*kd + 2*jd + id;
                 // Init first moment
-                for (unsigned int a = 0; a < global->nang; a++)
-                    scat_coef[SCAT_COEFF_INDEX(a,0,oct,global->nang,global->cmom)] = 1.0;
+                for (unsigned int a = 0; a < problem->nang; a++)
+                    scat_coef[SCAT_COEFF_INDEX(a,0,oct,problem->nang,problem->cmom)] = 1.0;
                 // Init other moments
                 int mom = 1;
-                for (int l = 1; l < global->nmom; l++)
+                for (int l = 1; l < problem->nmom; l++)
                 {
                     for (int m = 0; m < 2*l+1; m++)
                     {
-                        for (unsigned int a = 0; a < global->nang; a++)
+                        for (unsigned int a = 0; a < problem->nang; a++)
                         {
-                            scat_coef[SCAT_COEFF_INDEX(a,mom,oct,global->nang,global->cmom)] = pow(is*mu[a], 2.0*l-1.0) * pow(ks*xi[a]*js*eta[a], m);
+                            scat_coef[SCAT_COEFF_INDEX(a,mom,oct,problem->nang,problem->cmom)] = pow(is*mu[a], 2.0*l-1.0) * pow(ks*xi[a]*js*eta[a], m);
                         }
                         mom += 1;
                     }
@@ -78,19 +78,19 @@ void calculate_scattering_coefficients(
 }
 
 void init_material_data(
-    const struct problem * global,
+    const struct problem * problem,
     double * restrict mat_cross_section
     )
 {
     mat_cross_section[0] = 1.0;
-    for (unsigned int g = 1; g < global->ng; g++)
+    for (unsigned int g = 1; g < problem->ng; g++)
     {
         mat_cross_section[g] = mat_cross_section[g-1] + 0.01;
     }
 }
 
 void init_fixed_source(
-    const struct problem * global,
+    const struct problem * problem,
     const struct rankinfo * local,
     double * restrict fixed_source
     )
@@ -100,12 +100,12 @@ void init_fixed_source(
     for(unsigned int k = 0; k < local->nz; k++)
         for(unsigned int j = 0; j < local->ny; j++)
             for(unsigned int i = 0; i < local->nx; i++)
-                for(unsigned int g = 0; g < global->ng; g++)
-                    fixed_source[FIXED_SOURCE_INDEX(g,i,j,k,global->ng,local->nx,local->ny)] = 1.0;
+                for(unsigned int g = 0; g < problem->ng; g++)
+                    fixed_source[FIXED_SOURCE_INDEX(g,i,j,k,problem->ng,local->nx,local->ny)] = 1.0;
 }
 
 void init_scattering_matrix(
-        const struct problem * global,
+        const struct problem * problem,
         const double * restrict mat_cross_section,
         double * restrict scattering_matrix
     )
@@ -114,55 +114,55 @@ void init_scattering_matrix(
     // 20% in group scattering
     // 70% down scattering
     // First and last group, no up/down scattering
-    for (unsigned int g = 0; g < global->ng; g++)
+    for (unsigned int g = 0; g < problem->ng; g++)
     {
-        if (global->ng == 1)
+        if (problem->ng == 1)
         {
-            scattering_matrix[SCATTERING_MATRIX_INDEX(0,0,0,global->nmom,global->ng)] = mat_cross_section[g] * 0.5;
+            scattering_matrix[SCATTERING_MATRIX_INDEX(0,0,0,problem->nmom,problem->ng)] = mat_cross_section[g] * 0.5;
             break;
         }
 
-        scattering_matrix[SCATTERING_MATRIX_INDEX(0,g,g,global->nmom,global->ng)] = 0.2 * 0.5 * mat_cross_section[g];
+        scattering_matrix[SCATTERING_MATRIX_INDEX(0,g,g,problem->nmom,problem->ng)] = 0.2 * 0.5 * mat_cross_section[g];
 
         if (g > 0)
         {
             double t = 1.0 / (double)(g);
             for (unsigned int g2 = 0; g2 < g; g2++)
             {
-                scattering_matrix[SCATTERING_MATRIX_INDEX(0,g,g2,global->nmom,global->ng)] = 0.1 * 0.5 * mat_cross_section[g] * t;
+                scattering_matrix[SCATTERING_MATRIX_INDEX(0,g,g2,problem->nmom,problem->ng)] = 0.1 * 0.5 * mat_cross_section[g] * t;
             }
         }
         else
         {
-            scattering_matrix[SCATTERING_MATRIX_INDEX(0,0,0,global->nmom,global->ng)] = 0.3 * 0.5 * mat_cross_section[0];
+            scattering_matrix[SCATTERING_MATRIX_INDEX(0,0,0,problem->nmom,problem->ng)] = 0.3 * 0.5 * mat_cross_section[0];
         }
 
-        if (g < (global->ng) - 1)
+        if (g < (problem->ng) - 1)
         {
-            double t = 1.0 / (double)(global->ng - g - 1);
-            for (unsigned int g2 = g + 1; g2 < global->ng; g2++)
+            double t = 1.0 / (double)(problem->ng - g - 1);
+            for (unsigned int g2 = g + 1; g2 < problem->ng; g2++)
             {
-                scattering_matrix[SCATTERING_MATRIX_INDEX(0,g,g2,global->nmom,global->ng)] = 0.7 * 0.5 * mat_cross_section[g] * t;
+                scattering_matrix[SCATTERING_MATRIX_INDEX(0,g,g2,problem->nmom,problem->ng)] = 0.7 * 0.5 * mat_cross_section[g] * t;
             }
         }
         else
         {
-            scattering_matrix[SCATTERING_MATRIX_INDEX(0,global->ng-1,global->ng-1,global->nmom,global->ng)] = 0.9 * 0.5 * mat_cross_section[global->ng-1];
+            scattering_matrix[SCATTERING_MATRIX_INDEX(0,problem->ng-1,problem->ng-1,problem->nmom,problem->ng)] = 0.9 * 0.5 * mat_cross_section[problem->ng-1];
         }
     }
 
     // Set scattering moments (up to 4)
     // Second moment 10% of first, subsequent half of previous
-    if (global->nmom > 1)
+    if (problem->nmom > 1)
     {
-        for (unsigned int g1 = 0; g1 < global->ng; g1++)
+        for (unsigned int g1 = 0; g1 < problem->ng; g1++)
         {
-            for (unsigned int g2 = 0; g2 < global->ng; g2++)
+            for (unsigned int g2 = 0; g2 < problem->ng; g2++)
             {
-                scattering_matrix[SCATTERING_MATRIX_INDEX(1,g1,g2,global->nmom,global->ng)] = 0.1 * scattering_matrix[SCATTERING_MATRIX_INDEX(0,g1,g2,global->nmom,global->ng)];
-                for (unsigned int m = 2; m < global->nmom; m++)
+                scattering_matrix[SCATTERING_MATRIX_INDEX(1,g1,g2,problem->nmom,problem->ng)] = 0.1 * scattering_matrix[SCATTERING_MATRIX_INDEX(0,g1,g2,problem->nmom,problem->ng)];
+                for (unsigned int m = 2; m < problem->nmom; m++)
                 {
-                    scattering_matrix[SCATTERING_MATRIX_INDEX(m,g1,g2,global->nmom,global->ng)] = 0.5 * scattering_matrix[SCATTERING_MATRIX_INDEX(m-1,g1,g2,global->nmom,global->ng)];
+                    scattering_matrix[SCATTERING_MATRIX_INDEX(m,g1,g2,problem->nmom,problem->ng)] = 0.5 * scattering_matrix[SCATTERING_MATRIX_INDEX(m-1,g1,g2,problem->nmom,problem->ng)];
                 }
             }
         }
@@ -170,25 +170,25 @@ void init_scattering_matrix(
 }
 
 void init_velocities(
-    const struct problem * global,
+    const struct problem * problem,
     double * restrict velocities)
 {
-    for (unsigned int g = 0; g < global->ng; g++)
-        velocities[g] = (double)(global->ng - g);
+    for (unsigned int g = 0; g < problem->ng; g++)
+        velocities[g] = (double)(problem->ng - g);
 }
 
 void init_velocity_delta(
-    const struct problem * global,
+    const struct problem * problem,
     const double * restrict velocities,
     double * restrict velocity_delta
     )
 {
-    for (unsigned int g = 0; g < global->ng; g++)
-        velocity_delta[g] = 2.0 / (global->dt * velocities[g]);
+    for (unsigned int g = 0; g < problem->ng; g++)
+        velocity_delta[g] = 2.0 / (problem->dt * velocities[g]);
 }
 
 void calculate_dd_coefficients(
-    const struct problem * global,
+    const struct problem * problem,
     const double * restrict eta,
     const double * restrict xi,
     double * restrict dd_i,
@@ -196,16 +196,16 @@ void calculate_dd_coefficients(
     double * restrict dd_k
     )
 {
-    dd_i[0] = 2.0 / global->dx;
-    for (unsigned int a = 0; a < global->nang; a++)
+    dd_i[0] = 2.0 / problem->dx;
+    for (unsigned int a = 0; a < problem->nang; a++)
     {
-        dd_j[a] = (2.0 / global->dy) * eta[a];
-        dd_k[a] = (2.0 / global->dz) * xi[a];
+        dd_j[a] = (2.0 / problem->dy) * eta[a];
+        dd_k[a] = (2.0 / problem->dz) * xi[a];
     }
 }
 
 void calculate_denominator(
-    const struct problem * global,
+    const struct problem * problem,
     const struct rankinfo * local,
     const double * restrict dd_i,
     const double * restrict dd_j,
@@ -219,9 +219,9 @@ void calculate_denominator(
     for (unsigned int k = 0; k < local->nz; k++)
         for (unsigned int j = 0; j < local->ny; j++)
             for (unsigned int i = 0; i < local->nx; i++)
-                for (unsigned int g = 0; g < global->ng; g++)
-                    for (unsigned int a = 0; a < global->nang; a++)
+                for (unsigned int g = 0; g < problem->ng; g++)
+                    for (unsigned int a = 0; a < problem->nang; a++)
                     {
-                        denominator[DENOMINATOR_INDEX(a,g,i,j,k,global->nang,global->ng,local->nx,local->ny)] = 1.0 / (mat_cross_section[g] + velocity_delta[g] + mu[a]*dd_i[0] + dd_j[a] + dd_k[a]);
+                        denominator[DENOMINATOR_INDEX(a,g,i,j,k,problem->nang,problem->ng,local->nx,local->ny)] = 1.0 / (mat_cross_section[g] + velocity_delta[g] + mu[a]*dd_i[0] + dd_j[a] + dd_k[a]);
                     }
 }

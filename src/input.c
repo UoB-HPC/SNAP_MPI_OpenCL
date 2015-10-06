@@ -1,7 +1,7 @@
 
 #include "input.h"
 
-void read_input(char *file, struct problem *globals)
+void read_input(char *file, struct problem *problem)
 {
     FILE *fp;
     fp = fopen(file, "r");
@@ -28,7 +28,7 @@ void read_input(char *file, struct problem *globals)
             // Cycle to after the equals
             while (isspace(line[i]) || line[i] == '=')
                 i++;
-            globals->nx = atoi(line+i);
+            problem->nx = atoi(line+i);
         }
         else if (strncmp(line+i, "ny", strlen("ny")) == 0)
         {
@@ -36,7 +36,7 @@ void read_input(char *file, struct problem *globals)
             // Cycle to after the equals
             while (isspace(line[i]) || line[i] == '=')
                 i++;
-            globals->ny = atoi(line+i);
+            problem->ny = atoi(line+i);
         }
         else if (strncmp(line+i, "nz", strlen("nz")) == 0)
         {
@@ -44,7 +44,7 @@ void read_input(char *file, struct problem *globals)
             // Cycle to after the equals
             while (isspace(line[i]) || line[i] == '=')
                 i++;
-            globals->nz = atoi(line+i);
+            problem->nz = atoi(line+i);
         }
         else if (strncmp(line+i, "lx", strlen("lx")) == 0)
         {
@@ -52,7 +52,7 @@ void read_input(char *file, struct problem *globals)
             // Cycle to after the equals
             while (isspace(line[i]) || line[i] == '=')
                 i++;
-            globals->lx = atof(line+i);
+            problem->lx = atof(line+i);
         }
         else if (strncmp(line+i, "ly", strlen("ly")) == 0)
         {
@@ -60,7 +60,7 @@ void read_input(char *file, struct problem *globals)
             // Cycle to after the equals
             while (isspace(line[i]) || line[i] == '=')
                 i++;
-            globals->ly = atof(line+i);
+            problem->ly = atof(line+i);
         }
         else if (strncmp(line+i, "lz", strlen("lz")) == 0)
         {
@@ -68,7 +68,7 @@ void read_input(char *file, struct problem *globals)
             // Cycle to after the equals
             while (isspace(line[i]) || line[i] == '=')
                 i++;
-            globals->lz = atof(line+i);
+            problem->lz = atof(line+i);
         }
         else if (strncmp(line+i, "ng", strlen("ng")) == 0)
         {
@@ -76,7 +76,7 @@ void read_input(char *file, struct problem *globals)
             // Cycle to after the equals
             while (isspace(line[i]) || line[i] == '=')
                 i++;
-            globals->ng = atoi(line+i);
+            problem->ng = atoi(line+i);
         }
         else if (strncmp(line+i, "nang", strlen("nang")) == 0)
         {
@@ -84,7 +84,7 @@ void read_input(char *file, struct problem *globals)
             // Cycle to after the equals
             while (isspace(line[i]) || line[i] == '=')
                 i++;
-            globals->nang = atoi(line+i);
+            problem->nang = atoi(line+i);
         }
         else if (strncmp(line+i, "nmom", strlen("nmom")) == 0)
         {
@@ -92,7 +92,7 @@ void read_input(char *file, struct problem *globals)
             // Cycle to after the equals
             while (isspace(line[i]) || line[i] == '=')
                 i++;
-            globals->nmom = atoi(line+i);
+            problem->nmom = atoi(line+i);
         }
         else if (strncmp(line+i, "iitm", strlen("iitm")) == 0)
         {
@@ -100,7 +100,7 @@ void read_input(char *file, struct problem *globals)
             // Cycle to after the equals
             while (isspace(line[i]) || line[i] == '=')
                 i++;
-            globals->iitm = atoi(line+i);
+            problem->iitm = atoi(line+i);
         }
         else if (strncmp(line+i, "oitm", strlen("oitm")) == 0)
         {
@@ -108,7 +108,7 @@ void read_input(char *file, struct problem *globals)
             // Cycle to after the equals
             while (isspace(line[i]) || line[i] == '=')
                 i++;
-            globals->oitm = atoi(line+i);
+            problem->oitm = atoi(line+i);
         }
         else if (strncmp(line+i, "nsteps", strlen("nsteps")) == 0)
         {
@@ -116,7 +116,7 @@ void read_input(char *file, struct problem *globals)
             // Cycle to after the equals
             while (isspace(line[i]) || line[i] == '=')
                 i++;
-            globals->nsteps = atoi(line+i);
+            problem->nsteps = atoi(line+i);
         }
         else if (strncmp(line+i, "tf", strlen("tf")) == 0)
         {
@@ -124,7 +124,7 @@ void read_input(char *file, struct problem *globals)
             // Cycle to after the equals
             while (isspace(line[i]) || line[i] == '=')
                 i++;
-            globals->tf = atof(line+i);
+            problem->tf = atof(line+i);
         }
         else if (strncmp(line+i, "epsi", strlen("epsi")) == 0)
         {
@@ -132,7 +132,7 @@ void read_input(char *file, struct problem *globals)
             // Cycle to after the equals
             while (isspace(line[i]) || line[i] == '=')
                 i++;
-            globals->epsi = atof(line+i);
+            problem->epsi = atof(line+i);
         }
         else if (strncmp(line+i, "npex", strlen("npex")) == 0)
         {
@@ -140,7 +140,7 @@ void read_input(char *file, struct problem *globals)
             // Cycle to after the equals
             while (isspace(line[i]) || line[i] == '=')
                 i++;
-            globals->npex = atoi(line+i);
+            problem->npex = atoi(line+i);
         }
         else if (strncmp(line+i, "npey", strlen("npey")) == 0)
         {
@@ -148,7 +148,7 @@ void read_input(char *file, struct problem *globals)
             // Cycle to after the equals
             while (isspace(line[i]) || line[i] == '=')
                 i++;
-            globals->npey = atoi(line+i);
+            problem->npey = atoi(line+i);
         }
         else if (strncmp(line+i, "npez", strlen("npez")) == 0)
         {
@@ -156,7 +156,7 @@ void read_input(char *file, struct problem *globals)
             // Cycle to after the equals
             while (isspace(line[i]) || line[i] == '=')
                 i++;
-            globals->npez = atoi(line+i);
+            problem->npez = atoi(line+i);
         }
         else if (strncmp(line+i, "chunk", strlen("chunk")) == 0)
         {
@@ -164,67 +164,67 @@ void read_input(char *file, struct problem *globals)
             // Cycle to after the equals
             while (isspace(line[i]) || line[i] == '=')
                 i++;
-            globals->chunk = atoi(line+i);
+            problem->chunk = atoi(line+i);
         }
     }
     free(line);
 }
 
-void broadcast_problem(struct problem *globals, int rank)
+void broadcast_problem(struct problem *problem, int rank)
 {
     unsigned int ints[] = {
-        globals->nx,
-        globals->ny,
-        globals->nz,
-        globals->ng,
-        globals->nang,
-        globals->nmom,
-        globals->iitm,
-        globals->oitm,
-        globals->nsteps,
-        globals->npex,
-        globals->npey,
-        globals->npez
+        problem->nx,
+        problem->ny,
+        problem->nz,
+        problem->ng,
+        problem->nang,
+        problem->nmom,
+        problem->iitm,
+        problem->oitm,
+        problem->nsteps,
+        problem->npex,
+        problem->npey,
+        problem->npez
     };
     double doubles[] = {
-        globals->lx,
-        globals->ly,
-        globals->lz,
-        globals->dx,
-        globals->dy,
-        globals->dz,
-        globals->dt,
-        globals->tf,
-        globals->epsi
+        problem->lx,
+        problem->ly,
+        problem->lz,
+        problem->dx,
+        problem->dy,
+        problem->dz,
+        problem->dt,
+        problem->tf,
+        problem->epsi
     };
     MPI_Bcast(ints, 12, MPI_UNSIGNED, 0, MPI_COMM_WORLD);
     MPI_Bcast(doubles, 9, MPI_DOUBLE, 0, MPI_COMM_WORLD);
     if (rank != 0)
     {
-        globals->nx = ints[0];
-        globals->ny = ints[1];
-        globals->nz = ints[2];
-        globals->ng = ints[3];
-        globals->nang = ints[4];
-        globals->nmom = ints[5];
-        globals->iitm = ints[6];
-        globals->oitm = ints[7];
-        globals->nsteps = ints[8];
-        globals->npex = ints[9];
-        globals->npey = ints[10];
-        globals->npez = ints[11];
+        problem->nx = ints[0];
+        problem->ny = ints[1];
+        problem->nz = ints[2];
+        problem->ng = ints[3];
+        problem->nang = ints[4];
+        problem->nmom = ints[5];
+        problem->iitm = ints[6];
+        problem->oitm = ints[7];
+        problem->nsteps = ints[8];
+        problem->npex = ints[9];
+        problem->npey = ints[10];
+        problem->npez = ints[11];
 
-        globals->lx = doubles[0];
-        globals->ly = doubles[1];
-        globals->lz = doubles[2];
-        globals->dx = doubles[3];
-        globals->dy = doubles[4];
-        globals->dz = doubles[5];
-        globals->dt = doubles[6];
-        globals->tf = doubles[7];
-        globals->epsi = doubles[8];
+        problem->lx = doubles[0];
+        problem->ly = doubles[1];
+        problem->lz = doubles[2];
+        problem->dx = doubles[3];
+        problem->dy = doubles[4];
+        problem->dz = doubles[5];
+        problem->dt = doubles[6];
+        problem->tf = doubles[7];
+        problem->epsi = doubles[8];
     }
-    globals->cmom = globals->nmom * globals->nmom;
+    problem->cmom = problem->nmom * problem->nmom;
 }
 
 void check_decomposition(struct problem * input)

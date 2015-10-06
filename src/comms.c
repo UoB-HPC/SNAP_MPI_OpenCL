@@ -11,10 +11,10 @@ void check_mpi(const int err, const char *msg)
 }
 
 
-void setup_comms(struct problem * global, struct rankinfo * local)
+void setup_comms(struct problem * problem, struct rankinfo * local)
 {
     // Create the MPI Cartesian topology
-    int dims[] = {global->npex, global->npey, global->npez};
+    int dims[] = {problem->npex, problem->npey, problem->npez};
     int periods[] = {0, 0, 0};
     int mpi_err = MPI_Cart_create(MPI_COMM_WORLD, 3, dims, periods, 0, &snap_comms);
     check_mpi(mpi_err, "Creating MPI Cart");
@@ -29,11 +29,11 @@ void setup_comms(struct problem * global, struct rankinfo * local)
     // TODO: Change to allow for tiling
 
     // Calculate local sizes
-    local->nx = global->nx / global->npex;
-    local->ny = global->ny / global->npey;
-    local->nz = global->nz / global->npez;
+    local->nx = problem->nx / problem->npex;
+    local->ny = problem->ny / problem->npey;
+    local->nz = problem->nz / problem->npez;
 
-    // Calculate i,j,k lower and upper bounds in terms of global grid
+    // Calculate i,j,k lower and upper bounds in terms of problem grid
     local->ilb = local->ranks[0]     * local->nx;
     local->iub = (local->ranks[0]+1) * local->nx;
     local->jlb = local->ranks[1]     * local->ny;
@@ -42,7 +42,7 @@ void setup_comms(struct problem * global, struct rankinfo * local)
     local->kub = (local->ranks[2]+1) * local->nz;
 
     // Calculate neighbouring ranks
-    calculate_neighbours(snap_comms, global, local);
+    calculate_neighbours(snap_comms, problem, local);
 }
 
 void finish_comms(void)
@@ -51,14 +51,14 @@ void finish_comms(void)
     check_mpi(mpi_err, "MPI_Finalize");
 }
 
-void calculate_neighbours(MPI_Comm comms,  struct problem * global, struct rankinfo * local)
+void calculate_neighbours(MPI_Comm comms,  struct problem * problem, struct rankinfo * local)
 {
     int mpi_err;
 
     // Calculate my neighbours
     int coords[3];
     // x-dir + 1
-    coords[0] = (local->ranks[0] == global->npex - 1) ? local->ranks[0] : local->ranks[0] + 1;
+    coords[0] = (local->ranks[0] == problem->npex - 1) ? local->ranks[0] : local->ranks[0] + 1;
     coords[1] = local->ranks[1];
     coords[2] = local->ranks[2];
     mpi_err = MPI_Cart_rank(comms, coords, &local->xup);
@@ -71,7 +71,7 @@ void calculate_neighbours(MPI_Comm comms,  struct problem * global, struct ranki
     check_mpi(mpi_err, "Getting x-1 rank");
     // y-dir + 1
     coords[0] = local->ranks[0];
-    coords[1] = (local->ranks[1] == global->npey - 1) ? local->ranks[1] : local->ranks[1] + 1;
+    coords[1] = (local->ranks[1] == problem->npey - 1) ? local->ranks[1] : local->ranks[1] + 1;
     coords[2] = local->ranks[2];
     mpi_err = MPI_Cart_rank(comms, coords, &local->yup);
     check_mpi(mpi_err, "Getting y+1 rank");
@@ -84,7 +84,7 @@ void calculate_neighbours(MPI_Comm comms,  struct problem * global, struct ranki
     // z-dir + 1
     coords[0] = local->ranks[0];
     coords[1] = local->ranks[1];
-    coords[2] = (local->ranks[2] == global->npez - 1) ? local->ranks[2] : local->ranks[2] + 1;
+    coords[2] = (local->ranks[2] == problem->npez - 1) ? local->ranks[2] : local->ranks[2] + 1;
     mpi_err = MPI_Cart_rank(comms, coords, &local->zup);
     check_mpi(mpi_err, "Getting z+1 rank");
     // z-dir - 1

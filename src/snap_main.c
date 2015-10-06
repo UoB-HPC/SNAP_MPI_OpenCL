@@ -35,7 +35,7 @@ int main(int argc, char **argv)
     mpi_err = MPI_Comm_size(MPI_COMM_WORLD, &size);
     check_mpi(mpi_err, "Getting MPI size");
 
-    struct problem globals;
+    struct problem problem;
 
     if (rank == 0)
     {
@@ -45,29 +45,29 @@ int main(int argc, char **argv)
             fprintf(stderr, "Usage: ./snap snap.in snap.out\n");
             exit(-1);
         }
-        read_input(argv[1], &globals);
-        if ((globals.npex * globals.npey * globals.npez) != size)
+        read_input(argv[1], &problem);
+        if ((problem.npex * problem.npey * problem.npez) != size)
         {
-            fprintf(stderr, "Input error: wanted %d ranks but executing with %d\n", globals.npex*globals.npey*globals.npez, size);
+            fprintf(stderr, "Input error: wanted %d ranks but executing with %d\n", problem.npex*problem.npey*problem.npez, size);
             exit(-1);
         }
-        check_decomposition(&globals);
+        check_decomposition(&problem);
 
     }
 
     // Set dx, dy, dz, dt values
-    globals.dx = globals.lx / (double)globals.nx;
-    globals.dy = globals.ly / (double)globals.ny;
-    globals.dz = globals.lz / (double)globals.nz;
-    globals.dt = globals.tf / (double)globals.nsteps;
+    problem.dx = problem.lx / (double)problem.nx;
+    problem.dy = problem.ly / (double)problem.ny;
+    problem.dz = problem.lz / (double)problem.nz;
+    problem.dt = problem.tf / (double)problem.nsteps;
 
     // Broadcast the global variables
-    broadcast_problem(&globals, rank);
+    broadcast_problem(&problem, rank);
 
 
     // Set up communication neighbours
     struct rankinfo local;
-    setup_comms(&globals, &local);
+    setup_comms(&problem, &local);
 
     // Initlise the OpenCL
     struct context context;
@@ -76,19 +76,19 @@ int main(int argc, char **argv)
 
     // Allocate the problem arrays
     struct mem memory;
-    allocate_memory(globals, local, &memory);
+    allocate_memory(&problem, local, &memory);
     struct halo halos;
-    allocate_halos(&globals, &local, &halos);
+    allocate_halos(&problem, &local, &halos);
 
     // Set up problem
-    init_quadrature_weights(&globals, memory.quad_weights);
-    calculate_cosine_coefficients(&globals, memory.mu, memory.eta, memory.xi);
-    calculate_scattering_coefficients(&globals, memory.scat_coeff, memory.mu, memory.eta, memory.xi);
-    init_material_data(&globals, memory.mat_cross_section);
-    init_fixed_source(&globals, &local, memory.fixed_source);
-    init_scattering_matrix(&globals, memory.mat_cross_section, memory.scattering_matrix);
-    init_velocities(&globals, memory.velocities);
-    init_velocity_delta(&globals, memory.velocities, memory.velocity_delta);
+    init_quadrature_weights(&problem, memory.quad_weights);
+    calculate_cosine_coefficients(&problem, memory.mu, memory.eta, memory.xi);
+    calculate_scattering_coefficients(&problem, memory.scat_coeff, memory.mu, memory.eta, memory.xi);
+    init_material_data(&problem, memory.mat_cross_section);
+    init_fixed_source(&problem, &local, memory.fixed_source);
+    init_scattering_matrix(&problem, memory.mat_cross_section, memory.scattering_matrix);
+    init_velocities(&problem, memory.velocities);
+    init_velocity_delta(&problem, memory.velocities, memory.velocity_delta);
 
     // Time loop
     // TODO
@@ -96,14 +96,14 @@ int main(int argc, char **argv)
 
 
     // Outers
-    calculate_dd_coefficients(&globals, memory.eta, memory.xi, memory.dd_i, memory.dd_j, memory.dd_k);
-    calculate_denominator(&globals, &local, memory.dd_i, memory.dd_j, memory.dd_k, memory.mu, memory.mat_cross_section, memory.velocity_delta, memory.denominator);
+    calculate_dd_coefficients(&problem, memory.eta, memory.xi, memory.dd_i, memory.dd_j, memory.dd_k);
+    calculate_denominator(&problem, &local, memory.dd_i, memory.dd_j, memory.dd_k, memory.mu, memory.mat_cross_section, memory.velocity_delta, memory.denominator);
     // Calculate outer source
-    for (unsigned int i = 0; i < globals.ng*local.nx*local.ny*local.nz; i++)
+    for (unsigned int i = 0; i < problem.ng*local.nx*local.ny*local.nz; i++)
         memory.scalar_flux_in[i] = 0.0;
-    compute_outer_source(&globals, &local, memory.fixed_source, memory.scattering_matrix, memory.scalar_flux_in, memory.scalar_flux_moments, memory.outer_source);
+    compute_outer_source(&problem, &local, memory.fixed_source, memory.scattering_matrix, memory.scalar_flux_in, memory.scalar_flux_moments, memory.outer_source);
 
-    compute_inner_source(&globals, &local, memory.outer_source, memory.scattering_matrix, memory.scalar_flux_in, memory.scalar_flux_moments, memory.inner_source);
+    compute_inner_source(&problem, &local, memory.outer_source, memory.scattering_matrix, memory.scalar_flux_in, memory.scalar_flux_moments, memory.inner_source);
 
 
     // Halo exchange routines
@@ -128,7 +128,7 @@ int main(int argc, char **argv)
 
 
 
-    free_halos(&globals, &halos);
+    free_halos(&problem, &halos);
     free_memory(&memory);
 
     release_context(&context);
