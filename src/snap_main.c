@@ -131,5 +131,6 @@ int main(int argc, char **argv)
     free_halos(&globals, &halos);
     free_memory(&memory);
 
+    release_context(&context);
     finish_comms();
 }

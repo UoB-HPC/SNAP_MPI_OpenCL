@@ -64,3 +64,22 @@ void init_ocl(struct context * context)
     check_ocl(build_err, "Building program");
 
 }
+
+void release_context(struct context * context)
+{
+    cl_int err;
+    err = clReleaseProgram(context->program);
+    check_ocl(err, "Releasing program");
+
+#ifdef CL_VERSION_1_2
+    err = clReleaseDevice(context->device);
+    check_ocl(err, "Releasing device");
+#endif
+
+    err = clReleaseCommandQueue(context->queue);
+    check_ocl(err, "Releasing command queue");
+
+    err = clReleaseContext(context->context);
+    check_ocl(err, "Releasing context");
+
+}

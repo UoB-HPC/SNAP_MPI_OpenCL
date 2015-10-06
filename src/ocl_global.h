@@ -29,3 +29,6 @@ struct context
 
 /** \brief Initilise the OpenCL device, context, command queue and program */
 void init_ocl(struct context * context);
+
+/** \brief Release the OpenCL objects held in the context structure */
+void release_context(struct context * context);
