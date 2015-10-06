@@ -11,6 +11,7 @@
 #include "source.h"
 
 #include "ocl_global.h"
+#include "ocl_buffers.h"
 
 /** \mainpage
 * SNAP-MPI is a cut down version of the SNAP mini-app which allows us to
@@ -72,6 +73,8 @@ int main(int argc, char **argv)
     // Initlise the OpenCL
     struct context context;
     init_ocl(&context);
+    struct buffers buffers;
+    allocate_buffers(&problem, &rankinfo, &context, &buffers);
 
 
     // Allocate the problem arrays
