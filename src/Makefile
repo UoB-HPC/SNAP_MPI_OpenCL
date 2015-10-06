@@ -10,6 +10,12 @@ OMP_GNU		= -fopenmp
 
 OMP=$(OMP_$(COMPILER))
 
+ifeq ($(shell uname), Darwin)
+	OCL = -framework OpenCL
+else
+	OCL = -lOpenCL
+endif
+
 CFLAGS_			= -O3
 CFLAGS_INTEL	= -O3 -std=c99
 CFLAGS_CRAY		= -O3
@@ -24,5 +30,6 @@ snap: \
 	halos.c \
 	comms.c \
 	problem.c \
-	source.c
-	$(MPI_COMPILER) $^ $(CFLAGS_$(COMPILER)) $(OMP) $(OPTIONS) -o $@
+	source.c \
+	ocl_init.c
+	$(MPI_COMPILER) $^ $(CFLAGS_$(COMPILER)) $(OMP) $(OCL) $(OPTIONS) -o $@

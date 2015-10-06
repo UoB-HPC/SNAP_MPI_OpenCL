@@ -10,6 +10,8 @@
 #include "halos.h"
 #include "source.h"
 
+#include "ocl_global.h"
+
 /** \mainpage
 * SNAP-MPI is a cut down version of the SNAP mini-app which allows us to
 * investigate MPI decomposition schemes with various node-level implementations.
@@ -66,6 +68,10 @@ int main(int argc, char **argv)
     // Set up communication neighbours
     struct rankinfo local;
     setup_comms(&globals, &local);
+
+    // Initlise the OpenCL
+    struct context context;
+    init_ocl(&context);
 
 
     // Allocate the problem arrays
