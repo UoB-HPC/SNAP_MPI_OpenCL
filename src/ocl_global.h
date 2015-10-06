@@ -27,6 +27,8 @@ struct context
     cl_program program;
 };
 
+void check_ocl(const cl_int err, const char *msg);
+
 /** \brief Initilise the OpenCL device, context, command queue and program */
 void init_ocl(struct context * context);
 
