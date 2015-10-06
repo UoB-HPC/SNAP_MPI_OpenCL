@@ -74,6 +74,7 @@ int main(int argc, char **argv)
     struct context context;
     init_ocl(&context);
     struct buffers buffers;
+    check_device_memory_requirements(&problem, &rankinfo, &context);
     allocate_buffers(&problem, &rankinfo, &context, &buffers);
 
 
