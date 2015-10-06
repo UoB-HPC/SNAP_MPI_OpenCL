@@ -1,7 +1,12 @@
 
+/** \file
+* \brief Manage the allocation of OpenCL buffers
+*/
+
 #pragma once
 
 #include "ocl_global.h"
+#include "global.h"
 
 struct buffers
 {
@@ -46,3 +51,6 @@ struct buffers
     // Transport denominator
     cl_mem denominator;
 };
+
+/** \brief Allocate global device memory */
+void allocate_buffers(struct problem * problem, struct rankinfo * rankinfo, struct context * context, struct buffers * buffers);
