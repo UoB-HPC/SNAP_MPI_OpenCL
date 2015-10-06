@@ -1,5 +1,6 @@
 
 #include "ocl_global.h"
+#include "ocl_kernels.h"
 
 void check_ocl(const cl_int err, const char *msg)
 {
@@ -41,5 +42,9 @@ void init_ocl(struct context * context)
 
     context->queue = clCreateCommandQueue(context->context, context->device, 0, &err);
     check_ocl(err, "Creating command queue");
+
+    // Create program
+    context->program = clCreateProgramWithSource(context->context, 1, &ocl_kernels_ocl, NULL, &err);
+    check_ocl(err, "Creating program");
 
 }
