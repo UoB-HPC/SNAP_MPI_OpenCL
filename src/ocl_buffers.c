@@ -44,4 +44,22 @@ void allocate_buffers(
             NULL, &err);
         check_ocl(err, "Creating an angular flux out buffer");
     }
+
+    // Edge fluxes
+    buffers->flux_i = clCreateBuffer(context->context, CL_MEM_READ_WRITE,
+        sizeof(double)*problem->nang*problem->ng*rankinfo->ny*rankinfo->nz,
+        NULL, &err);
+    check_ocl(err, "Creating flux_i buffer");
+
+    buffers->flux_j = clCreateBuffer(context->context, CL_MEM_READ_WRITE,
+        sizeof(double)*problem->nang*problem->ng*rankinfo->nx*rankinfo->nz,
+        NULL, &err);
+    check_ocl(err, "Creating flux_j buffer");
+
+    buffers->flux_k = clCreateBuffer(context->context, CL_MEM_READ_WRITE,
+        sizeof(double)*problem->nang*problem->ng*rankinfo->nx*rankinfo->ny,
+        NULL, &err);
+    check_ocl(err, "Creating flux_k buffer");
+
+
 }
