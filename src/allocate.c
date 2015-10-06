@@ -4,25 +4,25 @@
 #include "problem.h"
 #include "allocate.h"
 
-void allocate_memory(struct problem * problem, struct rankinfo local, struct mem * memory)
+void allocate_memory(struct problem * problem, struct rankinfo * rankinfo, struct mem * memory)
 {
     // Allocate two copies of the angular flux
     // grid * angles * noct (8) * ng
-    memory->angular_flux_in = malloc(sizeof(double)*local.nx*local.ny*local.nz*problem->nang*8*problem->ng);
-    memory->angular_flux_out = malloc(sizeof(double)*local.nx*local.ny*local.nz*problem->nang*8*problem->ng);
+    memory->angular_flux_in = malloc(sizeof(double)*rankinfo->nx*rankinfo->ny*rankinfo->nz*problem->nang*8*problem->ng);
+    memory->angular_flux_out = malloc(sizeof(double)*rankinfo->nx*rankinfo->ny*rankinfo->nz*problem->nang*8*problem->ng);
 
     // Allocate edge arrays
-    memory->flux_i = malloc(sizeof(double)*problem->nang*problem->ng*local.ny*local.nz);
-    memory->flux_j = malloc(sizeof(double)*problem->nang*problem->ng*local.nx*local.nz);
-    memory->flux_k = malloc(sizeof(double)*problem->nang*problem->ng*local.nx*local.ny);
+    memory->flux_i = malloc(sizeof(double)*problem->nang*problem->ng*rankinfo->ny*rankinfo->nz);
+    memory->flux_j = malloc(sizeof(double)*problem->nang*problem->ng*rankinfo->nx*rankinfo->nz);
+    memory->flux_k = malloc(sizeof(double)*problem->nang*problem->ng*rankinfo->nx*rankinfo->ny);
 
     // Scalar flux
     // grid * ng
-    memory->scalar_flux_in = malloc(sizeof(double)*local.nx*local.ny*local.nz*problem->ng);
-    memory->scalar_flux_out = malloc(sizeof(double)*local.nx*local.ny*local.nz*problem->ng);
+    memory->scalar_flux_in = malloc(sizeof(double)*rankinfo->nx*rankinfo->ny*rankinfo->nz*problem->ng);
+    memory->scalar_flux_out = malloc(sizeof(double)*rankinfo->nx*rankinfo->ny*rankinfo->nz*problem->ng);
 
     //Scalar flux moments
-    memory->scalar_flux_moments = malloc(sizeof(double)*(problem->cmom-1)*problem->ng*local.nx*local.ny*local.nz);
+    memory->scalar_flux_moments = malloc(sizeof(double)*(problem->cmom-1)*problem->ng*rankinfo->nx*rankinfo->ny*rankinfo->nz);
 
     // Quadrature weights
     memory->quad_weights = malloc(sizeof(double)*problem->nang);
@@ -39,9 +39,9 @@ void allocate_memory(struct problem * problem, struct rankinfo local, struct mem
     memory->mat_cross_section = malloc(sizeof(double)*problem->ng);
 
     // Sources
-    memory->fixed_source = malloc(sizeof(double)*problem->ng*local.nx*local.ny*local.nz);
-    memory->outer_source = malloc(sizeof(double)*problem->cmom*problem->ng*local.nx*local.ny*local.nz);
-    memory->inner_source = malloc(sizeof(double)*problem->cmom*problem->ng*local.nx*local.ny*local.nz);
+    memory->fixed_source = malloc(sizeof(double)*problem->ng*rankinfo->nx*rankinfo->ny*rankinfo->nz);
+    memory->outer_source = malloc(sizeof(double)*problem->cmom*problem->ng*rankinfo->nx*rankinfo->ny*rankinfo->nz);
+    memory->inner_source = malloc(sizeof(double)*problem->cmom*problem->ng*rankinfo->nx*rankinfo->ny*rankinfo->nz);
 
     // Scattering matrix
     memory->scattering_matrix = malloc(sizeof(double)*problem->nmom*problem->ng*problem->ng);
@@ -58,7 +58,7 @@ void allocate_memory(struct problem * problem, struct rankinfo local, struct mem
     memory->velocity_delta = malloc(sizeof(double)*problem->ng);
 
     // Denominator array
-    memory->denominator = malloc(sizeof(double)*problem->nang*problem->ng*local.nx*local.ny*local.nz);
+    memory->denominator = malloc(sizeof(double)*problem->nang*problem->ng*rankinfo->nx*rankinfo->ny*rankinfo->nz);
 
 }
 

@@ -66,8 +66,8 @@ int main(int argc, char **argv)
 
 
     // Set up communication neighbours
-    struct rankinfo local;
-    setup_comms(&problem, &local);
+    struct rankinfo rankinfo;
+    setup_comms(&problem, &rankinfo);
 
     // Initlise the OpenCL
     struct context context;
@@ -76,16 +76,16 @@ int main(int argc, char **argv)
 
     // Allocate the problem arrays
     struct mem memory;
-    allocate_memory(&problem, local, &memory);
+    allocate_memory(&problem, &rankinfo, &memory);
     struct halo halos;
-    allocate_halos(&problem, &local, &halos);
+    allocate_halos(&problem, &rankinfo, &halos);
 
     // Set up problem
     init_quadrature_weights(&problem, memory.quad_weights);
     calculate_cosine_coefficients(&problem, memory.mu, memory.eta, memory.xi);
     calculate_scattering_coefficients(&problem, memory.scat_coeff, memory.mu, memory.eta, memory.xi);
     init_material_data(&problem, memory.mat_cross_section);
-    init_fixed_source(&problem, &local, memory.fixed_source);
+    init_fixed_source(&problem, &rankinfo, memory.fixed_source);
     init_scattering_matrix(&problem, memory.mat_cross_section, memory.scattering_matrix);
     init_velocities(&problem, memory.velocities);
     init_velocity_delta(&problem, memory.velocities, memory.velocity_delta);
@@ -97,13 +97,13 @@ int main(int argc, char **argv)
 
     // Outers
     calculate_dd_coefficients(&problem, memory.eta, memory.xi, memory.dd_i, memory.dd_j, memory.dd_k);
-    calculate_denominator(&problem, &local, memory.dd_i, memory.dd_j, memory.dd_k, memory.mu, memory.mat_cross_section, memory.velocity_delta, memory.denominator);
+    calculate_denominator(&problem, &rankinfo, memory.dd_i, memory.dd_j, memory.dd_k, memory.mu, memory.mat_cross_section, memory.velocity_delta, memory.denominator);
     // Calculate outer source
-    for (unsigned int i = 0; i < problem.ng*local.nx*local.ny*local.nz; i++)
+    for (unsigned int i = 0; i < problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz; i++)
         memory.scalar_flux_in[i] = 0.0;
-    compute_outer_source(&problem, &local, memory.fixed_source, memory.scattering_matrix, memory.scalar_flux_in, memory.scalar_flux_moments, memory.outer_source);
+    compute_outer_source(&problem, &rankinfo, memory.fixed_source, memory.scattering_matrix, memory.scalar_flux_in, memory.scalar_flux_moments, memory.outer_source);
 
-    compute_inner_source(&problem, &local, memory.outer_source, memory.scattering_matrix, memory.scalar_flux_in, memory.scalar_flux_moments, memory.inner_source);
+    compute_inner_source(&problem, &rankinfo, memory.outer_source, memory.scattering_matrix, memory.scalar_flux_in, memory.scalar_flux_moments, memory.inner_source);
 
 
     // Halo exchange routines

@@ -17,5 +17,5 @@ struct halo
 	struct dir x, y, z;
 };
 
-void allocate_halos(struct problem * problem, struct rankinfo * locals, struct halo * halos);
+void allocate_halos(struct problem * problem, struct rankinfo * rankinfos, struct halo * halos);
 void free_halos(struct problem * problem, struct halo * halos);

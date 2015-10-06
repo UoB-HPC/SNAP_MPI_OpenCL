@@ -11,7 +11,7 @@
 MPI_Comm snap_comms;
 
 void check_mpi(const int err, const char *msg);
-void setup_comms(struct problem * global, struct rankinfo * local);
+void setup_comms(struct problem * problem, struct rankinfo * rankinfo);
 void finish_comms(void);
 
-void calculate_neighbours(MPI_Comm comms,  struct problem * global, struct rankinfo * local);
+void calculate_neighbours(MPI_Comm comms,  struct problem * problem, struct rankinfo * rankinfo);

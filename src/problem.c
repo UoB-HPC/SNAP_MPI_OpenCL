@@ -91,17 +91,17 @@ void init_material_data(
 
 void init_fixed_source(
     const struct problem * problem,
-    const struct rankinfo * local,
+    const struct rankinfo * rankinfo,
     double * restrict fixed_source
     )
 {
     // Source everywhere, set at strength 1.0
     // This is src_opt == 0 in original SNAP
-    for(unsigned int k = 0; k < local->nz; k++)
-        for(unsigned int j = 0; j < local->ny; j++)
-            for(unsigned int i = 0; i < local->nx; i++)
+    for(unsigned int k = 0; k < rankinfo->nz; k++)
+        for(unsigned int j = 0; j < rankinfo->ny; j++)
+            for(unsigned int i = 0; i < rankinfo->nx; i++)
                 for(unsigned int g = 0; g < problem->ng; g++)
-                    fixed_source[FIXED_SOURCE_INDEX(g,i,j,k,problem->ng,local->nx,local->ny)] = 1.0;
+                    fixed_source[FIXED_SOURCE_INDEX(g,i,j,k,problem->ng,rankinfo->nx,rankinfo->ny)] = 1.0;
 }
 
 void init_scattering_matrix(
@@ -206,7 +206,7 @@ void calculate_dd_coefficients(
 
 void calculate_denominator(
     const struct problem * problem,
-    const struct rankinfo * local,
+    const struct rankinfo * rankinfo,
     const double * restrict dd_i,
     const double * restrict dd_j,
     const double * restrict dd_k,
@@ -216,12 +216,12 @@ void calculate_denominator(
     double * restrict denominator
     )
 {
-    for (unsigned int k = 0; k < local->nz; k++)
-        for (unsigned int j = 0; j < local->ny; j++)
-            for (unsigned int i = 0; i < local->nx; i++)
+    for (unsigned int k = 0; k < rankinfo->nz; k++)
+        for (unsigned int j = 0; j < rankinfo->ny; j++)
+            for (unsigned int i = 0; i < rankinfo->nx; i++)
                 for (unsigned int g = 0; g < problem->ng; g++)
                     for (unsigned int a = 0; a < problem->nang; a++)
                     {
-                        denominator[DENOMINATOR_INDEX(a,g,i,j,k,problem->nang,problem->ng,local->nx,local->ny)] = 1.0 / (mat_cross_section[g] + velocity_delta[g] + mu[a]*dd_i[0] + dd_j[a] + dd_k[a]);
+                        denominator[DENOMINATOR_INDEX(a,g,i,j,k,problem->nang,problem->ng,rankinfo->nx,rankinfo->ny)] = 1.0 / (mat_cross_section[g] + velocity_delta[g] + mu[a]*dd_i[0] + dd_j[a] + dd_k[a]);
                     }
 }

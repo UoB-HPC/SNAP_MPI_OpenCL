@@ -66,7 +66,7 @@ void init_material_data(const struct problem * problem, double * restrict mat_cr
 * Source is applied everywhere, set at strenght 1.0.
 * This is fixed src_opt == 0 in original SNAP
 */
-void init_fixed_source(const struct problem * problem, const struct rankinfo * local, double * restrict fixed_source);
+void init_fixed_source(const struct problem * problem, const struct rankinfo * rankinfo, double * restrict fixed_source);
 
 /** \brief Setup group to group scattering information
 *
@@ -95,4 +95,4 @@ void calculate_dd_coefficients(const struct problem * problem, const double * re
 *
 * Called every outer.
 */
-void calculate_denominator(const struct problem * problem, const struct rankinfo * local, const double * restrict dd_i, const double * restrict dd_j, const double * restrict dd_k, const double * restrict mu, const double * restrict mat_cross_section, const double * restrict velocity_delta, double * restrict denominator);
+void calculate_denominator(const struct problem * problem, const struct rankinfo * rankinfo, const double * restrict dd_i, const double * restrict dd_j, const double * restrict dd_k, const double * restrict mu, const double * restrict mat_cross_section, const double * restrict velocity_delta, double * restrict denominator);

@@ -69,7 +69,7 @@ struct problem
 
 /** \brief MPI Information
 *
-* Holds local information about tile size and MPI rank
+* Holds rankinfo information about tile size and MPI rank
 */
 struct rankinfo
 {

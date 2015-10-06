@@ -19,7 +19,7 @@
 * First moment is set to fixed source. Subsequent momemnts
 * use group-to-group scattering.
 */
-void compute_outer_source(const struct problem * global, const struct rankinfo * local, const double * restrict fixed_source, const double * restrict scattering_matrix, const double * restrict scalar_flux, const double * restrict scalar_flux_moments, double * restrict outer_source);
+void compute_outer_source(const struct problem * global, const struct rankinfo * rankinfo, const double * restrict fixed_source, const double * restrict scattering_matrix, const double * restrict scalar_flux, const double * restrict scalar_flux_moments, double * restrict outer_source);
 
 /** \brief Computer the inner source
 *
@@ -27,7 +27,7 @@ void compute_outer_source(const struct problem * global, const struct rankinfo *
 */
 void compute_inner_source(
     const struct problem * global,
-    const struct rankinfo * local,
+    const struct rankinfo * rankinfo,
     const double * restrict outer_source,
     const double * restrict scattering_matrix,
     const double * restrict scalar_flux,

@@ -19,7 +19,7 @@ struct mem
 	/**
 	* Size: (nang, ng, nx, ny, nz, 8)
 	*
-	* Note, local spatial dimensions, 8 octants
+	* Note, rankinfo spatial dimensions, 8 octants
 	*/
 	double *angular_flux_in;
 	double *angular_flux_out;
@@ -29,19 +29,19 @@ struct mem
 	/** \brief Edge flux arrays */
 	/** Size: (nang, ng, ny, nz)
 	*
-	* Note, local spatial dimension
+	* Note, rankinfo spatial dimension
 	*/
 	double *flux_i;
 	/** \brief Edge flux arrays */
 	/** Size: (nang, ng, nx, nz)
 	*
-	* Note, local spatial dimension
+	* Note, rankinfo spatial dimension
 	*/
 	double *flux_j;
 	/** \brief Edge flux arrays */
 	/** Size: (nang, ng, nx, ny)
 	*
-	* Note, local spatial dimension
+	* Note, rankinfo spatial dimension
 	*/
 	double *flux_k;
 	/**@}*/
@@ -50,7 +50,7 @@ struct mem
 	/**
 	* Size: (ng, nx, ny, nz)
 	*
-	* Note, local spatial dimensions
+	* Note, rankinfo spatial dimensions
 	*/
 	double *scalar_flux_in;
 	double *scalar_flux_out;
@@ -60,7 +60,7 @@ struct mem
 	/** \brief Scalar flux moments */
 	/** Size: (cmom-1, ng, nx, ny, nz)
 	*
-	* Note, local spatial dimensions
+	* Note, rankinfo spatial dimensions
 	*/
 	double *scalar_flux_moments;
 	/**@}*/
@@ -92,19 +92,19 @@ struct mem
 	/** \brief Fixed source */
 	/** Size: (ng, nx, ny, nz)
 	*
-	* Note, local spatial dimension
+	* Note, rankinfo spatial dimension
 	*/
 	double *fixed_source;
 	/** \brief Outer source: group-to-group scattering plus fixed source */
 	/** Size: (cmom, ng, nx, ny, nz)
 	*
-	* Note, local spatial dimension
+	* Note, rankinfo spatial dimension
 	*/
 	double *outer_source;
 	/** \brief Inner (total) source: outer source plus with-group source */
 	/** Size: (cmom, ng, nx, ny, nz)
 	*
-	* Note, local spatial dimension
+	* Note, rankinfo spatial dimension
 	*/
 	double *inner_source;
 	/**@}*/
@@ -137,14 +137,14 @@ struct mem
 	/**
 	* Size: (nang, ng, nx, ny, nz)
 	*
-	* Note, local spatial dimensions
+	* Note, rankinfo spatial dimensions
 	*/
 	double *denominator;
 
 };
 
 /** \brief Allocate the problem arrays */
-void allocate_memory(struct problem * problem, struct rankinfo local, struct mem * memory);
+void allocate_memory(struct problem * problem, struct rankinfo * rankinfo, struct mem * memory);
 
 /** \brief Free the arrays sroted in the \a mem struct */
 void free_memory(struct mem * memory);
