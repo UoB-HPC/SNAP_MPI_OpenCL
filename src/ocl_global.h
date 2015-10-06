@@ -11,6 +11,13 @@
 #endif
 
 
+/** \file
+* \brief OpenCL routines
+*/
+
+/**
+\brief Structure to contain OpenCL context, command queue, device and program objects
+*/
 struct context
 {
     cl_platform_id platform;
@@ -20,6 +27,5 @@ struct context
     cl_program program;
 };
 
-/**
-*/
+/** \brief Initilise the OpenCL device, context, command queue and program */
 void init_ocl(struct context * context);
