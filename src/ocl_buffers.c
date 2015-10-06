@@ -9,8 +9,24 @@ void check_device_memory_requirements(
     cl_int err;
     cl_ulong global;
     err = clGetDeviceInfo(context->device, CL_DEVICE_GLOBAL_MEM_SIZE, sizeof(cl_ulong), &global, NULL);
+
     cl_ulong total = 0;
-    // TODO - add up the memory requirements, in bytes.
+    // Add up the memory requirements, in bytes.
+    total += problem->nang*problem->ng*rankinfo->nx*rankinfo->ny*rankinfo->nz;
+    total += problem->nang*problem->ng*rankinfo->nx*rankinfo->ny*rankinfo->nz;
+    total += problem->nang*problem->ng*rankinfo->ny*rankinfo->nz;
+    total += problem->nang*problem->ng*rankinfo->nx*rankinfo->nz;
+    total += problem->nang*problem->ng*rankinfo->nx*rankinfo->ny;
+    total += problem->ng*rankinfo->nx*rankinfo->ny*rankinfo->nz;
+    if (problem->cmom-1 == 0)
+        total += problem->ng*rankinfo->nx*rankinfo->ny*rankinfo->nz;
+    else
+        total += (problem->cmom-1)*problem->ng*rankinfo->nx*rankinfo->ny*rankinfo->nz;
+    total += problem->ng;
+    total += problem->ng;
+    total += problem->ng;
+    total += problem->ng;
+    total *= sizeof(double);
 
     if (global < total)
     {
