@@ -61,5 +61,18 @@ void allocate_buffers(
         NULL, &err);
     check_ocl(err, "Creating flux_k buffer");
 
+    // Scalar flux
+    buffers->scalar_flux = clCreateBuffer(context->context, CL_MEM_READ_WRITE,
+        sizeof(double)*problem->ng*rankinfo->nx*rankinfo->ny*rankinfo->nz,
+        NULL, &err);
+    check_ocl(err, "Creating scalar flux buffer");
 
+    size_t scalar_moments_buffer_size;
+    if (problem->cmom-1 == 0)
+        scalar_moments_buffer_size = sizeof(double)*problem->ng*rankinfo->nx*rankinfo->ny*rankinfo->nz;
+    else
+        scalar_moments_buffer_size = sizeof(double)*(problem->cmom-1)*problem->ng*rankinfo->nx*rankinfo->ny*rankinfo->nz;
+    buffers->scalar_flux_moments = clCreateBuffer(context->context, CL_MEM_READ_WRITE,
+        scalar_moments_buffer_size, NULL, &err);
+    check_ocl(err, "Creating scalar flux moments buffer");
 }
