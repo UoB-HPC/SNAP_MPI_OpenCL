@@ -33,3 +33,6 @@ snap: \
 	source.c \
 	ocl_init.c
 	$(MPI_COMPILER) $^ $(CFLAGS_$(COMPILER)) $(OMP) $(OCL) $(OPTIONS) -o $@
+
+ocl_kernels.h:	ocl_kernels.cl
+	./stringify_opencl $< $@
