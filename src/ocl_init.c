@@ -47,4 +47,18 @@ void init_ocl(struct context * context)
     context->program = clCreateProgramWithSource(context->context, 1, &ocl_kernels_ocl, NULL, &err);
     check_ocl(err, "Creating program");
 
+    // Build program
+    char *options = "-cl-mad-enable -cl-fast-relaxed-math";
+    err = clBuildProgram(context->program, 1, &context->device, options, NULL, NULL);
+    if (err == CL_BUILD_PROGRAM_FAILURE)
+    {
+        size_t log_size;
+        err = clGetProgramBuildInfo(context->program, context->device, CL_PROGRAM_BUILD_LOG, 0, NULL, &log_size);
+        check_ocl(err, "Getting build log size");
+        char *build_log = malloc(log_size);
+        err = clGetProgramBuildInfo(context->program, context->device, CL_PROGRAM_BUILD_LOG, log_size, build_log, NULL);
+        fprintf(stderr, "OpenCL Build log: %s\n", build_log);
+    }
+    check_ocl(err, "Building program");
+
 }
