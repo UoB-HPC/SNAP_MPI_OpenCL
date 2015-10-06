@@ -49,16 +49,18 @@ void init_ocl(struct context * context)
 
     // Build program
     char *options = "-cl-mad-enable -cl-fast-relaxed-math";
-    err = clBuildProgram(context->program, 1, &context->device, options, NULL, NULL);
-    if (err == CL_BUILD_PROGRAM_FAILURE)
+    cl_int build_err = clBuildProgram(context->program, 1, &context->device, options, NULL, NULL);
+    if (build_err == CL_BUILD_PROGRAM_FAILURE)
     {
         size_t log_size;
         err = clGetProgramBuildInfo(context->program, context->device, CL_PROGRAM_BUILD_LOG, 0, NULL, &log_size);
         check_ocl(err, "Getting build log size");
         char *build_log = malloc(log_size);
         err = clGetProgramBuildInfo(context->program, context->device, CL_PROGRAM_BUILD_LOG, log_size, build_log, NULL);
+        check_ocl(err, "Getting build log");
         fprintf(stderr, "OpenCL Build log: %s\n", build_log);
+        free(build_log);
     }
-    check_ocl(err, "Building program");
+    check_ocl(build_err, "Building program");
 
 }
