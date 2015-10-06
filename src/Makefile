@@ -31,7 +31,8 @@ snap: \
 	comms.c \
 	problem.c \
 	source.c \
-	ocl_init.c
+	ocl_init.c \
+	ocl_buffers.c
 	$(MPI_COMPILER) $^ $(CFLAGS_$(COMPILER)) $(OMP) $(OCL) $(OPTIONS) -o $@
 
 ocl_kernels.h:	ocl_kernels.cl
