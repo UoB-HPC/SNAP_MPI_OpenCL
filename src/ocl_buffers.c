@@ -26,6 +26,7 @@ void check_device_memory_requirements(
     total += problem->ng;
     total += problem->ng;
     total += problem->ng;
+    total += problem->nang*problem->cmom*8;
     total *= sizeof(double);
 
     if (global < total)
@@ -102,6 +103,9 @@ void allocate_buffers(
     buffers->xi = clCreateBuffer(context->context, CL_MEM_READ_ONLY, sizeof(double)*problem->ng, NULL, &err);
     check_ocl(err, "Creating xi cosine buffer");
 
-
+    // Scattering coefficient
+    buffers->scat_coeff = clCreateBuffer(context->context, CL_MEM_READ_ONLY,
+        sizeof(double)*problem->nang*problem->cmom*8, NULL, &err);
+    check_ocl(err, "Creating scattering coefficient buffer");
 
 }
