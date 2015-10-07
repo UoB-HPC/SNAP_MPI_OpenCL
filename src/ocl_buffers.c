@@ -32,6 +32,9 @@ void check_device_memory_requirements(
     total += problem->cmom*problem->ng*rankinfo->nx*rankinfo->ny*rankinfo->nz;
     total += problem->cmom*problem->ng*rankinfo->nx*rankinfo->ny*rankinfo->nz;
     total += problem->nmom*problem->ng*problem->ng;
+    total += 1;
+    total += problem->nang;
+    total += problem->nang;
     total *= sizeof(double);
 
     if (global < total)
@@ -133,5 +136,16 @@ void allocate_buffers(
     buffers->scattering_matrix = clCreateBuffer(context->context, CL_MEM_READ_ONLY,
         sizeof(double)*problem->nmom*problem->ng*problem->ng, NULL, &err);
     check_ocl(err, "Creating scattering matrix buffer");
+
+    // Diamond diference co-efficients
+    buffers->dd_i = clCreateBuffer(context->context, CL_MEM_READ_ONLY,
+        sizeof(double), NULL, &err);
+    check_ocl(err, "Creating i diamond difference coefficient");
+    buffers->dd_j = clCreateBuffer(context->context, CL_MEM_READ_ONLY,
+        sizeof(double)*problem->nang, NULL, &err);
+    check_ocl(err, "Creating j diamond difference coefficient");
+    buffers->dd_k = clCreateBuffer(context->context, CL_MEM_READ_ONLY,
+        sizeof(double)*problem->nang, NULL, &err);
+    check_ocl(err, "Creating k diamond difference coefficient");
 
 }
