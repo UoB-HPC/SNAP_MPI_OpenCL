@@ -107,11 +107,11 @@ void allocate_buffers(
     // Weights and cosines
     buffers->quad_weights = clCreateBuffer(context->context, CL_MEM_READ_ONLY, sizeof(double)*problem->nang, NULL, &err);
     check_ocl(err, "Creating quadrature weights buffer");
-    buffers->mu = clCreateBuffer(context->context, CL_MEM_READ_ONLY, sizeof(double)*problem->ng, NULL, &err);
+    buffers->mu = clCreateBuffer(context->context, CL_MEM_READ_ONLY, sizeof(double)*problem->nang, NULL, &err);
     check_ocl(err, "Creating mu cosine buffer");
-    buffers->eta = clCreateBuffer(context->context, CL_MEM_READ_ONLY, sizeof(double)*problem->ng, NULL, &err);
+    buffers->eta = clCreateBuffer(context->context, CL_MEM_READ_ONLY, sizeof(double)*problem->nang, NULL, &err);
     check_ocl(err, "Creating eta cosine buffer");
-    buffers->xi = clCreateBuffer(context->context, CL_MEM_READ_ONLY, sizeof(double)*problem->ng, NULL, &err);
+    buffers->xi = clCreateBuffer(context->context, CL_MEM_READ_ONLY, sizeof(double)*problem->nang, NULL, &err);
     check_ocl(err, "Creating xi cosine buffer");
 
     // Scattering coefficient

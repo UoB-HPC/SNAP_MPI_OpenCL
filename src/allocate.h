@@ -65,13 +65,6 @@ struct mem
 	double *scalar_flux_moments;
 	/**@}*/
 
-	/**@{ \brief Cosine coefficients */
-	/** Size: (ng) */
-	double *mu;
-	double *eta;
-	double *xi;
-	/**@}*/
-
 	/** \brief Scattering coefficient */
 	/** Size: (nang, cmom, octant) */
 	double *scat_coeff;

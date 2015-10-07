@@ -48,7 +48,7 @@ void init_quadrature_weights(const struct problem * problem, const struct contex
 *
 * Populates the \a mu, \a eta and \a xi arrays.
 */
-void calculate_cosine_coefficients(const struct problem * problem, double * restrict mu, double * restrict eta, double * restrict xi);
+void calculate_cosine_coefficients(const struct problem * problem, const struct context * context, const struct buffers * buffers);
 
 /** \brief Calculate the scattering coefficients
 *

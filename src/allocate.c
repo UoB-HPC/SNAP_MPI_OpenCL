@@ -24,11 +24,6 @@ void allocate_memory(struct problem * problem, struct rankinfo * rankinfo, struc
     //Scalar flux moments
     memory->scalar_flux_moments = malloc(sizeof(double)*(problem->cmom-1)*problem->ng*rankinfo->nx*rankinfo->ny*rankinfo->nz);
 
-    // Cosine coefficients
-    memory->mu = malloc(sizeof(double)*problem->nang);
-    memory->eta = malloc(sizeof(double)*problem->nang);
-    memory->xi = malloc(sizeof(double)*problem->nang);
-
     // Scattering coefficient
     memory->scat_coeff = malloc(sizeof(double)*problem->nang*problem->cmom*8);
 
@@ -69,9 +64,6 @@ void free_memory(struct mem * memory)
     free(memory->scalar_flux_in);
     free(memory->scalar_flux_out);
     free(memory->scalar_flux_moments);
-    free(memory->mu);
-    free(memory->eta);
-    free(memory->xi);
     free(memory->scat_coeff);
     free(memory->mat_cross_section);
     free(memory->fixed_source);

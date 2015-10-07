@@ -86,8 +86,8 @@ int main(int argc, char **argv)
 
     // Set up problem
     init_quadrature_weights(&problem, &context, &buffers);
-    calculate_cosine_coefficients(&problem, memory.mu, memory.eta, memory.xi);
-    calculate_scattering_coefficients(&problem, memory.scat_coeff, memory.mu, memory.eta, memory.xi);
+    calculate_cosine_coefficients(&problem, &context, &buffers);
+    // calculate_scattering_coefficients(&problem, memory.scat_coeff, memory.mu, memory.eta, memory.xi);
     init_material_data(&problem, memory.mat_cross_section);
     init_fixed_source(&problem, &rankinfo, memory.fixed_source);
     init_scattering_matrix(&problem, memory.mat_cross_section, memory.scattering_matrix);
@@ -100,8 +100,8 @@ int main(int argc, char **argv)
 
     // Outers
     init_velocity_delta(&problem, memory.velocities, memory.velocity_delta);
-    calculate_dd_coefficients(&problem, memory.eta, memory.xi, memory.dd_i, memory.dd_j, memory.dd_k);
-    calculate_denominator(&problem, &rankinfo, memory.dd_i, memory.dd_j, memory.dd_k, memory.mu, memory.mat_cross_section, memory.velocity_delta, memory.denominator);
+    //calculate_dd_coefficients(&problem, memory.eta, memory.xi, memory.dd_i, memory.dd_j, memory.dd_k);
+    //calculate_denominator(&problem, &rankinfo, memory.dd_i, memory.dd_j, memory.dd_k, memory.mu, memory.mat_cross_section, memory.velocity_delta, memory.denominator);
     // Calculate outer source
     for (unsigned int i = 0; i < problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz; i++)
         memory.scalar_flux_in[i] = 0.0;
