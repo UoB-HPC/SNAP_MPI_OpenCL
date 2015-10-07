@@ -27,6 +27,7 @@ void check_device_memory_requirements(
     total += problem->ng;
     total += problem->ng;
     total += problem->nang*problem->cmom*8;
+    total += problem->ng;
     total *= sizeof(double);
 
     if (global < total)
@@ -107,5 +108,10 @@ void allocate_buffers(
     buffers->scat_coeff = clCreateBuffer(context->context, CL_MEM_READ_ONLY,
         sizeof(double)*problem->nang*problem->cmom*8, NULL, &err);
     check_ocl(err, "Creating scattering coefficient buffer");
+
+    // Material cross section
+    buffers->mat_cross_section = clCreateBuffer(context->context, CL_MEM_READ_ONLY,
+        sizeof(double)*problem->ng, NULL, &err);
+    check_ocl(err, "Creating material cross section buffer");
 
 }
