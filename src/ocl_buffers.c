@@ -23,9 +23,9 @@ void check_device_memory_requirements(
     else
         total += (problem->cmom-1)*problem->ng*rankinfo->nx*rankinfo->ny*rankinfo->nz;
     total += problem->nang;
-    total += problem->ng;
-    total += problem->ng;
-    total += problem->ng;
+    total += problem->nang;
+    total += problem->nang;
+    total += problem->nang;
     total += problem->nang*problem->cmom*8;
     total += problem->ng;
     total += problem->ng*rankinfo->nx*rankinfo->ny*rankinfo->nz;
