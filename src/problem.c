@@ -4,14 +4,24 @@
 
 void init_quadrature_weights(
     const struct problem * problem,
-    double * restrict quad_weights
+    const struct context * context,
+    const struct buffers * buffers
     )
 {
+    // Create tempoary on host for quadrature weights
+    double *quad_weights = malloc(sizeof(double)*problem->nang);
     // Uniform weights
     for (unsigned int a = 0; a < problem->nang; a++)
     {
         quad_weights[a] = 0.125 / (double)(problem->nang);
     }
+
+    // Copy to device
+    cl_int err;
+    err = clEnqueueWriteBuffer(context->queue, buffers->quad_weights, CL_TRUE,
+        0, sizeof(double)*problem->nang, quad_weights, 0, NULL, NULL);
+    check_ocl(err, "Copying quadrature weights to device");
+    free(quad_weights);
 }
 
 void calculate_cosine_coefficients(

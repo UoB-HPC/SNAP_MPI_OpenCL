@@ -24,9 +24,6 @@ void allocate_memory(struct problem * problem, struct rankinfo * rankinfo, struc
     //Scalar flux moments
     memory->scalar_flux_moments = malloc(sizeof(double)*(problem->cmom-1)*problem->ng*rankinfo->nx*rankinfo->ny*rankinfo->nz);
 
-    // Quadrature weights
-    memory->quad_weights = malloc(sizeof(double)*problem->nang);
-
     // Cosine coefficients
     memory->mu = malloc(sizeof(double)*problem->nang);
     memory->eta = malloc(sizeof(double)*problem->nang);
@@ -72,7 +69,6 @@ void free_memory(struct mem * memory)
     free(memory->scalar_flux_in);
     free(memory->scalar_flux_out);
     free(memory->scalar_flux_moments);
-    free(memory->quad_weights);
     free(memory->mu);
     free(memory->eta);
     free(memory->xi);

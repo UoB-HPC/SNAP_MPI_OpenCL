@@ -85,7 +85,7 @@ int main(int argc, char **argv)
     allocate_halos(&problem, &rankinfo, &halos);
 
     // Set up problem
-    init_quadrature_weights(&problem, memory.quad_weights);
+    init_quadrature_weights(&problem, &context, &buffers);
     calculate_cosine_coefficients(&problem, memory.mu, memory.eta, memory.xi);
     calculate_scattering_coefficients(&problem, memory.scat_coeff, memory.mu, memory.eta, memory.xi);
     init_material_data(&problem, memory.mat_cross_section);

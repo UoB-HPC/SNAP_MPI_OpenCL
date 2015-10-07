@@ -65,10 +65,6 @@ struct mem
 	double *scalar_flux_moments;
 	/**@}*/
 
-	/** \brief Quadrature weights */
-	/** Size: (ng) */
-	double *quad_weights;
-
 	/**@{ \brief Cosine coefficients */
 	/** Size: (ng) */
 	double *mu;

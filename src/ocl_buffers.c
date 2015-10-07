@@ -22,7 +22,7 @@ void check_device_memory_requirements(
         total += problem->ng*rankinfo->nx*rankinfo->ny*rankinfo->nz;
     else
         total += (problem->cmom-1)*problem->ng*rankinfo->nx*rankinfo->ny*rankinfo->nz;
-    total += problem->ng;
+    total += problem->nang;
     total += problem->ng;
     total += problem->ng;
     total += problem->ng;
@@ -105,7 +105,7 @@ void allocate_buffers(
     check_ocl(err, "Creating scalar flux moments buffer");
 
     // Weights and cosines
-    buffers->quad_weights = clCreateBuffer(context->context, CL_MEM_READ_ONLY, sizeof(double)*problem->ng, NULL, &err);
+    buffers->quad_weights = clCreateBuffer(context->context, CL_MEM_READ_ONLY, sizeof(double)*problem->nang, NULL, &err);
     check_ocl(err, "Creating quadrature weights buffer");
     buffers->mu = clCreateBuffer(context->context, CL_MEM_READ_ONLY, sizeof(double)*problem->ng, NULL, &err);
     check_ocl(err, "Creating mu cosine buffer");

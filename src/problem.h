@@ -10,6 +10,8 @@
 #pragma once
 
 #include "global.h"
+#include "ocl_global.h"
+#include "ocl_buffers.h"
 
 /** @defgroup MEM Memory access patterns
 * \brief Macros for indexing multi-dimensional arrays
@@ -40,7 +42,7 @@
 *
 * Set to uniform weights: nuber of angles divided by eight.
 */
-void init_quadrature_weights(const struct problem * problem, double * restrict quad_weights);
+void init_quadrature_weights(const struct problem * problem, const struct context * context, const struct buffers * buffers);
 
 /** \brief Calculate cosine coefficients
 *
