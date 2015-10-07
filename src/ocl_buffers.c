@@ -35,6 +35,8 @@ void check_device_memory_requirements(
     total += 1;
     total += problem->nang;
     total += problem->nang;
+    total += problem->ng;
+    total += problem->ng;
     total *= sizeof(double);
 
     if (global < total)
@@ -147,5 +149,11 @@ void allocate_buffers(
     buffers->dd_k = clCreateBuffer(context->context, CL_MEM_READ_ONLY,
         sizeof(double)*problem->nang, NULL, &err);
     check_ocl(err, "Creating k diamond difference coefficient");
+
+    // Velocities
+    buffers->velocities = clCreateBuffer(context->context, CL_MEM_READ_ONLY, sizeof(double)*problem->ng, NULL, &err);
+    check_ocl(err, "Creating velocity buffer");
+    buffers->velocity_delta = clCreateBuffer(context->context, CL_MEM_READ_ONLY, sizeof(double)*problem->ng, NULL, &err);
+    check_ocl(err, "Creating velocity delta buffer");
 
 }
