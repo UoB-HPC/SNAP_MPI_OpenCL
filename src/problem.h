@@ -68,7 +68,7 @@ void init_material_data(const struct problem * problem, const struct context * c
 * Source is applied everywhere, set at strenght 1.0.
 * This is fixed src_opt == 0 in original SNAP
 */
-void init_fixed_source(const struct problem * problem, const struct rankinfo * rankinfo, double * restrict fixed_source);
+void init_fixed_source(const struct problem * problem, const struct rankinfo * rankinfo, const struct context * context, const struct buffers * buffers);
 
 /** \brief Setup group to group scattering information
 *

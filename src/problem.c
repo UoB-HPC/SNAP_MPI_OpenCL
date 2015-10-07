@@ -134,9 +134,13 @@ void init_material_data(
 void init_fixed_source(
     const struct problem * problem,
     const struct rankinfo * rankinfo,
-    double * restrict fixed_source
+    const struct context * context,
+    const struct buffers * buffers
     )
 {
+    // Allocate temporary array for fixed source
+    double *fixed_source = malloc(sizeof(double)*problem->ng*rankinfo->nx*rankinfo->ny*rankinfo->nz);
+
     // Source everywhere, set at strength 1.0
     // This is src_opt == 0 in original SNAP
     for(unsigned int k = 0; k < rankinfo->nz; k++)
@@ -144,6 +148,12 @@ void init_fixed_source(
             for(unsigned int i = 0; i < rankinfo->nx; i++)
                 for(unsigned int g = 0; g < problem->ng; g++)
                     fixed_source[FIXED_SOURCE_INDEX(g,i,j,k,problem->ng,rankinfo->nx,rankinfo->ny)] = 1.0;
+
+    // Copy to device
+    cl_int err;
+    err = clEnqueueWriteBuffer(context->queue, buffers->fixed_source, CL_TRUE,
+        0, sizeof(double)*problem->ng*rankinfo->nx*rankinfo->ny*rankinfo->nz, fixed_source, 0, NULL, NULL);
+    free(fixed_source);
 }
 
 void init_scattering_matrix(

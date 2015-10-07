@@ -33,7 +33,6 @@ void allocate_memory(struct problem * problem, struct rankinfo * rankinfo, struc
     memory->mat_cross_section = malloc(sizeof(double)*problem->ng);
 
     // Sources
-    memory->fixed_source = malloc(sizeof(double)*problem->ng*rankinfo->nx*rankinfo->ny*rankinfo->nz);
     memory->outer_source = malloc(sizeof(double)*problem->cmom*problem->ng*rankinfo->nx*rankinfo->ny*rankinfo->nz);
     memory->inner_source = malloc(sizeof(double)*problem->cmom*problem->ng*rankinfo->nx*rankinfo->ny*rankinfo->nz);
 
@@ -70,7 +69,6 @@ void free_memory(struct memory * memory)
     free(memory->eta);
     free(memory->xi);
     free(memory->mat_cross_section);
-    free(memory->fixed_source);
     free(memory->outer_source);
     free(memory->inner_source);
     free(memory->scattering_matrix);
