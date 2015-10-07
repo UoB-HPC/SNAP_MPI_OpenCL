@@ -23,6 +23,7 @@ CFLAGS_GNU		= -O3 -std=c99
 
 MPI_COMPILER 	= mpicc
 
+
 snap: \
 	snap_main.c \
 	input.c \
@@ -35,5 +36,12 @@ snap: \
 	ocl_buffers.c
 	$(MPI_COMPILER) $^ $(CFLAGS_$(COMPILER)) $(OMP) $(OCL) $(OPTIONS) -o $@
 
-ocl_kernels.h:	ocl_kernels.cl
+kernels/%.h:	kernels/%.cl
 	./stringify_opencl $< $@
+
+
+KERNEL_HEADER_FILES=kernels/calc_velocity_delta.h
+
+ocl_init.c:	$(KERNEL_HEADER_FILES)
+	@touch ocl_init.c
+
