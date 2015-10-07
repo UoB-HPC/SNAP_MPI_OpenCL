@@ -72,11 +72,6 @@ struct memory
 	double *xi;
 	/**@}*/
 
-
-	/** \brief Scattering coefficient */
-	/** Size: (nang, cmom, octant) */
-	double *scat_coeff;
-
 	/** \brief Material cross sections
 	*
 	* ASSUME ONE MATERIAL

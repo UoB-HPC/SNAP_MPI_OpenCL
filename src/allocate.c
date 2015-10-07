@@ -29,9 +29,6 @@ void allocate_memory(struct problem * problem, struct rankinfo * rankinfo, struc
     memory->eta = malloc(sizeof(double)*problem->nang);
     memory->xi = malloc(sizeof(double)*problem->nang);
 
-    // Scattering coefficient
-    memory->scat_coeff = malloc(sizeof(double)*problem->nang*problem->cmom*8);
-
     // Material cross section
     memory->mat_cross_section = malloc(sizeof(double)*problem->ng);
 
@@ -72,7 +69,6 @@ void free_memory(struct memory * memory)
     free(memory->mu);
     free(memory->eta);
     free(memory->xi);
-    free(memory->scat_coeff);
     free(memory->mat_cross_section);
     free(memory->fixed_source);
     free(memory->outer_source);

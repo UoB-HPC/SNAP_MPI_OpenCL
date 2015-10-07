@@ -55,7 +55,7 @@ void calculate_cosine_coefficients(const struct problem * problem, const struct 
 * Populates the \a scat_coef array based on the cosine coefficients.
 * Set as \f$(\mu*\eta*\xi)^l\f$ starting at 0, for the lth moment.
 */
-void calculate_scattering_coefficients(const struct problem * problem, double * restrict scat_coef, const double * restrict mu, const double * restrict eta, const double * restrict xi);
+void calculate_scattering_coefficients(const struct problem * problem, const struct context * context, const struct buffers * buffers, const double * restrict mu, const double * restrict eta, const double * restrict xi);
 
 /** \brief Set material cross sections
 *

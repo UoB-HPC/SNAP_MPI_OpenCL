@@ -64,12 +64,15 @@ void calculate_cosine_coefficients(const struct problem * problem,
 
 void calculate_scattering_coefficients(
     const struct problem * problem,
-    double * restrict scat_coef,
+    const struct context * context,
+    const struct buffers * buffers,
     const double * restrict mu,
     const double * restrict eta,
     const double * restrict xi
     )
 {
+    // Allocate temporary on host for scattering coefficients
+    double *scat_coeff = malloc(sizeof(double)*problem->nang*problem->cmom*8);
     // (mu*eta*xi)^l starting at 0
     for (int kd = 0; kd < 2; kd++)
     {
@@ -83,7 +86,7 @@ void calculate_scattering_coefficients(
                 int oct = 4*kd + 2*jd + id;
                 // Init first moment
                 for (unsigned int a = 0; a < problem->nang; a++)
-                    scat_coef[SCAT_COEFF_INDEX(a,0,oct,problem->nang,problem->cmom)] = 1.0;
+                    scat_coeff[SCAT_COEFF_INDEX(a,0,oct,problem->nang,problem->cmom)] = 1.0;
                 // Init other moments
                 int mom = 1;
                 for (int l = 1; l < problem->nmom; l++)
@@ -92,7 +95,7 @@ void calculate_scattering_coefficients(
                     {
                         for (unsigned int a = 0; a < problem->nang; a++)
                         {
-                            scat_coef[SCAT_COEFF_INDEX(a,mom,oct,problem->nang,problem->cmom)] = pow(is*mu[a], 2.0*l-1.0) * pow(ks*xi[a]*js*eta[a], m);
+                            scat_coeff[SCAT_COEFF_INDEX(a,mom,oct,problem->nang,problem->cmom)] = pow(is*mu[a], 2.0*l-1.0) * pow(ks*xi[a]*js*eta[a], m);
                         }
                         mom += 1;
                     }
@@ -100,6 +103,13 @@ void calculate_scattering_coefficients(
             }
         }
     }
+
+    // Copy to device
+    cl_int err;
+    err = clEnqueueWriteBuffer(context->queue, buffers->scat_coeff, CL_TRUE,
+        0, sizeof(double)*problem->nang*problem->cmom*8, scat_coeff, 0, NULL, NULL);
+    check_ocl(err, "Copying scattering coefficients to device");
+    free(scat_coeff);
 }
 
 void init_material_data(
