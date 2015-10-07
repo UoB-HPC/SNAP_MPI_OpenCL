@@ -44,7 +44,7 @@ void init_ocl(struct context * context)
     check_ocl(err, "Creating command queue");
 
     // Create program
-    context->program = clCreateProgramWithSource(context->context, 1, &ocl_kernels_ocl, NULL, &err);
+    context->program = clCreateProgramWithSource(context->context, sizeof(ocl_kernels)/sizeof(char*), ocl_kernels, NULL, &err);
     check_ocl(err, "Creating program");
 
     // Build program
