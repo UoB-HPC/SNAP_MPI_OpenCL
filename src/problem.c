@@ -234,10 +234,22 @@ void init_scattering_matrix(
 
 void init_velocities(
     const struct problem * problem,
-    double * restrict velocities)
+    const struct context * context,
+    const struct buffers * buffers
+    )
 {
+    // Allocate tempoary array for velocities
+    double *velocities = malloc(sizeof(double)*problem->ng);
+
     for (unsigned int g = 0; g < problem->ng; g++)
         velocities[g] = (double)(problem->ng - g);
+
+    // Copy to device
+    cl_int err;
+    err = clEnqueueWriteBuffer(context->queue, buffers->velocities, CL_TRUE,
+        0, sizeof(double)*problem->ng, velocities, 0, NULL, NULL);
+    check_ocl(err, "Copying velocities to device");
+    free(velocities);
 }
 
 void init_velocity_delta(

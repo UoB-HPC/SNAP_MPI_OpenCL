@@ -41,9 +41,6 @@ void allocate_memory(struct problem * problem, struct rankinfo * rankinfo, struc
     memory->dd_j = malloc(sizeof(double)*problem->nang);
     memory->dd_k = malloc(sizeof(double)*problem->nang);
 
-    // Mock velocities array
-    memory->velocities = malloc(sizeof(double)*problem->ng);
-
     // Time absorption coefficient
     memory->velocity_delta = malloc(sizeof(double)*problem->ng);
 
@@ -71,7 +68,6 @@ void free_memory(struct memory * memory)
     free(memory->dd_i);
     free(memory->dd_j);
     free(memory->dd_k);
-    free(memory->velocities);
     free(memory->velocity_delta);
     free(memory->denominator);
 }

@@ -107,10 +107,6 @@ struct memory
 	double *dd_k;
 	/**@}*/
 
-	/** \brief Mock velocities array */
-	/** Size: (ng) */
-	double *velocities;
-
 	/** \brief Time absorption coefficient */
 	/** Size: (ng) */
 	double *velocity_delta;
