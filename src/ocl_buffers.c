@@ -154,7 +154,7 @@ void allocate_buffers(
     // Velocities
     buffers->velocities = clCreateBuffer(context->context, CL_MEM_READ_ONLY, sizeof(double)*problem->ng, NULL, &err);
     check_ocl(err, "Creating velocity buffer");
-    buffers->velocity_delta = clCreateBuffer(context->context, CL_MEM_READ_ONLY, sizeof(double)*problem->ng, NULL, &err);
+    buffers->velocity_delta = clCreateBuffer(context->context, CL_MEM_READ_WRITE, sizeof(double)*problem->ng, NULL, &err);
     check_ocl(err, "Creating velocity delta buffer");
 
     // Denominator array
