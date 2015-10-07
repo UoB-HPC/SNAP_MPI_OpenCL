@@ -79,7 +79,7 @@ int main(int argc, char **argv)
 
 
     // Allocate the problem arrays
-    struct mem memory;
+    struct memory memory;
     allocate_memory(&problem, &rankinfo, &memory);
     struct halo halos;
     allocate_halos(&problem, &rankinfo, &halos);

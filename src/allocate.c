@@ -4,7 +4,7 @@
 #include "problem.h"
 #include "allocate.h"
 
-void allocate_memory(struct problem * problem, struct rankinfo * rankinfo, struct mem * memory)
+void allocate_memory(struct problem * problem, struct rankinfo * rankinfo, struct memory * memory)
 {
     // Allocate two copies of the angular flux
     // grid * angles * noct (8) * ng
@@ -54,7 +54,7 @@ void allocate_memory(struct problem * problem, struct rankinfo * rankinfo, struc
 
 }
 
-void free_memory(struct mem * memory)
+void free_memory(struct memory * memory)
 {
     free(memory->angular_flux_in);
     free(memory->angular_flux_out);

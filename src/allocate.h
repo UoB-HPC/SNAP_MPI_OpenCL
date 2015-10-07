@@ -13,7 +13,7 @@
 *
 * All the memory arrays are stored here
 */
-struct mem
+struct memory
 {
 	/**@{ \brief Angular flux */
 	/**
@@ -133,8 +133,8 @@ struct mem
 };
 
 /** \brief Allocate the problem arrays */
-void allocate_memory(struct problem * problem, struct rankinfo * rankinfo, struct mem * memory);
+void allocate_memory(struct problem * problem, struct rankinfo * rankinfo, struct memory * memory);
 
 /** \brief Free the arrays sroted in the \a mem struct */
-void free_memory(struct mem * memory);
+void free_memory(struct memory * memory);
 
