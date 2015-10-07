@@ -157,11 +157,15 @@ void init_fixed_source(
 }
 
 void init_scattering_matrix(
-        const struct problem * problem,
-        const double * restrict mat_cross_section,
-        double * restrict scattering_matrix
+    const struct problem * problem,
+    const struct context * context,
+    const struct buffers * buffers,
+    const double * restrict mat_cross_section
     )
 {
+    // Allocate temporary array for scattering matrix
+    double *scattering_matrix = malloc(sizeof(double)*problem->nmom*problem->ng*problem->ng);
+
     // 10% up scattering
     // 20% in group scattering
     // 70% down scattering
@@ -219,6 +223,13 @@ void init_scattering_matrix(
             }
         }
     }
+
+    // Copy to device
+    cl_int err;
+    err = clEnqueueWriteBuffer(context->queue, buffers->scattering_matrix, CL_TRUE,
+        0, sizeof(double)*problem->nmom*problem->ng*problem->ng, scattering_matrix, 0, NULL, NULL);
+    check_ocl(err, "Copying scattering matrix to device");
+    free(scattering_matrix);
 }
 
 void init_velocities(

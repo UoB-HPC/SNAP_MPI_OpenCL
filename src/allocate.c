@@ -36,9 +36,6 @@ void allocate_memory(struct problem * problem, struct rankinfo * rankinfo, struc
     memory->outer_source = malloc(sizeof(double)*problem->cmom*problem->ng*rankinfo->nx*rankinfo->ny*rankinfo->nz);
     memory->inner_source = malloc(sizeof(double)*problem->cmom*problem->ng*rankinfo->nx*rankinfo->ny*rankinfo->nz);
 
-    // Scattering matrix
-    memory->scattering_matrix = malloc(sizeof(double)*problem->nmom*problem->ng*problem->ng);
-
     // Diamon difference co-efficients
     memory->dd_i = malloc(sizeof(double));
     memory->dd_j = malloc(sizeof(double)*problem->nang);
@@ -71,7 +68,6 @@ void free_memory(struct memory * memory)
     free(memory->mat_cross_section);
     free(memory->outer_source);
     free(memory->inner_source);
-    free(memory->scattering_matrix);
     free(memory->dd_i);
     free(memory->dd_j);
     free(memory->dd_k);

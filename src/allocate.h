@@ -95,10 +95,6 @@ struct memory
 	double *inner_source;
 	/**@}*/
 
-	/** \brief Scattering matrix */
-	/** Size: (nmom, ng, ng) */
-	double *scattering_matrix;
-
 	/**@{*/
 	/** \brief Diamond difference co-efficients */
 	/** Size: 1 */

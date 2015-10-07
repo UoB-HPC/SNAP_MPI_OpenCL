@@ -76,7 +76,8 @@ void init_fixed_source(const struct problem * problem, const struct rankinfo * r
 * except first and last which have no up/down scattering.
 * Data is initilised for all moments.
 */
-void init_scattering_matrix(const struct problem * problem, const double * restrict mat_cross_section, double * restrict scattering_matrix);
+void init_scattering_matrix(const struct problem * problem, const struct context * context, const struct buffers * buffers, const double * restrict mat_cross_section);
+
 
 /** \brief Set velocities array
 *

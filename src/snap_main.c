@@ -90,7 +90,7 @@ int main(int argc, char **argv)
     calculate_scattering_coefficients(&problem, &context, &buffers, memory.mu, memory.eta, memory.xi);
     init_material_data(&problem, &context, &buffers, memory.mat_cross_section);
     init_fixed_source(&problem, &rankinfo, &context, &buffers);
-    init_scattering_matrix(&problem, memory.mat_cross_section, memory.scattering_matrix);
+    init_scattering_matrix(&problem, &context, &buffers, memory.mat_cross_section);
     init_velocities(&problem, memory.velocities);
 
     // Time loop
@@ -107,7 +107,7 @@ int main(int argc, char **argv)
         memory.scalar_flux_in[i] = 0.0;
     // compute_outer_source(&problem, &rankinfo, memory.fixed_source, memory.scattering_matrix, memory.scalar_flux_in, memory.scalar_flux_moments, memory.outer_source);
 
-    compute_inner_source(&problem, &rankinfo, memory.outer_source, memory.scattering_matrix, memory.scalar_flux_in, memory.scalar_flux_moments, memory.inner_source);
+    // compute_inner_source(&problem, &rankinfo, memory.outer_source, memory.scattering_matrix, memory.scalar_flux_in, memory.scalar_flux_moments, memory.inner_source);
 
 
     // Halo exchange routines
