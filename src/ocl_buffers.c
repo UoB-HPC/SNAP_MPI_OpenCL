@@ -92,13 +92,16 @@ void allocate_buffers(
         scalar_moments_buffer_size, NULL, &err);
     check_ocl(err, "Creating scalar flux moments buffer");
 
+    // Weights and cosines
     buffers->quad_weights = clCreateBuffer(context->context, CL_MEM_READ_ONLY, sizeof(double)*problem->ng, NULL, &err);
-    check_ocl(err, "Crearing quadrature weights buffer");
+    check_ocl(err, "Creating quadrature weights buffer");
     buffers->mu = clCreateBuffer(context->context, CL_MEM_READ_ONLY, sizeof(double)*problem->ng, NULL, &err);
-    check_ocl(err, "Crearing mu cosine buffer");
+    check_ocl(err, "Creating mu cosine buffer");
     buffers->eta = clCreateBuffer(context->context, CL_MEM_READ_ONLY, sizeof(double)*problem->ng, NULL, &err);
-    check_ocl(err, "Crearing eta cosine buffer");
+    check_ocl(err, "Creating eta cosine buffer");
     buffers->xi = clCreateBuffer(context->context, CL_MEM_READ_ONLY, sizeof(double)*problem->ng, NULL, &err);
-    check_ocl(err, "Crearing xi cosine buffer");
+    check_ocl(err, "Creating xi cosine buffer");
+
+
 
 }
