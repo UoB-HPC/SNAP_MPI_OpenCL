@@ -37,6 +37,7 @@ void check_device_memory_requirements(
     total += problem->nang;
     total += problem->ng;
     total += problem->ng;
+    total += problem->nang*problem->ng*rankinfo->nx*rankinfo->ny*rankinfo->nz;
     total *= sizeof(double);
 
     if (global < total)
@@ -155,5 +156,10 @@ void allocate_buffers(
     check_ocl(err, "Creating velocity buffer");
     buffers->velocity_delta = clCreateBuffer(context->context, CL_MEM_READ_ONLY, sizeof(double)*problem->ng, NULL, &err);
     check_ocl(err, "Creating velocity delta buffer");
+
+    // Denominator array
+    buffers->denominator = clCreateBuffer(context->context, CL_MEM_READ_WRITE,
+        sizeof(double)*problem->nang*problem->ng*rankinfo->nx*rankinfo->ny*rankinfo->nz, NULL, &err);
+    check_ocl(err, "Creating denominator buffer");
 
 }
