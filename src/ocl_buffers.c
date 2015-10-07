@@ -29,8 +29,8 @@ void check_device_memory_requirements(
     total += problem->nang*problem->cmom*8;
     total += problem->ng;
     total += problem->ng*rankinfo->nx*rankinfo->ny*rankinfo->nz;
-    total += problem->ng*rankinfo->nx*rankinfo->ny*rankinfo->nz;
-    total += problem->ng*rankinfo->nx*rankinfo->ny*rankinfo->nz;
+    total += problem->cmom*problem->ng*rankinfo->nx*rankinfo->ny*rankinfo->nz;
+    total += problem->cmom*problem->ng*rankinfo->nx*rankinfo->ny*rankinfo->nz;
     total *= sizeof(double);
 
     if (global < total)
@@ -122,10 +122,10 @@ void allocate_buffers(
         sizeof(double)*problem->ng*rankinfo->nx*rankinfo->ny*rankinfo->nz, NULL, &err);
     check_ocl(err, "Creating fixed source buffer");
     buffers->outer_source = clCreateBuffer(context->context, CL_MEM_READ_WRITE,
-        sizeof(double)*problem->ng*rankinfo->nx*rankinfo->ny*rankinfo->nz, NULL, &err);
+        sizeof(double)*problem->cmom*problem->ng*rankinfo->nx*rankinfo->ny*rankinfo->nz, NULL, &err);
     check_ocl(err, "Creating outer source buffer");
     buffers->inner_source = clCreateBuffer(context->context, CL_MEM_READ_WRITE,
-        sizeof(double)*problem->ng*rankinfo->nx*rankinfo->ny*rankinfo->nz, NULL, &err);
+        sizeof(double)*problem->cmom*problem->ng*rankinfo->nx*rankinfo->ny*rankinfo->nz, NULL, &err);
     check_ocl(err, "Creating inner source buffer");
 
 }
