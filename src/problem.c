@@ -26,12 +26,12 @@ void init_quadrature_weights(
 
 void calculate_cosine_coefficients(const struct problem * problem,
     const struct context * context,
-    const struct buffers * buffers)
+    const struct buffers * buffers,
+    double * restrict mu,
+    double * restrict eta,
+    double * restrict xi
+    )
 {
-    // Create tempoary on host for cosine coefficients
-    double *mu = malloc(sizeof(double)*problem->nang);
-    double *eta = malloc(sizeof(double)*problem->nang);
-    double *xi = malloc(sizeof(double)*problem->nang);
 
     double dm = 1.0 / problem->nang;
 
@@ -59,9 +59,7 @@ void calculate_cosine_coefficients(const struct problem * problem,
     err = clEnqueueWriteBuffer(context->queue, buffers->xi, CL_TRUE,
         0, sizeof(double)*problem->nang, xi, 0, NULL, NULL);
     check_ocl(err, "Copying xi cosine to device");
-    free(mu);
-    free(eta);
-    free(xi);
+
 }
 
 void calculate_scattering_coefficients(

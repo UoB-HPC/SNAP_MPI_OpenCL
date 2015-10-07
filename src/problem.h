@@ -40,7 +40,7 @@
 
 /** \brief Initilise quadrature weights
 *
-* Set to uniform weights: nuber of angles divided by eight.
+* Set to uniform weights: number of angles divided by eight.
 */
 void init_quadrature_weights(const struct problem * problem, const struct context * context, const struct buffers * buffers);
 
@@ -48,7 +48,7 @@ void init_quadrature_weights(const struct problem * problem, const struct contex
 *
 * Populates the \a mu, \a eta and \a xi arrays.
 */
-void calculate_cosine_coefficients(const struct problem * problem, const struct context * context, const struct buffers * buffers);
+void calculate_cosine_coefficients(const struct problem * problem, const struct context * context, const struct buffers * buffers, double * restrict mu, double * restrict eta, double * restrict xi);
 
 /** \brief Calculate the scattering coefficients
 *
