@@ -31,6 +31,7 @@ void check_device_memory_requirements(
     total += problem->ng*rankinfo->nx*rankinfo->ny*rankinfo->nz;
     total += problem->cmom*problem->ng*rankinfo->nx*rankinfo->ny*rankinfo->nz;
     total += problem->cmom*problem->ng*rankinfo->nx*rankinfo->ny*rankinfo->nz;
+    total += problem->nmom*problem->ng*problem->ng;
     total *= sizeof(double);
 
     if (global < total)
@@ -127,5 +128,10 @@ void allocate_buffers(
     buffers->inner_source = clCreateBuffer(context->context, CL_MEM_READ_WRITE,
         sizeof(double)*problem->cmom*problem->ng*rankinfo->nx*rankinfo->ny*rankinfo->nz, NULL, &err);
     check_ocl(err, "Creating inner source buffer");
+
+    // Scattering terms
+    buffers->scattering_matrix = clCreateBuffer(context->context, CL_MEM_READ_ONLY,
+        sizeof(double)*problem->nmom*problem->ng*problem->ng, NULL, &err);
+    check_ocl(err, "Creating scattering matrix buffer");
 
 }
