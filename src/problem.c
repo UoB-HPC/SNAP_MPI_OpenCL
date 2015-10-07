@@ -254,12 +254,23 @@ void init_velocities(
 
 void init_velocity_delta(
     const struct problem * problem,
-    const double * restrict velocities,
-    double * restrict velocity_delta
+    const struct context * context,
+    const struct buffers * buffers
     )
 {
-    for (unsigned int g = 0; g < problem->ng; g++)
-        velocity_delta[g] = 2.0 / (problem->dt * velocities[g]);
+    // We do this on the device because SNAP does it every outer
+    cl_int err;
+    err = clSetKernelArg(context->kernels.calc_velocity_delta, 0, sizeof(cl_mem), &buffers->velocities);
+    err |= clSetKernelArg(context->kernels.calc_velocity_delta, 1, sizeof(double), &problem->dt);
+    err |= clSetKernelArg(context->kernels.calc_velocity_delta, 2, sizeof(cl_mem), &buffers->velocity_delta);
+    check_ocl(err, "Setting velocity delta calculation kernel arguments");
+
+    size_t global[] = {problem->ng};
+    err = clEnqueueNDRangeKernel(context->queue,
+        context->kernels.calc_velocity_delta,
+        1, 0, global, NULL,
+        0, NULL, NULL);
+    check_ocl(err, "Enqueue velocity delta calculation kernel");
 }
 
 void calculate_dd_coefficients(

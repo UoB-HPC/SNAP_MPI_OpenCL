@@ -63,6 +63,10 @@ void init_ocl(struct context * context)
     }
     check_ocl(build_err, "Building program");
 
+    // Create the kernels
+    context->kernels.calc_velocity_delta = clCreateKernel(context->program, "calc_velocity_delta", &err);
+    check_ocl(err, "Creating velocity delta kernel");
+
 }
 
 void release_context(struct context * context)

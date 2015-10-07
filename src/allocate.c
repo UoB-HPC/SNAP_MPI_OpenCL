@@ -41,9 +41,6 @@ void allocate_memory(struct problem * problem, struct rankinfo * rankinfo, struc
     memory->dd_j = malloc(sizeof(double)*problem->nang);
     memory->dd_k = malloc(sizeof(double)*problem->nang);
 
-    // Time absorption coefficient
-    memory->velocity_delta = malloc(sizeof(double)*problem->ng);
-
     // Denominator array
     memory->denominator = malloc(sizeof(double)*problem->nang*problem->ng*rankinfo->nx*rankinfo->ny*rankinfo->nz);
 
@@ -68,6 +65,5 @@ void free_memory(struct memory * memory)
     free(memory->dd_i);
     free(memory->dd_j);
     free(memory->dd_k);
-    free(memory->velocity_delta);
     free(memory->denominator);
 }

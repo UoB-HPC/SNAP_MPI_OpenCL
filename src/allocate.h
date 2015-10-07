@@ -107,10 +107,6 @@ struct memory
 	double *dd_k;
 	/**@}*/
 
-	/** \brief Time absorption coefficient */
-	/** Size: (ng) */
-	double *velocity_delta;
-
 	/** \brief Denominator array */
 	/**
 	* Size: (nang, ng, nx, ny, nz)

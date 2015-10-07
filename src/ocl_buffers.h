@@ -46,6 +46,8 @@ struct buffers
 
     // Mock velocities array
     cl_mem velocities;
+
+    // Time absorption coefficient
     cl_mem velocity_delta;
 
     // Transport denominator

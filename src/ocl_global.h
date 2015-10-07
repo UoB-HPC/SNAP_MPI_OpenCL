@@ -18,6 +18,10 @@
 /**
 \brief Structure to contain OpenCL context, command queue, device and program objects
 */
+struct kernels
+{
+    cl_kernel calc_velocity_delta;
+};
 struct context
 {
     cl_platform_id platform;
@@ -25,7 +29,9 @@ struct context
     cl_device_id device;
     cl_command_queue queue;
     cl_program program;
+    struct kernels kernels;
 };
+
 
 void check_ocl(const cl_int err, const char *msg);
 
