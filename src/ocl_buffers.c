@@ -28,6 +28,9 @@ void check_device_memory_requirements(
     total += problem->ng;
     total += problem->nang*problem->cmom*8;
     total += problem->ng;
+    total += problem->ng*rankinfo->nx*rankinfo->ny*rankinfo->nz;
+    total += problem->ng*rankinfo->nx*rankinfo->ny*rankinfo->nz;
+    total += problem->ng*rankinfo->nx*rankinfo->ny*rankinfo->nz;
     total *= sizeof(double);
 
     if (global < total)
@@ -113,5 +116,16 @@ void allocate_buffers(
     buffers->mat_cross_section = clCreateBuffer(context->context, CL_MEM_READ_ONLY,
         sizeof(double)*problem->ng, NULL, &err);
     check_ocl(err, "Creating material cross section buffer");
+
+    // Source terms
+    buffers->fixed_source = clCreateBuffer(context->context, CL_MEM_READ_ONLY,
+        sizeof(double)*problem->ng*rankinfo->nx*rankinfo->ny*rankinfo->nz, NULL, &err);
+    check_ocl(err, "Creating fixed source buffer");
+    buffers->outer_source = clCreateBuffer(context->context, CL_MEM_READ_WRITE,
+        sizeof(double)*problem->ng*rankinfo->nx*rankinfo->ny*rankinfo->nz, NULL, &err);
+    check_ocl(err, "Creating outer source buffer");
+    buffers->inner_source = clCreateBuffer(context->context, CL_MEM_READ_WRITE,
+        sizeof(double)*problem->ng*rankinfo->nx*rankinfo->ny*rankinfo->nz, NULL, &err);
+    check_ocl(err, "Creating inner source buffer");
 
 }
