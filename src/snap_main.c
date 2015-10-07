@@ -88,7 +88,7 @@ int main(int argc, char **argv)
     init_quadrature_weights(&problem, &context, &buffers);
     calculate_cosine_coefficients(&problem, &context, &buffers, memory.mu, memory.eta, memory.xi);
     calculate_scattering_coefficients(&problem, &context, &buffers, memory.mu, memory.eta, memory.xi);
-    init_material_data(&problem, memory.mat_cross_section);
+    init_material_data(&problem, &context, &buffers, memory.mat_cross_section);
     init_fixed_source(&problem, &rankinfo, memory.fixed_source);
     init_scattering_matrix(&problem, memory.mat_cross_section, memory.scattering_matrix);
     init_velocities(&problem, memory.velocities);

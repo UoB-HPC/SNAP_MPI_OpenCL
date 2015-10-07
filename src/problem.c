@@ -114,6 +114,8 @@ void calculate_scattering_coefficients(
 
 void init_material_data(
     const struct problem * problem,
+    const struct context * context,
+    const struct buffers * buffers,
     double * restrict mat_cross_section
     )
 {
@@ -122,6 +124,11 @@ void init_material_data(
     {
         mat_cross_section[g] = mat_cross_section[g-1] + 0.01;
     }
+    // Copy to device
+    cl_int err;
+    err = clEnqueueWriteBuffer(context->queue, buffers->mat_cross_section, CL_TRUE,
+        0, sizeof(double)*problem->ng, mat_cross_section, 0, NULL, NULL);
+    check_ocl(err, "Copying material cross sections to device");
 }
 
 void init_fixed_source(
