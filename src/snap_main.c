@@ -92,7 +92,6 @@ int main(int argc, char **argv)
     init_fixed_source(&problem, &rankinfo, memory.fixed_source);
     init_scattering_matrix(&problem, memory.mat_cross_section, memory.scattering_matrix);
     init_velocities(&problem, memory.velocities);
-    init_velocity_delta(&problem, memory.velocities, memory.velocity_delta);
 
     // Time loop
     // TODO
@@ -100,6 +99,7 @@ int main(int argc, char **argv)
 
 
     // Outers
+    init_velocity_delta(&problem, memory.velocities, memory.velocity_delta);
     calculate_dd_coefficients(&problem, memory.eta, memory.xi, memory.dd_i, memory.dd_j, memory.dd_k);
     calculate_denominator(&problem, &rankinfo, memory.dd_i, memory.dd_j, memory.dd_k, memory.mu, memory.mat_cross_section, memory.velocity_delta, memory.denominator);
     // Calculate outer source
