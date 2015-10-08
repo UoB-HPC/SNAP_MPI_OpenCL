@@ -36,11 +36,6 @@ void allocate_memory(struct problem * problem, struct rankinfo * rankinfo, struc
     memory->outer_source = malloc(sizeof(double)*problem->cmom*problem->ng*rankinfo->nx*rankinfo->ny*rankinfo->nz);
     memory->inner_source = malloc(sizeof(double)*problem->cmom*problem->ng*rankinfo->nx*rankinfo->ny*rankinfo->nz);
 
-    // Diamon difference co-efficients
-    memory->dd_i = malloc(sizeof(double));
-    memory->dd_j = malloc(sizeof(double)*problem->nang);
-    memory->dd_k = malloc(sizeof(double)*problem->nang);
-
     // Denominator array
     memory->denominator = malloc(sizeof(double)*problem->nang*problem->ng*rankinfo->nx*rankinfo->ny*rankinfo->nz);
 
@@ -62,8 +57,5 @@ void free_memory(struct memory * memory)
     free(memory->mat_cross_section);
     free(memory->outer_source);
     free(memory->inner_source);
-    free(memory->dd_i);
-    free(memory->dd_j);
-    free(memory->dd_k);
     free(memory->denominator);
 }

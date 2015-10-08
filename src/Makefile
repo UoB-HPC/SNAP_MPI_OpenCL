@@ -40,7 +40,9 @@ kernels/%.h:	kernels/%.cl
 	./stringify_opencl $< $@
 
 
-KERNEL_HEADER_FILES=kernels/calc_velocity_delta.h
+KERNEL_HEADER_FILES=\
+	kernels/calc_velocity_delta.h \
+	kernels/calc_dd_coeff.h
 
 ocl_init.c:	$(KERNEL_HEADER_FILES)
 	@touch ocl_init.c

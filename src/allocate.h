@@ -95,18 +95,6 @@ struct memory
 	double *inner_source;
 	/**@}*/
 
-	/**@{*/
-	/** \brief Diamond difference co-efficients */
-	/** Size: 1 */
-	double *dd_i;
-	/** \brief Diamond difference co-efficients */
-	/** Size: (nang) */
-	double *dd_j;
-	/** \brief Diamond difference co-efficients */
-	/** Size: (nang) */
-	double *dd_k;
-	/**@}*/
-
 	/** \brief Denominator array */
 	/**
 	* Size: (nang, ng, nx, ny, nz)

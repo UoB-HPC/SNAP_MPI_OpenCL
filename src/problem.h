@@ -88,11 +88,11 @@ void init_velocities(const struct problem * problem, const struct context * cont
 /** \brief Set velocity time delta array on device (non-blocking) */
 void init_velocity_delta(const struct problem * problem, const struct context * context, const struct buffers * buffers);
 
-/** \brief Calculate the spatial diamond difference coefficients
+/** \brief Calculate the spatial diamond difference coefficients on device (non-blocking)
 *
 * Called every outer. Includes the cosine coefficient terms.
 */
-void calculate_dd_coefficients(const struct problem * problem, const double * restrict eta, const double * restrict xi, double * restrict dd_i, double * restrict dd_j, double * restrict dd_k);
+void calculate_dd_coefficients(const struct problem * problem, const struct context * context, const struct buffers * buffers);
 
 /** \brief Calculate the denominator to the transport equation update
 *

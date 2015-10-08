@@ -141,13 +141,13 @@ void allocate_buffers(
     check_ocl(err, "Creating scattering matrix buffer");
 
     // Diamond diference co-efficients
-    buffers->dd_i = clCreateBuffer(context->context, CL_MEM_READ_ONLY,
+    buffers->dd_i = clCreateBuffer(context->context, CL_MEM_READ_WRITE,
         sizeof(double), NULL, &err);
     check_ocl(err, "Creating i diamond difference coefficient");
-    buffers->dd_j = clCreateBuffer(context->context, CL_MEM_READ_ONLY,
+    buffers->dd_j = clCreateBuffer(context->context, CL_MEM_READ_WRITE,
         sizeof(double)*problem->nang, NULL, &err);
     check_ocl(err, "Creating j diamond difference coefficient");
-    buffers->dd_k = clCreateBuffer(context->context, CL_MEM_READ_ONLY,
+    buffers->dd_k = clCreateBuffer(context->context, CL_MEM_READ_WRITE,
         sizeof(double)*problem->nang, NULL, &err);
     check_ocl(err, "Creating k diamond difference coefficient");
 

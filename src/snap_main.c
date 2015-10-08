@@ -100,7 +100,7 @@ int main(int argc, char **argv)
 
     // Outers
     init_velocity_delta(&problem, &context, &buffers);
-    //calculate_dd_coefficients(&problem, memory.eta, memory.xi, memory.dd_i, memory.dd_j, memory.dd_k);
+    calculate_dd_coefficients(&problem, &context, &buffers);
     //calculate_denominator(&problem, &rankinfo, memory.dd_i, memory.dd_j, memory.dd_k, memory.mu, memory.mat_cross_section, memory.velocity_delta, memory.denominator);
     // Calculate outer source
     for (unsigned int i = 0; i < problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz; i++)

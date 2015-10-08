@@ -66,7 +66,8 @@ void init_ocl(struct context * context)
     // Create the kernels
     context->kernels.calc_velocity_delta = clCreateKernel(context->program, "calc_velocity_delta", &err);
     check_ocl(err, "Creating velocity delta kernel");
-
+    context->kernels.calc_dd_coeff = clCreateKernel(context->program, "calc_dd_coeff", &err);
+    check_ocl(err, "Creating diamond difference constants kernel");
 }
 
 void release_context(struct context * context)

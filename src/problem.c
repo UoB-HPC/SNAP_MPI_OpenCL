@@ -275,19 +275,28 @@ void init_velocity_delta(
 
 void calculate_dd_coefficients(
     const struct problem * problem,
-    const double * restrict eta,
-    const double * restrict xi,
-    double * restrict dd_i,
-    double * restrict dd_j,
-    double * restrict dd_k
+    const struct context * context,
+    const struct buffers * buffers
     )
 {
-    dd_i[0] = 2.0 / problem->dx;
-    for (unsigned int a = 0; a < problem->nang; a++)
-    {
-        dd_j[a] = (2.0 / problem->dy) * eta[a];
-        dd_k[a] = (2.0 / problem->dz) * xi[a];
-    }
+    // We do this on the device because SNAP does it every outer
+    cl_int err;
+    err = clSetKernelArg(context->kernels.calc_dd_coeff, 0, sizeof(double), &problem->dx);
+    err |= clSetKernelArg(context->kernels.calc_dd_coeff, 1, sizeof(double), &problem->dy);
+    err |= clSetKernelArg(context->kernels.calc_dd_coeff, 2, sizeof(double), &problem->dz);
+    err |= clSetKernelArg(context->kernels.calc_dd_coeff, 3, sizeof(cl_mem), &buffers->eta);
+    err |= clSetKernelArg(context->kernels.calc_dd_coeff, 4, sizeof(cl_mem), &buffers->xi);
+    err |= clSetKernelArg(context->kernels.calc_dd_coeff, 5, sizeof(cl_mem), &buffers->dd_i);
+    err |= clSetKernelArg(context->kernels.calc_dd_coeff, 6, sizeof(cl_mem), &buffers->dd_j);
+    err |= clSetKernelArg(context->kernels.calc_dd_coeff, 7, sizeof(cl_mem), &buffers->dd_k);
+    check_ocl(err, "Setting diamond difference calculation kernel arguments");
+
+    size_t global[] = {problem->nang};
+    err = clEnqueueNDRangeKernel(context->queue,
+        context->kernels.calc_dd_coeff,
+        1, 0, global, NULL,
+        0, NULL, NULL);
+    check_ocl(err, "Enqueue diamond difference calculation kernel");
 }
 
 void calculate_denominator(
