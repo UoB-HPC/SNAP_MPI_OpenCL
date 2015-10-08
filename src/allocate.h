@@ -95,14 +95,6 @@ struct memory
 	double *inner_source;
 	/**@}*/
 
-	/** \brief Denominator array */
-	/**
-	* Size: (nang, ng, nx, ny, nz)
-	*
-	* Note, rankinfo spatial dimensions
-	*/
-	double *denominator;
-
 };
 
 /** \brief Allocate the problem arrays */

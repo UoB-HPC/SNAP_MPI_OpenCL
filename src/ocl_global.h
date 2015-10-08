@@ -22,6 +22,7 @@ struct kernels
 {
     cl_kernel calc_velocity_delta;
     cl_kernel calc_dd_coeff;
+    cl_kernel calc_denominator;
 };
 struct context
 {

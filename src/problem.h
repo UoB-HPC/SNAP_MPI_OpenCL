@@ -94,8 +94,8 @@ void init_velocity_delta(const struct problem * problem, const struct context * 
 */
 void calculate_dd_coefficients(const struct problem * problem, const struct context * context, const struct buffers * buffers);
 
-/** \brief Calculate the denominator to the transport equation update
+/** \brief Calculate the denominator to the transport equation update on device (non-blocking)
 *
 * Called every outer.
 */
-void calculate_denominator(const struct problem * problem, const struct rankinfo * rankinfo, const double * restrict dd_i, const double * restrict dd_j, const double * restrict dd_k, const double * restrict mu, const double * restrict mat_cross_section, const double * restrict velocity_delta, double * restrict denominator);
+void calculate_denominator(const struct problem * problem, const struct rankinfo * rankinfo, const struct context * context, const struct buffers * buffers);

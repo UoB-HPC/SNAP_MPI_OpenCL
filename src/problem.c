@@ -302,21 +302,30 @@ void calculate_dd_coefficients(
 void calculate_denominator(
     const struct problem * problem,
     const struct rankinfo * rankinfo,
-    const double * restrict dd_i,
-    const double * restrict dd_j,
-    const double * restrict dd_k,
-    const double * restrict mu,
-    const double * restrict mat_cross_section,
-    const double * restrict velocity_delta,
-    double * restrict denominator
+    const struct context * context,
+    const struct buffers * buffers
     )
 {
-    for (unsigned int k = 0; k < rankinfo->nz; k++)
-        for (unsigned int j = 0; j < rankinfo->ny; j++)
-            for (unsigned int i = 0; i < rankinfo->nx; i++)
-                for (unsigned int g = 0; g < problem->ng; g++)
-                    for (unsigned int a = 0; a < problem->nang; a++)
-                    {
-                        denominator[DENOMINATOR_INDEX(a,g,i,j,k,problem->nang,problem->ng,rankinfo->nx,rankinfo->ny)] = 1.0 / (mat_cross_section[g] + velocity_delta[g] + mu[a]*dd_i[0] + dd_j[a] + dd_k[a]);
-                    }
+    // We do this on the device because SNAP does it every outer
+    cl_int err;
+    err = clSetKernelArg(context->kernels.calc_denominator, 0, sizeof(unsigned int), &rankinfo->nx);
+    err |= clSetKernelArg(context->kernels.calc_denominator, 1, sizeof(unsigned int), &rankinfo->ny);
+    err |= clSetKernelArg(context->kernels.calc_denominator, 2, sizeof(unsigned int), &rankinfo->nz);
+    err |= clSetKernelArg(context->kernels.calc_denominator, 3, sizeof(unsigned int), &problem->nang);
+    err |= clSetKernelArg(context->kernels.calc_denominator, 4, sizeof(unsigned int), &problem->ng);
+    err |= clSetKernelArg(context->kernels.calc_denominator, 5, sizeof(cl_mem), &buffers->mat_cross_section);
+    err |= clSetKernelArg(context->kernels.calc_denominator, 6, sizeof(cl_mem), &buffers->velocity_delta);
+    err |= clSetKernelArg(context->kernels.calc_denominator, 7, sizeof(cl_mem), &buffers->mu);
+    err |= clSetKernelArg(context->kernels.calc_denominator, 8, sizeof(cl_mem), &buffers->dd_i);
+    err |= clSetKernelArg(context->kernels.calc_denominator, 9, sizeof(cl_mem), &buffers->dd_j);
+    err |= clSetKernelArg(context->kernels.calc_denominator, 10, sizeof(cl_mem), &buffers->dd_k);
+    err |= clSetKernelArg(context->kernels.calc_denominator, 11, sizeof(cl_mem), &buffers->denominator);
+    check_ocl(err, "Setting denominator kernel arguments");
+
+    size_t global[] = {problem->nang, problem->ng};
+    err = clEnqueueNDRangeKernel(context->queue,
+        context->kernels.calc_denominator,
+        2, 0, global, NULL,
+        0, NULL, NULL);
+    check_ocl(err, "Enqueue denominator kernel");
 }

@@ -36,9 +36,6 @@ void allocate_memory(struct problem * problem, struct rankinfo * rankinfo, struc
     memory->outer_source = malloc(sizeof(double)*problem->cmom*problem->ng*rankinfo->nx*rankinfo->ny*rankinfo->nz);
     memory->inner_source = malloc(sizeof(double)*problem->cmom*problem->ng*rankinfo->nx*rankinfo->ny*rankinfo->nz);
 
-    // Denominator array
-    memory->denominator = malloc(sizeof(double)*problem->nang*problem->ng*rankinfo->nx*rankinfo->ny*rankinfo->nz);
-
 }
 
 void free_memory(struct memory * memory)
@@ -57,5 +54,4 @@ void free_memory(struct memory * memory)
     free(memory->mat_cross_section);
     free(memory->outer_source);
     free(memory->inner_source);
-    free(memory->denominator);
 }
