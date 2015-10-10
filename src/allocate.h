@@ -81,12 +81,6 @@ struct memory
 	double *mat_cross_section;
 
 	/**@{*/
-	/** \brief Outer source: group-to-group scattering plus fixed source */
-	/** Size: (cmom, ng, nx, ny, nz)
-	*
-	* Note, rankinfo spatial dimension
-	*/
-	double *outer_source;
 	/** \brief Inner (total) source: outer source plus with-group source */
 	/** Size: (cmom, ng, nx, ny, nz)
 	*
