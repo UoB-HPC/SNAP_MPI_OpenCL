@@ -44,7 +44,8 @@ KERNEL_HEADER_FILES=\
 	kernels/calc_velocity_delta.h \
 	kernels/calc_dd_coeff.h \
 	kernels/calc_denominator.h \
-	kernels/zero_buffer.h
+	kernels/zero_buffer.h \
+	kernels/outer_source.h
 
 ocl_init.c:	$(KERNEL_HEADER_FILES)
 	@touch ocl_init.c

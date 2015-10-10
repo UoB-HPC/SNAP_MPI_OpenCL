@@ -1,48 +1,34 @@
 
 #include "source.h"
 
+
 void compute_outer_source(
-    const struct problem * global,
+    const struct problem * problem,
     const struct rankinfo * rankinfo,
-    const double * restrict fixed_source,
-    const double * restrict scattering_matrix,
-    const double * restrict scalar_flux,
-    const double * restrict scalar_flux_moments,
-    double * restrict outer_source
+    struct context * context,
+    struct buffers * buffers
     )
 {
-    for (unsigned int k = 0; k < rankinfo->nz; k++)
-        for (unsigned int j = 0; j < rankinfo->ny; j++)
-            for (unsigned int i = 0; i < rankinfo->nx; i++)
-                for (unsigned int g = 0; g < global->ng; g++)
-                {
-                    // Set first moment to the fixed source
-                    outer_source[SOURCE_INDEX(0,g,i,j,k,global->cmom,global->ng,rankinfo->nx,rankinfo->ny)]
-                        = fixed_source[FIXED_SOURCE_INDEX(g,i,j,k,global->ng,rankinfo->nx,rankinfo->ny)];
+    cl_int err;
+    err = clSetKernelArg(context->kernels.outer_source, 0, sizeof(unsigned int), &rankinfo->nx);
+    err |= clSetKernelArg(context->kernels.outer_source, 1, sizeof(unsigned int), &rankinfo->ny);
+    err |= clSetKernelArg(context->kernels.outer_source, 2, sizeof(unsigned int), &rankinfo->nz);
+    err |= clSetKernelArg(context->kernels.outer_source, 3, sizeof(unsigned int), &problem->ng);
+    err |= clSetKernelArg(context->kernels.outer_source, 4, sizeof(unsigned int), &problem->cmom);
+    err |= clSetKernelArg(context->kernels.outer_source, 5, sizeof(unsigned int), &problem->nmom);
+    err |= clSetKernelArg(context->kernels.outer_source, 6, sizeof(cl_mem), &buffers->fixed_source);
+    err |= clSetKernelArg(context->kernels.outer_source, 7, sizeof(cl_mem), &buffers->scattering_matrix);
+    err |= clSetKernelArg(context->kernels.outer_source, 8, sizeof(cl_mem), &buffers->scalar_flux);
+    err |= clSetKernelArg(context->kernels.outer_source, 9, sizeof(cl_mem), &buffers->scalar_flux_moments);
+    err |= clSetKernelArg(context->kernels.outer_source, 10, sizeof(cl_mem), &buffers->outer_source);
+    check_ocl(err, "Setting outer source kernel arguments");
 
-                    // Loop over groups and moments to compute out-of-group scattering
-                    for (unsigned int g2 = 0; g2 < global->ng; g2++)
-                    {
-                        if (g == g2)
-                            continue;
-                        // Compute scattering source
-                        outer_source[SOURCE_INDEX(0,g,i,j,k,global->cmom,global->ng,rankinfo->nx,rankinfo->ny)]
-                            += scattering_matrix[SCATTERING_MATRIX_INDEX(0,g2,g,global->nmom,global->ng)]
-                            * scalar_flux[SCALAR_FLUX_INDEX(g2,i,j,k,global->ng,rankinfo->nx,rankinfo->ny)];
-                        // Other moments
-                        unsigned int mom = 1;
-                        for (unsigned int l = 0; l < global->nmom; l++)
-                        {
-                            for (unsigned int m = 0; m < 2*l+1; m++)
-                            {
-                                outer_source[SOURCE_INDEX(mom,g,i,j,k,global->cmom,global->ng,rankinfo->nx,rankinfo->ny)]
-                                    += scattering_matrix[SCATTERING_MATRIX_INDEX(l,g2,g,global->nmom,global->ng)]
-                                    * scalar_flux_moments[SCALAR_FLUX_MOMENTS_INDEX(mom-1,g2,i,j,k,global->cmom,global->ng,rankinfo->nx,rankinfo->ny)];
-                                mom += 1;
-                            }
-                        }
-                    }
-                }
+    size_t global[] = {rankinfo->nx, rankinfo->ny, rankinfo->nz};
+    err = clEnqueueNDRangeKernel(context->queue,
+        context->kernels.outer_source,
+        3, 0, global, NULL,
+        0, NULL, NULL);
+    check_ocl(err, "Enqueue outer source kernel");
 }
 
 

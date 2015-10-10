@@ -24,6 +24,7 @@ struct kernels
     cl_kernel calc_dd_coeff;
     cl_kernel calc_denominator;
     cl_kernel zero_buffer;
+    cl_kernel outer_source;
 };
 struct context
 {

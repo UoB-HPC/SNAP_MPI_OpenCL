@@ -107,7 +107,10 @@ int main(int argc, char **argv)
     // Zero out the scalar_flux
     zero_buffer(&context, buffers.scalar_flux, problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz);
 
-    // compute_outer_source(&problem, &rankinfo, memory.fixed_source, memory.scattering_matrix, memory.scalar_flux_in, memory.scalar_flux_moments, memory.outer_source);
+    compute_outer_source(&problem, &rankinfo, &context, &buffers);
+
+    cl_int err = clFinish(context.queue);
+    printf("%d\n", err);
 
     // compute_inner_source(&problem, &rankinfo, memory.outer_source, memory.scattering_matrix, memory.scalar_flux_in, memory.scalar_flux_moments, memory.inner_source);
 
