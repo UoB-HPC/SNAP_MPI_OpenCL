@@ -11,7 +11,7 @@ void read_input(char *file, struct problem *problem)
         exit(-1);
     }
     char *line = NULL;
-    ssize_t read;
+    size_t read;
     size_t len = 0;
 
     // Read the lines in the file
