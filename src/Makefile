@@ -3,13 +3,6 @@ ifndef COMPILER
 	MESSAGE=select a compiler to compiler in OpenMP, e.g. make COMPILER=INTEL
 endif
 
-
-OMP_INTEL	= -openmp
-OMP_CRAY	= 
-OMP_GNU		= -fopenmp
-
-OMP=$(OMP_$(COMPILER))
-
 ifeq ($(shell uname), Darwin)
 	OCL = -framework OpenCL
 else
@@ -34,7 +27,7 @@ snap: \
 	source.c \
 	ocl_init.c \
 	ocl_buffers.c
-	$(MPI_COMPILER) $^ $(CFLAGS_$(COMPILER)) $(OMP) $(OCL) $(OPTIONS) -o $@
+	$(MPI_COMPILER) $^ $(CFLAGS_$(COMPILER)) $(OCL) $(OPTIONS) -o $@
 
 kernels/%.h:	kernels/%.cl
 	./stringify_opencl $< $@
