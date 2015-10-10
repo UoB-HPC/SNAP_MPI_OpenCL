@@ -24,16 +24,8 @@
 */
 void compute_outer_source(const struct problem * problem, const struct rankinfo * rankinfo, struct context * context, struct buffers * buffers);
 
-/** \brief Computer the inner source
+/** \brief Compute the inner source on the device (non-blocking)
 *
 * Set to the outer source plus within group scattering based on scalar flux and scalar flux moments.
 */
-void compute_inner_source(
-    const struct problem * global,
-    const struct rankinfo * rankinfo,
-    const double * restrict outer_source,
-    const double * restrict scattering_matrix,
-    const double * restrict scalar_flux,
-    const double * restrict scalar_flux_moments,
-    double * restrict inner_source
-    );
+void compute_inner_source(const struct problem * problem, const struct rankinfo * rankinfo, struct context * context, struct buffers * buffers);

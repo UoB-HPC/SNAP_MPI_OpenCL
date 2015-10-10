@@ -25,6 +25,7 @@ struct kernels
     cl_kernel calc_denominator;
     cl_kernel zero_buffer;
     cl_kernel outer_source;
+    cl_kernel inner_source;
 };
 struct context
 {

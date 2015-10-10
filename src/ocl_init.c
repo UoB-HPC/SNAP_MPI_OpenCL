@@ -74,6 +74,8 @@ void init_ocl(struct context * context)
     check_ocl(err, "Creating buffer zeroing kernel");
     context->kernels.outer_source = clCreateKernel(context->program, "calc_outer_source", &err);
     check_ocl(err, "Creating outer source kernel");
+    context->kernels.inner_source = clCreateKernel(context->program, "calc_inner_source", &err);
+    check_ocl(err, "Creating inner source kernel");
 
 }
 
