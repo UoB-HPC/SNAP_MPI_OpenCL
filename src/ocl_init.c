@@ -70,6 +70,8 @@ void init_ocl(struct context * context)
     check_ocl(err, "Creating diamond difference constants kernel");
     context->kernels.calc_denominator = clCreateKernel(context->program, "calc_denominator", &err);
     check_ocl(err, "Creating denominator kernel");
+    context->kernels.zero_buffer = clCreateKernel(context->program, "zero_buffer", &err);
+    check_ocl(err, "Creating buffer zeroing kernel");
 
 }
 
