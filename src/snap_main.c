@@ -102,9 +102,11 @@ int main(int argc, char **argv)
     init_velocity_delta(&problem, &context, &buffers);
     calculate_dd_coefficients(&problem, &context, &buffers);
     calculate_denominator(&problem, &rankinfo, &context, &buffers);
+
     // Calculate outer source
-    for (unsigned int i = 0; i < problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz; i++)
-        memory.scalar_flux_in[i] = 0.0;
+    // Zero out the scalar_flux
+    zero_buffer(&context, buffers.scalar_flux, problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz);
+
     // compute_outer_source(&problem, &rankinfo, memory.fixed_source, memory.scattering_matrix, memory.scalar_flux_in, memory.scalar_flux_moments, memory.outer_source);
 
     // compute_inner_source(&problem, &rankinfo, memory.outer_source, memory.scattering_matrix, memory.scalar_flux_in, memory.scalar_flux_moments, memory.inner_source);
