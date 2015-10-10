@@ -49,7 +49,7 @@ kernel void calc_outer_source(
             outer_source(0,g,i,j,k) += scattering_matrix(0,g2,g) * scalar_flux(g2,i,j,k);
             // Other moments
             unsigned int mom = 1;
-            for (unsigned int l = 0; l < nmom; l++)
+            for (unsigned int l = 1; l < nmom; l++)
             {
                 for (unsigned int m = 0; m < 2*l+1; m++)
                 {
