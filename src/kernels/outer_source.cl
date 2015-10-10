@@ -41,7 +41,7 @@ kernel void calc_outer_source(
         outer_source(0,g,i,j,k) = fixed_source(g,i,j,k);
 
         // Loop over groups and moments to compute out-of-group scattering
-        for (unsigned int g2 = 0; g < ng; g2++)
+        for (unsigned int g2 = 0; g2 < ng; g2++)
         {
             if (g == g2)
                 continue;
