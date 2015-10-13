@@ -7,4 +7,5 @@
 #include "ocl_global.h"
 #include "ocl_buffers.h"
 
-void sweep(const int octant, const unsigned int num_planes, const struct plane * planes, struct problem * problem, struct context * context, struct buffers * buffers);
+/** \brief Enqueue the kernels to sweep a plane */
+void sweep_plane(const int octant, const unsigned int plane_num, const struct plane * planes, struct problem * problem, struct context * context, struct buffers * buffers);

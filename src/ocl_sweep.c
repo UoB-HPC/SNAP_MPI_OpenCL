@@ -1,9 +1,9 @@
 
 #include "ocl_sweep.h"
 
-void sweep(
+void sweep_plane(
     const int octant,
-    const unsigned int num_planes,
+    const unsigned int plane,
     const struct plane * planes,
     struct problem * problem,
     struct context * context,
@@ -12,13 +12,10 @@ void sweep(
 {
     cl_int err;
 
-    for (unsigned int p = 0; p < num_planes; p++)
-    {
-        size_t global[] = {problem->nang*problem->ng, planes[p].num_cells};
-        err = clEnqueueNDRangeKernel(context->queue,
-            context->kernels.sweep_plane,
-            2, 0, global, NULL,
-            0, NULL, NULL);
-        check_ocl(err, "Enqueue plane sweep kernel");
-    }
+    size_t global[] = {problem->nang*problem->ng, planes[plane].num_cells};
+    err = clEnqueueNDRangeKernel(context->queue,
+        context->kernels.sweep_plane,
+        2, 0, global, NULL,
+        0, NULL, NULL);
+    check_ocl(err, "Enqueue plane sweep kernel");
 }

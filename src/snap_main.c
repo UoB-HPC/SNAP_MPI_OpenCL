@@ -13,6 +13,7 @@
 
 #include "ocl_global.h"
 #include "ocl_buffers.h"
+#include "ocl_sweep.h"
 
 /** \mainpage
 * SNAP-MPI is a cut down version of the SNAP mini-app which allows us to
@@ -140,19 +141,29 @@ int main(int argc, char **argv)
             for (unsigned int i = 0; i < problem.iitm; i++)
             {
                 compute_inner_source(&problem, &rankinfo, &context, &buffers);
+
+                // Zero out the incoming boundary fluxes
+                zero_buffer(&context, buffers.flux_i, problem.nang*problem.ng*rankinfo.ny*rankinfo.nz);
+                zero_buffer(&context, buffers.flux_j, problem.nang*problem.ng*rankinfo.nx*rankinfo.nz);
+                zero_buffer(&context, buffers.flux_k, problem.nang*problem.ng*rankinfo.nx*rankinfo.ny);
+
+                // Sweep each octant
+                for (unsigned int p = 0; p < num_planes; p++)
+                    sweep_plane(0, p, planes, &problem, &context, &buffers);
             }
+            //----------------------------------------------
+            // End of Inners
+            //----------------------------------------------
         }
+        //----------------------------------------------
+        // End of Outers
+        //----------------------------------------------
+
+        // swap angluar flux pointers
     }
-
-
-    // swap angluar flux pointers
-
-
-
-    // Zero out the incoming boundary fluxes
-    zero_buffer(&context, buffers.flux_i, problem.nang*problem.ng*rankinfo.ny*rankinfo.nz);
-    zero_buffer(&context, buffers.flux_j, problem.nang*problem.ng*rankinfo.nx*rankinfo.nz);
-    zero_buffer(&context, buffers.flux_k, problem.nang*problem.ng*rankinfo.nx*rankinfo.ny);
+    //----------------------------------------------
+    // End of Timestep
+    //----------------------------------------------
 
     cl_int err = clFinish(context.queue);
     printf("%d\n", err);
