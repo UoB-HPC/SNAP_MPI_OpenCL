@@ -149,7 +149,7 @@ int main(int argc, char **argv)
 
                 // Sweep each octant
                 for (unsigned int p = 0; p < num_planes; p++)
-                    sweep_plane(0, p, planes, &problem, &context, &buffers);
+                    sweep_plane(0, p, planes, &problem, &rankinfo, &context, &buffers);
             }
             //----------------------------------------------
             // End of Inners

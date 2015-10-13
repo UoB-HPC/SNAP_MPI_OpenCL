@@ -6,6 +6,7 @@ void sweep_plane(
     const unsigned int plane,
     const struct plane * planes,
     struct problem * problem,
+    struct rankinfo * rankinfo,
     struct context * context,
     struct buffers * buffers
     )
