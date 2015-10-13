@@ -111,9 +111,20 @@ int main(int argc, char **argv)
     else
         scalar_moments_buffer_size = (problem.cmom-1)*problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz;
 
+    // Zero out the angular flux buffers
+    for (int oct = 0; oct < 8; oct++)
+    {
+        zero_buffer(&context, buffers.angular_flux_in[oct], problem.nang*problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz);
+        zero_buffer(&context, buffers.angular_flux_out[oct], problem.nang*problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz);
+    }
+
+    cl_int err = clFinish(context.queue);
+    check_ocl(err, "Finish queue at end of setup");
 
     setup_time = wtime() - setup_time;
     printf("Setup took %lfs\n", setup_time);
+
+    double simulation_time = wtime();
 
     //----------------------------------------------
     // Timestep loop
@@ -149,7 +160,7 @@ int main(int argc, char **argv)
 
                 // Sweep each octant
                 for (unsigned int p = 0; p < num_planes; p++)
-                    sweep_plane(0, p, planes, &problem, &rankinfo, &context, &buffers);
+                    sweep_plane(0, -1, -1, -1, p, planes, &problem, &rankinfo, &context, &buffers);
             }
             //----------------------------------------------
             // End of Inners
@@ -165,8 +176,11 @@ int main(int argc, char **argv)
     // End of Timestep
     //----------------------------------------------
 
-    cl_int err = clFinish(context.queue);
+    err = clFinish(context.queue);
     printf("%d\n", err);
+
+    simulation_time = wtime() - simulation_time;
+    printf("Simulation took %lfs\n", simulation_time);
 
     // Halo exchange routines
 
