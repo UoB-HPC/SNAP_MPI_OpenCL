@@ -9,6 +9,7 @@
 #include "allocate.h"
 #include "halos.h"
 #include "source.h"
+#include "sweep.h"
 
 #include "ocl_global.h"
 #include "ocl_buffers.h"
@@ -96,6 +97,13 @@ int main(int argc, char **argv)
     init_fixed_source(&problem, &rankinfo, &context, &buffers);
     init_scattering_matrix(&problem, &context, &buffers, memory.mat_cross_section);
     init_velocities(&problem, &context, &buffers);
+
+    struct plane planes;
+    unsigned int num_planes;
+    init_planes(&planes, &num_planes, &rankinfo);
+
+    setup_time = wtime() - setup_time;
+    printf("Setup took %lfs\n", setup_time);
 
     // Time loop
     // TODO
