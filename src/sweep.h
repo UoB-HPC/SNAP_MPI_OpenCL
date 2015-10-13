@@ -4,6 +4,8 @@
 #include <stdlib.h>
 
 #include "global.h"
+#include "ocl_global.h"
+#include "ocl_buffers.h"
 
 struct cell_id
 {
@@ -18,4 +20,6 @@ struct plane
 
 
 void init_planes(struct plane** planes, unsigned int *num_planes, struct rankinfo * rankinfo);
+
+void copy_planes(const struct plane * planes, const unsigned int num_planes, struct context * context, struct buffers * buffers);
 

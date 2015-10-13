@@ -52,6 +52,11 @@ struct buffers
 
     // Transport denominator
     cl_mem denominator;
+
+    // Lists of cell indicies in each plane
+    // Each buffer is an array of the i,j,k indicies for cells within that plane
+    // One buffer per plane
+    cl_mem *planes;
 };
 
 /** \brief Check the device has enough memory to allocate the buffers */
