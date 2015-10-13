@@ -76,6 +76,8 @@ void init_ocl(struct context * context)
     check_ocl(err, "Creating outer source kernel");
     context->kernels.inner_source = clCreateKernel(context->program, "calc_inner_source", &err);
     check_ocl(err, "Creating inner source kernel");
+    context->kernels.sweep_plane = clCreateKernel(context->program, "sweep_plane", &err);
+    check_ocl(err, "Creating sweep plane kernel");
 
 }
 

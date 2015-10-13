@@ -26,6 +26,7 @@ struct kernels
     cl_kernel zero_buffer;
     cl_kernel outer_source;
     cl_kernel inner_source;
+    cl_kernel sweep_plane;
 };
 struct context
 {

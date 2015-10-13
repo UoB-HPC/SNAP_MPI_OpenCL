@@ -28,7 +28,8 @@ snap: \
 	timer.c \
 	sweep.c \
 	ocl_init.c \
-	ocl_buffers.c
+	ocl_buffers.c \
+	ocl_sweep.c
 	$(MPI_COMPILER) $^ $(CFLAGS_$(COMPILER)) $(OCL) $(OPTIONS) -o $@
 
 kernels/%.h:	kernels/%.cl
@@ -41,7 +42,8 @@ KERNEL_HEADER_FILES=\
 	kernels/calc_denominator.h \
 	kernels/zero_buffer.h \
 	kernels/outer_source.h \
-	kernels/inner_source.h
+	kernels/inner_source.h \
+	kernels/sweep_plane.h
 
 ocl_init.c:	$(KERNEL_HEADER_FILES)
 	@touch ocl_init.c
