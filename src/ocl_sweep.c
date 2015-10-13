@@ -12,7 +12,11 @@ void sweep_plane(
 {
     cl_int err;
 
+    // 2 dimensional kernel
+    // First dimension: number of angles * number of groups
+    // Second dimension: number of cells in plane
     size_t global[] = {problem->nang*problem->ng, planes[plane].num_cells};
+
     err = clEnqueueNDRangeKernel(context->queue,
         context->kernels.sweep_plane,
         2, 0, global, NULL,
