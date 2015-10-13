@@ -100,7 +100,7 @@ int main(int argc, char **argv)
 
     struct plane* planes;
     unsigned int num_planes;
-    init_planes(planes, &num_planes, &rankinfo);
+    init_planes(&planes, &num_planes, &rankinfo);
 
     setup_time = wtime() - setup_time;
     printf("Setup took %lfs\n", setup_time);

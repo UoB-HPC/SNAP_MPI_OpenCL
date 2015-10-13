@@ -17,4 +17,5 @@ struct plane
 };
 
 
-void init_planes(struct plane* planes, unsigned int *num_planes, struct rankinfo * rankinfo);
+void init_planes(struct plane** planes, unsigned int *num_planes, struct rankinfo * rankinfo);
+
