@@ -98,9 +98,9 @@ int main(int argc, char **argv)
     init_scattering_matrix(&problem, &context, &buffers, memory.mat_cross_section);
     init_velocities(&problem, &context, &buffers);
 
-    struct plane planes;
+    struct plane* planes;
     unsigned int num_planes;
-    init_planes(&planes, &num_planes, &rankinfo);
+    init_planes(planes, &num_planes, &rankinfo);
 
     setup_time = wtime() - setup_time;
     printf("Setup took %lfs\n", setup_time);
