@@ -124,6 +124,11 @@ int main(int argc, char **argv)
 
     compute_inner_source(&problem, &rankinfo, &context, &buffers);
 
+    // Zero out the incoming boundary fluxes
+    zero_buffer(&context, buffers.flux_i, problem.nang*problem.ng*rankinfo.ny*rankinfo.nz);
+    zero_buffer(&context, buffers.flux_j, problem.nang*problem.ng*rankinfo.nx*rankinfo.nz);
+    zero_buffer(&context, buffers.flux_k, problem.nang*problem.ng*rankinfo.nx*rankinfo.ny);
+
     cl_int err = clFinish(context.queue);
     printf("%d\n", err);
 
