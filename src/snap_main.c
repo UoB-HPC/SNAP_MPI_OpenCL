@@ -103,26 +103,51 @@ int main(int argc, char **argv)
     init_planes(&planes, &num_planes, &rankinfo);
     copy_planes(planes, num_planes, &context, &buffers);
 
+    // Save the scalar_flux_moments buffer size for repeated zero'ing every timestep
+    size_t scalar_moments_buffer_size;
+    if (problem.cmom-1 == 0)
+        scalar_moments_buffer_size = problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz;
+    else
+        scalar_moments_buffer_size = (problem.cmom-1)*problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz;
+
+
     setup_time = wtime() - setup_time;
     printf("Setup took %lfs\n", setup_time);
 
-    // Time loop
-    // TODO
+    //----------------------------------------------
+    // Timestep loop
+    //----------------------------------------------
+    for (unsigned int t = 0; t < problem.nsteps; t++)
+    {
+        // Zero out the scalar flux and flux moments
+        zero_buffer(&context, buffers.scalar_flux, problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz);
+        zero_buffer(&context, buffers.scalar_flux_moments, scalar_moments_buffer_size);
+
+        //----------------------------------------------
+        // Outers
+        //----------------------------------------------
+        for (unsigned int o = 0; o < problem.oitm; o++)
+        {
+            init_velocity_delta(&problem, &context, &buffers);
+            calculate_dd_coefficients(&problem, &context, &buffers);
+            calculate_denominator(&problem, &rankinfo, &context, &buffers);
+
+            compute_outer_source(&problem, &rankinfo, &context, &buffers);
+
+            //----------------------------------------------
+            // Inners
+            //----------------------------------------------
+            for (unsigned int i = 0; i < problem.iitm; i++)
+            {
+                compute_inner_source(&problem, &rankinfo, &context, &buffers);
+            }
+        }
+    }
+
+
     // swap angluar flux pointers
 
 
-    // Outers
-    init_velocity_delta(&problem, &context, &buffers);
-    calculate_dd_coefficients(&problem, &context, &buffers);
-    calculate_denominator(&problem, &rankinfo, &context, &buffers);
-
-    // Calculate outer source
-    // Zero out the scalar_flux
-    zero_buffer(&context, buffers.scalar_flux, problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz);
-
-    compute_outer_source(&problem, &rankinfo, &context, &buffers);
-
-    compute_inner_source(&problem, &rankinfo, &context, &buffers);
 
     // Zero out the incoming boundary fluxes
     zero_buffer(&context, buffers.flux_i, problem.nang*problem.ng*rankinfo.ny*rankinfo.nz);
