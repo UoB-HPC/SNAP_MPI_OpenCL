@@ -24,10 +24,14 @@
 * The MPI scheme used is KBA, expending into hybrid-KBA.
 */
 
+extern double wtime(void);
+
 int main(int argc, char **argv)
 {
     int mpi_err = MPI_Init(&argc, &argv);
     check_mpi(mpi_err, "MPI_Init");
+
+    double setup_time = wtime();
 
     int rank, size;
     mpi_err = MPI_Comm_rank(MPI_COMM_WORLD, &rank);

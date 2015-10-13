@@ -25,6 +25,7 @@ snap: \
 	comms.c \
 	problem.c \
 	source.c \
+	timer.c \
 	ocl_init.c \
 	ocl_buffers.c
 	$(MPI_COMPILER) $^ $(CFLAGS_$(COMPILER)) $(OCL) $(OPTIONS) -o $@
