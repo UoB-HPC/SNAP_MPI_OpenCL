@@ -159,8 +159,30 @@ int main(int argc, char **argv)
                 zero_buffer(&context, buffers.flux_k, problem.nang*problem.ng*rankinfo.nx*rankinfo.ny);
 
                 // Sweep each octant
+                // Octant 1
                 for (unsigned int p = 0; p < num_planes; p++)
                     sweep_plane(0, -1, -1, -1, p, planes, &problem, &rankinfo, &context, &buffers);
+                // Octant 2
+                for (unsigned int p = 0; p < num_planes; p++)
+                    sweep_plane(1, +1, -1, -1, p, planes, &problem, &rankinfo, &context, &buffers);
+                // Octant 3
+                for (unsigned int p = 0; p < num_planes; p++)
+                    sweep_plane(2, -1, +1, -1, p, planes, &problem, &rankinfo, &context, &buffers);
+                // Octant 4
+                for (unsigned int p = 0; p < num_planes; p++)
+                    sweep_plane(3, +1, +1, -1, p, planes, &problem, &rankinfo, &context, &buffers);
+                // Octant 5
+                for (unsigned int p = 0; p < num_planes; p++)
+                    sweep_plane(4, -1, -1, +1, p, planes, &problem, &rankinfo, &context, &buffers);
+                // Octant 6
+                for (unsigned int p = 0; p < num_planes; p++)
+                    sweep_plane(5, +1, -1, +1, p, planes, &problem, &rankinfo, &context, &buffers);
+                // Octant 7
+                for (unsigned int p = 0; p < num_planes; p++)
+                    sweep_plane(6, -1, +1, +1, p, planes, &problem, &rankinfo, &context, &buffers);
+                // Octant 8
+                for (unsigned int p = 0; p < num_planes; p++)
+                    sweep_plane(7, +1, +1, +1, p, planes, &problem, &rankinfo, &context, &buffers);
             }
             //----------------------------------------------
             // End of Inners
