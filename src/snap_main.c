@@ -204,6 +204,24 @@ int main(int argc, char **argv)
     simulation_time = wtime() - simulation_time;
     printf("Simulation took %lfs\n", simulation_time);
 
+    err = clEnqueueReadBuffer(context.queue, buffers.angular_flux_out[0], CL_TRUE, 0, sizeof(double)*problem.nang*problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz, memory.angular_flux_out, 0, NULL, NULL);
+    err = clEnqueueReadBuffer(context.queue, buffers.angular_flux_out[1], CL_TRUE, 0, sizeof(double)*problem.nang*problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz, memory.angular_flux_out+problem.nang*problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz, 0, NULL, NULL);
+    err = clEnqueueReadBuffer(context.queue, buffers.angular_flux_out[2], CL_TRUE, 0, sizeof(double)*problem.nang*problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz, memory.angular_flux_out+(problem.nang*problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz)*2, 0, NULL, NULL);
+    err = clEnqueueReadBuffer(context.queue, buffers.angular_flux_out[3], CL_TRUE, 0, sizeof(double)*problem.nang*problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz, memory.angular_flux_out+(problem.nang*problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz)*3, 0, NULL, NULL);
+    err = clEnqueueReadBuffer(context.queue, buffers.angular_flux_out[4], CL_TRUE, 0, sizeof(double)*problem.nang*problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz, memory.angular_flux_out+(problem.nang*problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz)*4, 0, NULL, NULL);
+    err = clEnqueueReadBuffer(context.queue, buffers.angular_flux_out[5], CL_TRUE, 0, sizeof(double)*problem.nang*problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz, memory.angular_flux_out+(problem.nang*problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz)*5, 0, NULL, NULL);
+    err = clEnqueueReadBuffer(context.queue, buffers.angular_flux_out[6], CL_TRUE, 0, sizeof(double)*problem.nang*problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz, memory.angular_flux_out+(problem.nang*problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz)*6, 0, NULL, NULL);
+    err = clEnqueueReadBuffer(context.queue, buffers.angular_flux_out[7], CL_TRUE, 0, sizeof(double)*problem.nang*problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz, memory.angular_flux_out+(problem.nang*problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz)*7, 0, NULL, NULL);
+    check_ocl(err, "reading octant 0");
+    printf("%d: %E\n", rank, memory.angular_flux_out[0]);
+    printf("%d: %E\n", rank, memory.angular_flux_out[problem.nang*problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz]);
+    printf("%d: %E\n", rank, memory.angular_flux_out[2*problem.nang*problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz]);
+    printf("%d: %E\n", rank, memory.angular_flux_out[3*problem.nang*problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz]);
+    printf("%d: %E\n", rank, memory.angular_flux_out[4*problem.nang*problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz]);
+    printf("%d: %E\n", rank, memory.angular_flux_out[5*problem.nang*problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz]);
+    printf("%d: %E\n", rank, memory.angular_flux_out[6*problem.nang*problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz]);
+    printf("%d: %E\n", rank, memory.angular_flux_out[7*problem.nang*problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz]);
+
     // Halo exchange routines
 
     // Loop over octants
