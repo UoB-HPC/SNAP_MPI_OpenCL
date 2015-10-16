@@ -153,15 +153,62 @@ int main(int argc, char **argv)
             {
                 compute_inner_source(&problem, &rankinfo, &context, &buffers);
 
-                // Zero out the incoming boundary fluxes
-                zero_buffer(&context, buffers.flux_i, problem.nang*problem.ng*rankinfo.ny*rankinfo.nz);
-                zero_buffer(&context, buffers.flux_j, problem.nang*problem.ng*rankinfo.nx*rankinfo.nz);
-                zero_buffer(&context, buffers.flux_k, problem.nang*problem.ng*rankinfo.nx*rankinfo.ny);
+                // Sweep each octant in turn
+                int octant, istep, jstep, kstep;
 
-                // Sweep each octant
+                // Octant 1
+                octant = 3;
+                istep = -1;
+                jstep = +1;
+                kstep = -1;
+
+                // Check if pencil has an external boundary for this sweep direction
+                // If so, set as vacuum
+                if ( (istep == -1 && rankinfo.iub == problem.nx)
+                    || (istep == 1 && rankinfo.ilb == 0))
+                {
+                    zero_buffer(&context, buffers.flux_i, problem.nang*problem.ng*rankinfo.ny*rankinfo.nz);
+                    printf("hi I'm %d\n", rank);
+                }
+                // Otherwise, internal boundary - get data from MPI receives
+                else
+                {
+                    // TODO
+                    // MPI_Recv
+                    // Copy to device
+                    continue;
+
+                }
+
+                if ( (jstep == -1 && rankinfo.jub == problem.ny)
+                    || (jstep == 1 && rankinfo.jlb == 0))
+                {
+                    zero_buffer(&context, buffers.flux_j, problem.nang*problem.ng*rankinfo.nx*rankinfo.nz);
+                }
+                else
+                {
+continue;
+                }
+
+                if ( (kstep == -1 && rankinfo.kub == problem.nz)
+                    || (kstep == 1 && rankinfo.klb == 0))
+                {
+                    zero_buffer(&context, buffers.flux_k, problem.nang*problem.ng*rankinfo.nx*rankinfo.ny);
+                }
+                else
+                {
+continue;
+                }
+
                 // Octant 1
                 for (unsigned int p = 0; p < num_planes; p++)
                     sweep_plane(0, -1, -1, -1, p, planes, &problem, &rankinfo, &context, &buffers);
+
+                // TODO
+                // Get the edges off the device
+                // Send to neighbour with MPI_Send
+
+
                 // Octant 2
                 for (unsigned int p = 0; p < num_planes; p++)
                     sweep_plane(1, +1, -1, -1, p, planes, &problem, &rankinfo, &context, &buffers);
