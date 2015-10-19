@@ -200,7 +200,24 @@ int main(int argc, char **argv)
                 }
                 else
                 {
-continue;
+                    if (jstep == -1)
+                    {
+                        mpi_err = MPI_Recv(memory.flux_j, problem.nang*problem.ng*rankinfo.nx*rankinfo.nz, MPI_DOUBLE,
+                            rankinfo.yup, MPI_ANY_TAG, snap_comms, NULL);
+                        check_mpi(mpi_err, "Receiving from upward y neighbour");
+                    }
+                    else
+                    {
+                        mpi_err = MPI_Recv(memory.flux_j, problem.nang*problem.ng*rankinfo.nx*rankinfo.nz, MPI_DOUBLE,
+                            rankinfo.ydown, MPI_ANY_TAG, snap_comms, NULL);
+                        check_mpi(mpi_err, "Receiving from downward y neighbour");
+                    }
+                    // Copy flux_i to the device
+                    cl_int cl_err;
+                    cl_err = clEnqueueWriteBuffer(context.queue, buffers.flux_j, CL_TRUE, 0,
+                        sizeof(double)*problem.nang*problem.ng*rankinfo.nx*rankinfo.nz, memory.flux_j,
+                        0, NULL, NULL);
+                    check_ocl(cl_err, "Copying flux j buffer to device");
                 }
 
                 if ( (kstep == -1 && rankinfo.kub == problem.nz)
@@ -210,7 +227,24 @@ continue;
                 }
                 else
                 {
-continue;
+                    if (kstep == -1)
+                    {
+                        mpi_err = MPI_Recv(memory.flux_k, problem.nang*problem.ng*rankinfo.nx*rankinfo.ny, MPI_DOUBLE,
+                            rankinfo.zup, MPI_ANY_TAG, snap_comms, NULL);
+                        check_mpi(mpi_err, "Receiving from upward z neighbour");
+                    }
+                    else
+                    {
+                        mpi_err = MPI_Recv(memory.flux_k, problem.nang*problem.ng*rankinfo.nx*rankinfo.ny, MPI_DOUBLE,
+                            rankinfo.zdown, MPI_ANY_TAG, snap_comms, NULL);
+                        check_mpi(mpi_err, "Receiving from downward z neighbour");
+                    }
+                    // Copy flux_i to the device
+                    cl_int cl_err;
+                    cl_err = clEnqueueWriteBuffer(context.queue, buffers.flux_k, CL_TRUE, 0,
+                        sizeof(double)*problem.nang*problem.ng*rankinfo.nx*rankinfo.ny, memory.flux_k,
+                        0, NULL, NULL);
+                    check_ocl(cl_err, "Copying flux k buffer to device");
                 }
 
                 // Octant 1
