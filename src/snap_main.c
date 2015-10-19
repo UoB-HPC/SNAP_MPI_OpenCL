@@ -251,9 +251,59 @@ int main(int argc, char **argv)
                 for (unsigned int p = 0; p < num_planes; p++)
                     sweep_plane(0, -1, -1, -1, p, planes, &problem, &rankinfo, &context, &buffers);
 
-                // TODO
+
                 // Get the edges off the device
+                cl_int cl_err;
+                cl_err = clEnqueueReadBuffer(context.queue, buffers.flux_i, CL_FALSE,
+                    0, sizeof(double)*problem.nang*problem.ng*rankinfo.ny*rankinfo.nz, memory.flux_i, 0, NULL, NULL);
+                check_ocl(cl_err, "Copying flux i buffer back to host");
+                cl_err = clEnqueueReadBuffer(context.queue, buffers.flux_j, CL_FALSE,
+                    0, sizeof(double)*problem.nang*problem.ng*rankinfo.nx*rankinfo.nz, memory.flux_j, 0, NULL, NULL);
+                check_ocl(cl_err, "Copying flux j buffer back to host");
+                cl_err = clEnqueueReadBuffer(context.queue, buffers.flux_k, CL_TRUE,
+                    0, sizeof(double)*problem.nang*problem.ng*rankinfo.nx*rankinfo.ny, memory.flux_k, 0, NULL, NULL);
+                check_ocl(cl_err, "Copying flux k buffer back to host");
+
                 // Send to neighbour with MPI_Send
+                // X
+                if (istep == -1 && rankinfo.xdown != rankinfo.rank)
+                {
+                    mpi_err = MPI_Send(memory.flux_i, problem.nang*problem.ng*rankinfo.ny*rankinfo.nz, MPI_DOUBLE,
+                            rankinfo.xdown, 0, snap_comms);
+                    check_mpi(mpi_err, "Sending to downward x neighbour");
+                }
+                else if (istep == 1 && rankinfo.xup != rankinfo.rank)
+                {
+                    mpi_err = MPI_Send(memory.flux_i, problem.nang*problem.ng*rankinfo.ny*rankinfo.nz, MPI_DOUBLE,
+                            rankinfo.xup, 0, snap_comms);
+                    check_mpi(mpi_err, "Sending to upward x neighbour");
+                }
+                // Y
+                if (jstep == -1 && rankinfo.ydown != rankinfo.rank)
+                {
+                    mpi_err = MPI_Send(memory.flux_j, problem.nang*problem.ng*rankinfo.nx*rankinfo.nz, MPI_DOUBLE,
+                            rankinfo.ydown, 0, snap_comms);
+                    check_mpi(mpi_err, "Sending to downward y neighbour");
+                }
+                else if (jstep == 1 && rankinfo.yup != rankinfo.rank)
+                {
+                    mpi_err = MPI_Send(memory.flux_j, problem.nang*problem.ng*rankinfo.nx*rankinfo.nz, MPI_DOUBLE,
+                            rankinfo.yup, 0, snap_comms);
+                    check_mpi(mpi_err, "Sending to upward y neighbour");
+                }
+                // Z
+                if (kstep == -1 && rankinfo.zdown != rankinfo.rank)
+                {
+                    mpi_err = MPI_Send(memory.flux_k, problem.nang*problem.ng*rankinfo.nx*rankinfo.ny, MPI_DOUBLE,
+                            rankinfo.zdown, 0, snap_comms);
+                    check_mpi(mpi_err, "Sending to downward z neighbour");
+                }
+                else if (kstep == 1 && rankinfo.zup != rankinfo.rank)
+                {
+                    mpi_err = MPI_Send(memory.flux_k, problem.nang*problem.ng*rankinfo.nx*rankinfo.ny, MPI_DOUBLE,
+                            rankinfo.zup, 0, snap_comms);
+                    check_mpi(mpi_err, "Sending to upward z neighbour");
+                }
 
 
                 // Octant 2
