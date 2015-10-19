@@ -157,176 +157,102 @@ int main(int argc, char **argv)
                 int octant, istep, jstep, kstep;
 
                 // Octant 1
-                octant = 3;
+                octant = 0;
+                istep = -1;
+                jstep = -1;
+                kstep = -1;
+                recv_boundaries(octant, istep, jstep, kstep, &problem, &rankinfo, &memory, &context, &buffers);
+                for (unsigned int p = 0; p < num_planes; p++)
+                {
+                    sweep_plane(octant, istep, jstep, kstep, p, planes, &problem, &rankinfo, &context, &buffers);
+                }
+                send_boundaries(octant, istep, jstep, kstep, &problem, &rankinfo, &memory, &context, &buffers);
+
+                // Octant 2
+                octant = 1;
+                istep = +1;
+                jstep = -1;
+                kstep = -1;
+                recv_boundaries(octant, istep, jstep, kstep, &problem, &rankinfo, &memory, &context, &buffers);
+                for (unsigned int p = 0; p < num_planes; p++)
+                {
+                    sweep_plane(octant, istep, jstep, kstep, p, planes, &problem, &rankinfo, &context, &buffers);
+                }
+                send_boundaries(octant, istep, jstep, kstep, &problem, &rankinfo, &memory, &context, &buffers);
+
+                // Octant 3
+                octant = 2;
                 istep = -1;
                 jstep = +1;
                 kstep = -1;
-
-                // Check if pencil has an external boundary for this sweep direction
-                // If so, set as vacuum
-                if ( (istep == -1 && rankinfo.iub == problem.nx)
-                    || (istep == 1 && rankinfo.ilb == 0))
-                {
-                    zero_buffer(&context, buffers.flux_i, problem.nang*problem.ng*rankinfo.ny*rankinfo.nz);
-                    printf("hi I'm %d\n", rank);
-                }
-                // Otherwise, internal boundary - get data from MPI receives
-                else
-                {
-                    if (istep == -1)
-                    {
-                        mpi_err = MPI_Recv(memory.flux_i, problem.nang*problem.ng*rankinfo.ny*rankinfo.nz, MPI_DOUBLE,
-                            rankinfo.xup, MPI_ANY_TAG, snap_comms, NULL);
-                        check_mpi(mpi_err, "Receiving from upward x neighbour");
-                    }
-                    else
-                    {
-                        mpi_err = MPI_Recv(memory.flux_i, problem.nang*problem.ng*rankinfo.ny*rankinfo.nz, MPI_DOUBLE,
-                            rankinfo.xdown, MPI_ANY_TAG, snap_comms, NULL);
-                        check_mpi(mpi_err, "Receiving from downward x neighbour");
-                    }
-                    // Copy flux_i to the device
-                    cl_int cl_err;
-                    cl_err = clEnqueueWriteBuffer(context.queue, buffers.flux_i, CL_TRUE, 0,
-                        sizeof(double)*problem.nang*problem.ng*rankinfo.ny*rankinfo.nz, memory.flux_i,
-                        0, NULL, NULL);
-                    check_ocl(cl_err, "Copying flux i buffer to device");
-                }
-
-                if ( (jstep == -1 && rankinfo.jub == problem.ny)
-                    || (jstep == 1 && rankinfo.jlb == 0))
-                {
-                    zero_buffer(&context, buffers.flux_j, problem.nang*problem.ng*rankinfo.nx*rankinfo.nz);
-                }
-                else
-                {
-                    if (jstep == -1)
-                    {
-                        mpi_err = MPI_Recv(memory.flux_j, problem.nang*problem.ng*rankinfo.nx*rankinfo.nz, MPI_DOUBLE,
-                            rankinfo.yup, MPI_ANY_TAG, snap_comms, NULL);
-                        check_mpi(mpi_err, "Receiving from upward y neighbour");
-                    }
-                    else
-                    {
-                        mpi_err = MPI_Recv(memory.flux_j, problem.nang*problem.ng*rankinfo.nx*rankinfo.nz, MPI_DOUBLE,
-                            rankinfo.ydown, MPI_ANY_TAG, snap_comms, NULL);
-                        check_mpi(mpi_err, "Receiving from downward y neighbour");
-                    }
-                    // Copy flux_i to the device
-                    cl_int cl_err;
-                    cl_err = clEnqueueWriteBuffer(context.queue, buffers.flux_j, CL_TRUE, 0,
-                        sizeof(double)*problem.nang*problem.ng*rankinfo.nx*rankinfo.nz, memory.flux_j,
-                        0, NULL, NULL);
-                    check_ocl(cl_err, "Copying flux j buffer to device");
-                }
-
-                if ( (kstep == -1 && rankinfo.kub == problem.nz)
-                    || (kstep == 1 && rankinfo.klb == 0))
-                {
-                    zero_buffer(&context, buffers.flux_k, problem.nang*problem.ng*rankinfo.nx*rankinfo.ny);
-                }
-                else
-                {
-                    if (kstep == -1)
-                    {
-                        mpi_err = MPI_Recv(memory.flux_k, problem.nang*problem.ng*rankinfo.nx*rankinfo.ny, MPI_DOUBLE,
-                            rankinfo.zup, MPI_ANY_TAG, snap_comms, NULL);
-                        check_mpi(mpi_err, "Receiving from upward z neighbour");
-                    }
-                    else
-                    {
-                        mpi_err = MPI_Recv(memory.flux_k, problem.nang*problem.ng*rankinfo.nx*rankinfo.ny, MPI_DOUBLE,
-                            rankinfo.zdown, MPI_ANY_TAG, snap_comms, NULL);
-                        check_mpi(mpi_err, "Receiving from downward z neighbour");
-                    }
-                    // Copy flux_i to the device
-                    cl_int cl_err;
-                    cl_err = clEnqueueWriteBuffer(context.queue, buffers.flux_k, CL_TRUE, 0,
-                        sizeof(double)*problem.nang*problem.ng*rankinfo.nx*rankinfo.ny, memory.flux_k,
-                        0, NULL, NULL);
-                    check_ocl(cl_err, "Copying flux k buffer to device");
-                }
-
-                // Octant 1
+                recv_boundaries(octant, istep, jstep, kstep, &problem, &rankinfo, &memory, &context, &buffers);
                 for (unsigned int p = 0; p < num_planes; p++)
-                    sweep_plane(0, -1, -1, -1, p, planes, &problem, &rankinfo, &context, &buffers);
+                {
+                    sweep_plane(octant, istep, jstep, kstep, p, planes, &problem, &rankinfo, &context, &buffers);
+                }
+                send_boundaries(octant, istep, jstep, kstep, &problem, &rankinfo, &memory, &context, &buffers);
 
-
-                // Get the edges off the device
-                cl_int cl_err;
-                cl_err = clEnqueueReadBuffer(context.queue, buffers.flux_i, CL_FALSE,
-                    0, sizeof(double)*problem.nang*problem.ng*rankinfo.ny*rankinfo.nz, memory.flux_i, 0, NULL, NULL);
-                check_ocl(cl_err, "Copying flux i buffer back to host");
-                cl_err = clEnqueueReadBuffer(context.queue, buffers.flux_j, CL_FALSE,
-                    0, sizeof(double)*problem.nang*problem.ng*rankinfo.nx*rankinfo.nz, memory.flux_j, 0, NULL, NULL);
-                check_ocl(cl_err, "Copying flux j buffer back to host");
-                cl_err = clEnqueueReadBuffer(context.queue, buffers.flux_k, CL_TRUE,
-                    0, sizeof(double)*problem.nang*problem.ng*rankinfo.nx*rankinfo.ny, memory.flux_k, 0, NULL, NULL);
-                check_ocl(cl_err, "Copying flux k buffer back to host");
-
-                // Send to neighbour with MPI_Send
-                // X
-                if (istep == -1 && rankinfo.xdown != rankinfo.rank)
-                {
-                    mpi_err = MPI_Send(memory.flux_i, problem.nang*problem.ng*rankinfo.ny*rankinfo.nz, MPI_DOUBLE,
-                            rankinfo.xdown, 0, snap_comms);
-                    check_mpi(mpi_err, "Sending to downward x neighbour");
-                }
-                else if (istep == 1 && rankinfo.xup != rankinfo.rank)
-                {
-                    mpi_err = MPI_Send(memory.flux_i, problem.nang*problem.ng*rankinfo.ny*rankinfo.nz, MPI_DOUBLE,
-                            rankinfo.xup, 0, snap_comms);
-                    check_mpi(mpi_err, "Sending to upward x neighbour");
-                }
-                // Y
-                if (jstep == -1 && rankinfo.ydown != rankinfo.rank)
-                {
-                    mpi_err = MPI_Send(memory.flux_j, problem.nang*problem.ng*rankinfo.nx*rankinfo.nz, MPI_DOUBLE,
-                            rankinfo.ydown, 0, snap_comms);
-                    check_mpi(mpi_err, "Sending to downward y neighbour");
-                }
-                else if (jstep == 1 && rankinfo.yup != rankinfo.rank)
-                {
-                    mpi_err = MPI_Send(memory.flux_j, problem.nang*problem.ng*rankinfo.nx*rankinfo.nz, MPI_DOUBLE,
-                            rankinfo.yup, 0, snap_comms);
-                    check_mpi(mpi_err, "Sending to upward y neighbour");
-                }
-                // Z
-                if (kstep == -1 && rankinfo.zdown != rankinfo.rank)
-                {
-                    mpi_err = MPI_Send(memory.flux_k, problem.nang*problem.ng*rankinfo.nx*rankinfo.ny, MPI_DOUBLE,
-                            rankinfo.zdown, 0, snap_comms);
-                    check_mpi(mpi_err, "Sending to downward z neighbour");
-                }
-                else if (kstep == 1 && rankinfo.zup != rankinfo.rank)
-                {
-                    mpi_err = MPI_Send(memory.flux_k, problem.nang*problem.ng*rankinfo.nx*rankinfo.ny, MPI_DOUBLE,
-                            rankinfo.zup, 0, snap_comms);
-                    check_mpi(mpi_err, "Sending to upward z neighbour");
-                }
-
-
-                // Octant 2
-                for (unsigned int p = 0; p < num_planes; p++)
-                    sweep_plane(1, +1, -1, -1, p, planes, &problem, &rankinfo, &context, &buffers);
-                // Octant 3
-                for (unsigned int p = 0; p < num_planes; p++)
-                    sweep_plane(2, -1, +1, -1, p, planes, &problem, &rankinfo, &context, &buffers);
                 // Octant 4
+                octant = 3;
+                istep = +1;
+                jstep = +1;
+                kstep = -1;
+                recv_boundaries(octant, istep, jstep, kstep, &problem, &rankinfo, &memory, &context, &buffers);
                 for (unsigned int p = 0; p < num_planes; p++)
-                    sweep_plane(3, +1, +1, -1, p, planes, &problem, &rankinfo, &context, &buffers);
+                {
+                    sweep_plane(octant, istep, jstep, kstep, p, planes, &problem, &rankinfo, &context, &buffers);
+                }
+                send_boundaries(octant, istep, jstep, kstep, &problem, &rankinfo, &memory, &context, &buffers);
+
                 // Octant 5
+                octant = 4;
+                istep = -1;
+                jstep = -1;
+                kstep = +1;
+                recv_boundaries(octant, istep, jstep, kstep, &problem, &rankinfo, &memory, &context, &buffers);
                 for (unsigned int p = 0; p < num_planes; p++)
-                    sweep_plane(4, -1, -1, +1, p, planes, &problem, &rankinfo, &context, &buffers);
+                {
+                    sweep_plane(octant, istep, jstep, kstep, p, planes, &problem, &rankinfo, &context, &buffers);
+                }
+                send_boundaries(octant, istep, jstep, kstep, &problem, &rankinfo, &memory, &context, &buffers);
+
                 // Octant 6
+                octant = 5;
+                istep = +1;
+                jstep = -1;
+                kstep = +1;
+                recv_boundaries(octant, istep, jstep, kstep, &problem, &rankinfo, &memory, &context, &buffers);
                 for (unsigned int p = 0; p < num_planes; p++)
-                    sweep_plane(5, +1, -1, +1, p, planes, &problem, &rankinfo, &context, &buffers);
+                {
+                    sweep_plane(octant, istep, jstep, kstep, p, planes, &problem, &rankinfo, &context, &buffers);
+                }
+                send_boundaries(octant, istep, jstep, kstep, &problem, &rankinfo, &memory, &context, &buffers);
+
                 // Octant 7
+                octant = 6;
+                istep = -1;
+                jstep = +1;
+                kstep = +1;
+                recv_boundaries(octant, istep, jstep, kstep, &problem, &rankinfo, &memory, &context, &buffers);
                 for (unsigned int p = 0; p < num_planes; p++)
-                    sweep_plane(6, -1, +1, +1, p, planes, &problem, &rankinfo, &context, &buffers);
+                {
+                    sweep_plane(octant, istep, jstep, kstep, p, planes, &problem, &rankinfo, &context, &buffers);
+                }
+                send_boundaries(octant, istep, jstep, kstep, &problem, &rankinfo, &memory, &context, &buffers);
+
                 // Octant 8
+                octant = 7;
+                istep = +1;
+                jstep = +1;
+                kstep = +1;
+                recv_boundaries(octant, istep, jstep, kstep, &problem, &rankinfo, &memory, &context, &buffers);
                 for (unsigned int p = 0; p < num_planes; p++)
-                    sweep_plane(7, +1, +1, +1, p, planes, &problem, &rankinfo, &context, &buffers);
+                {
+                    sweep_plane(octant, istep, jstep, kstep, p, planes, &problem, &rankinfo, &context, &buffers);
+                }
+                send_boundaries(octant, istep, jstep, kstep, &problem, &rankinfo, &memory, &context, &buffers);
+
+
             }
             //----------------------------------------------
             // End of Inners
@@ -349,44 +275,27 @@ int main(int argc, char **argv)
     printf("Simulation took %lfs\n", simulation_time);
 
     err = clEnqueueReadBuffer(context.queue, buffers.angular_flux_out[0], CL_TRUE, 0, sizeof(double)*problem.nang*problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz, memory.angular_flux_out, 0, NULL, NULL);
-    err = clEnqueueReadBuffer(context.queue, buffers.angular_flux_out[1], CL_TRUE, 0, sizeof(double)*problem.nang*problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz, memory.angular_flux_out+problem.nang*problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz, 0, NULL, NULL);
-    err = clEnqueueReadBuffer(context.queue, buffers.angular_flux_out[2], CL_TRUE, 0, sizeof(double)*problem.nang*problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz, memory.angular_flux_out+(problem.nang*problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz)*2, 0, NULL, NULL);
-    err = clEnqueueReadBuffer(context.queue, buffers.angular_flux_out[3], CL_TRUE, 0, sizeof(double)*problem.nang*problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz, memory.angular_flux_out+(problem.nang*problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz)*3, 0, NULL, NULL);
-    err = clEnqueueReadBuffer(context.queue, buffers.angular_flux_out[4], CL_TRUE, 0, sizeof(double)*problem.nang*problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz, memory.angular_flux_out+(problem.nang*problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz)*4, 0, NULL, NULL);
-    err = clEnqueueReadBuffer(context.queue, buffers.angular_flux_out[5], CL_TRUE, 0, sizeof(double)*problem.nang*problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz, memory.angular_flux_out+(problem.nang*problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz)*5, 0, NULL, NULL);
-    err = clEnqueueReadBuffer(context.queue, buffers.angular_flux_out[6], CL_TRUE, 0, sizeof(double)*problem.nang*problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz, memory.angular_flux_out+(problem.nang*problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz)*6, 0, NULL, NULL);
-    err = clEnqueueReadBuffer(context.queue, buffers.angular_flux_out[7], CL_TRUE, 0, sizeof(double)*problem.nang*problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz, memory.angular_flux_out+(problem.nang*problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz)*7, 0, NULL, NULL);
-    check_ocl(err, "reading octant 0");
-    printf("%d: %E\n", rank, memory.angular_flux_out[0]);
-    printf("%d: %E\n", rank, memory.angular_flux_out[problem.nang*problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz]);
-    printf("%d: %E\n", rank, memory.angular_flux_out[2*problem.nang*problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz]);
-    printf("%d: %E\n", rank, memory.angular_flux_out[3*problem.nang*problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz]);
-    printf("%d: %E\n", rank, memory.angular_flux_out[4*problem.nang*problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz]);
-    printf("%d: %E\n", rank, memory.angular_flux_out[5*problem.nang*problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz]);
-    printf("%d: %E\n", rank, memory.angular_flux_out[6*problem.nang*problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz]);
-    printf("%d: %E\n", rank, memory.angular_flux_out[7*problem.nang*problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz]);
+    err |= clEnqueueReadBuffer(context.queue, buffers.angular_flux_out[1], CL_TRUE, 0, sizeof(double)*problem.nang*problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz, memory.angular_flux_out+problem.nang*problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz, 0, NULL, NULL);
+    err |= clEnqueueReadBuffer(context.queue, buffers.angular_flux_out[2], CL_TRUE, 0, sizeof(double)*problem.nang*problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz, memory.angular_flux_out+(problem.nang*problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz)*2, 0, NULL, NULL);
+    err |= clEnqueueReadBuffer(context.queue, buffers.angular_flux_out[3], CL_TRUE, 0, sizeof(double)*problem.nang*problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz, memory.angular_flux_out+(problem.nang*problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz)*3, 0, NULL, NULL);
+    err |= clEnqueueReadBuffer(context.queue, buffers.angular_flux_out[4], CL_TRUE, 0, sizeof(double)*problem.nang*problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz, memory.angular_flux_out+(problem.nang*problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz)*4, 0, NULL, NULL);
+    err |= clEnqueueReadBuffer(context.queue, buffers.angular_flux_out[5], CL_TRUE, 0, sizeof(double)*problem.nang*problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz, memory.angular_flux_out+(problem.nang*problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz)*5, 0, NULL, NULL);
+    err |= clEnqueueReadBuffer(context.queue, buffers.angular_flux_out[6], CL_TRUE, 0, sizeof(double)*problem.nang*problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz, memory.angular_flux_out+(problem.nang*problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz)*6, 0, NULL, NULL);
+    err |= clEnqueueReadBuffer(context.queue, buffers.angular_flux_out[7], CL_TRUE, 0, sizeof(double)*problem.nang*problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz, memory.angular_flux_out+(problem.nang*problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz)*7, 0, NULL, NULL);
+    check_ocl(err, "reading octants");
 
-    // Halo exchange routines
-
-    // Loop over octants
-    int istep, jstep, kstep;
-    for (unsigned int OmZ = 0; OmZ < 2; OmZ++)
-        for (unsigned int OmY = 0; OmY < 2; OmY++)
-            for (unsigned int OmX = 0; OmX < 2; OmX++)
-            {
-                istep = (OmX == 0)? -1 : 1;
-                jstep = (OmY == 0)? -1 : 1;
-                kstep = (OmZ == 0)? -1 : 1;
+#define ANGULAR_FLUX_INDEX(a,g,i,j,k,o,nang,ng,nx,ny,nz) ((a)+((nang)*(g))+((nang)*(ng)*(i))+((nang)*(ng)*(nx)*(j))+((nang)*(ng)*(nx)*(ny)*(k))+((nang)*(ng)*(nx)*(ny)*(nz)*(o)))
+#define angular_flux_out(a,g,i,j,k,o) angular_flux_out[ANGULAR_FLUX_INDEX((a),(g),(i),(j),(k),(o),problem.nang,problem.ng,rankinfo.nx,rankinfo.ny,rankinfo.nz)]
 
 
-
-            }
-    // Receive data from neighbours
-
-    // Sweep chunk
-    // Send data to neighbours
-
-
+    printf("%d: oct: 1, first %E, last %E\n", rank, memory.angular_flux_out(0,0,rankinfo.nx-1,rankinfo.ny-1,rankinfo.nz-1,0), memory.angular_flux_out(0,0,0,0,0,0));
+    printf("%d: oct: 2, first %E, last %E\n", rank, memory.angular_flux_out(0,0,0,rankinfo.ny-1,rankinfo.nz-1,0), memory.angular_flux_out(0,0,rankinfo.nx-1,0,0,0));
+    printf("%d: oct: 3, first %E, last %E\n", rank, memory.angular_flux_out(0,0,rankinfo.nx-1,0,rankinfo.nz-1,0), memory.angular_flux_out(0,0,0,rankinfo.ny-1,0,0));
+    printf("%d: oct: 4, first %E, last %E\n", rank, memory.angular_flux_out(0,0,0,0,rankinfo.nz-1,0), memory.angular_flux_out(0,0,rankinfo.nx-1,rankinfo.ny-1,0,0));
+    printf("%d: oct: 5, first %E, last %E\n", rank, memory.angular_flux_out(0,0,rankinfo.nx-1,rankinfo.ny-1,0,0), memory.angular_flux_out(0,0,0,0,rankinfo.nz-1,0));
+    printf("%d: oct: 6, first %E, last %E\n", rank, memory.angular_flux_out(0,0,0,rankinfo.ny-1,0,0), memory.angular_flux_out(0,0,rankinfo.nx-1,0,rankinfo.nz-1,0));
+    printf("%d: oct: 7, first %E, last %E\n", rank, memory.angular_flux_out(0,0,rankinfo.nx-1,0,0,0), memory.angular_flux_out(0,0,0,rankinfo.ny-1,rankinfo.nz-1,0));
+    printf("%d: oct: 8, first %E, last %E\n", rank, memory.angular_flux_out(0,0,0,0,0,0), memory.angular_flux_out(0,0,rankinfo.nx-1,rankinfo.ny-1,rankinfo.nz-1,0));
 
     free_halos(&problem, &halos);
     free_memory(&memory);
