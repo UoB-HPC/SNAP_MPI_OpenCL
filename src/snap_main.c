@@ -173,11 +173,24 @@ int main(int argc, char **argv)
                 // Otherwise, internal boundary - get data from MPI receives
                 else
                 {
-                    // TODO
-                    // MPI_Recv
-                    // Copy to device
-                    continue;
-
+                    if (istep == -1)
+                    {
+                        mpi_err = MPI_Recv(memory.flux_i, problem.nang*problem.ng*rankinfo.ny*rankinfo.nz, MPI_DOUBLE,
+                            rankinfo.xup, MPI_ANY_TAG, snap_comms, NULL);
+                        check_mpi(mpi_err, "Receiving from upward x neighbour");
+                    }
+                    else
+                    {
+                        mpi_err = MPI_Recv(memory.flux_i, problem.nang*problem.ng*rankinfo.ny*rankinfo.nz, MPI_DOUBLE,
+                            rankinfo.xdown, MPI_ANY_TAG, snap_comms, NULL);
+                        check_mpi(mpi_err, "Receiving from downward x neighbour");
+                    }
+                    // Copy flux_i to the device
+                    cl_int cl_err;
+                    cl_err = clEnqueueWriteBuffer(context.queue, buffers.flux_i, CL_TRUE, 0,
+                        sizeof(double)*problem.nang*problem.ng*rankinfo.ny*rankinfo.nz, memory.flux_i,
+                        0, NULL, NULL);
+                    check_ocl(cl_err, "Copying flux i buffer to device");
                 }
 
                 if ( (jstep == -1 && rankinfo.jub == problem.ny)
