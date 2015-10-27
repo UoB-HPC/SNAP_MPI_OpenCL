@@ -50,3 +50,19 @@ void compute_scalar_flux(
     check_ocl(err, "Enqueueing scalar flux reduction kernel");
 
 }
+
+void copy_back_scalar_flux(
+    struct problem *problem,
+    struct rankinfo * rankinfo,
+    struct context * context,
+    struct buffers * buffers,
+    double * scalar_flux,
+    cl_bool blocking
+    )
+{
+    cl_int err;
+    err = clEnqueueReadBuffer(context->queue, buffers->scalar_flux, blocking,
+        0, sizeof(double)*problem->ng*rankinfo->nx*rankinfo->ny*rankinfo->nz, scalar_flux,
+        0, NULL, NULL);
+    check_ocl(err, "Copying back scalar flux");
+}
