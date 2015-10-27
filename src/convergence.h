@@ -11,4 +11,4 @@
 #include "allocate.h"
 
 /** \brief Check inner convergence - requires MPI_AllReduce*/
-bool inner_convergence(struct problem * problem, struct rankinfo * rankinfo, struct memory * memory);
+bool inner_convergence(const struct problem * problem, const struct rankinfo * rankinfo, const struct memory * memory);
