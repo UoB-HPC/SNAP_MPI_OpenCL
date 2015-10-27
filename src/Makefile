@@ -29,7 +29,6 @@ snap: \
 	sweep.c \
 	ocl_init.c \
 	ocl_buffers.c \
-	ocl_sweep.c \
 	scalar_flux.c
 	$(MPI_COMPILER) $^ $(CFLAGS_$(COMPILER)) $(OCL) $(OPTIONS) -o $@
 

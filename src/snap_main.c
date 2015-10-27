@@ -14,7 +14,6 @@
 
 #include "ocl_global.h"
 #include "ocl_buffers.h"
-#include "ocl_sweep.h"
 
 /** \mainpage
 * SNAP-MPI is a cut down version of the SNAP mini-app which allows us to
