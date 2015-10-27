@@ -280,16 +280,20 @@ int main(int argc, char **argv)
             // Check outer convergence
             // We don't need to copy back the new scalar flux again as it won't have changed from the last inner
             double max_outer_diff;
-            outerdone = outer_convergence(&problem, &rankinfo, &memory, &max_outer_diff);
+            outerdone = outer_convergence(&problem, &rankinfo, &memory, &max_outer_diff) && innerdone;
             if (rankinfo.rank == 0)
                 printf("Outer done? %d - diff %lf\n", outerdone, max_outer_diff);
-            if (outerdone && innerdone)
+            if (outerdone)
                 break;
 
         }
         //----------------------------------------------
         // End of Outers
         //----------------------------------------------
+
+        // Exit the time loop early if outer not converged
+        if (!outerdone)
+            break;
 
     }
     //----------------------------------------------
