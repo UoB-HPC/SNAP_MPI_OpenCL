@@ -10,6 +10,7 @@
 #include "halos.h"
 #include "source.h"
 #include "sweep.h"
+#include "scalar_flux.h"
 
 #include "ocl_global.h"
 #include "ocl_buffers.h"
@@ -252,6 +253,8 @@ int main(int argc, char **argv)
                 }
                 send_boundaries(octant, istep, jstep, kstep, &problem, &rankinfo, &memory, &context, &buffers);
 
+                // Compute the Scalar Flux
+                compute_scalar_flux(&problem, &rankinfo, &context, &buffers);
 
             }
             //----------------------------------------------
@@ -296,6 +299,14 @@ int main(int argc, char **argv)
     printf("%d: oct: 6, first %E, last %E\n", rank, memory.angular_flux_out(0,0,0,rankinfo.ny-1,0,0), memory.angular_flux_out(0,0,rankinfo.nx-1,0,rankinfo.nz-1,0));
     printf("%d: oct: 7, first %E, last %E\n", rank, memory.angular_flux_out(0,0,rankinfo.nx-1,0,0,0), memory.angular_flux_out(0,0,0,rankinfo.ny-1,rankinfo.nz-1,0));
     printf("%d: oct: 8, first %E, last %E\n", rank, memory.angular_flux_out(0,0,0,0,0,0), memory.angular_flux_out(0,0,rankinfo.nx-1,rankinfo.ny-1,rankinfo.nz-1,0));
+
+#define SCALAR_FLUX_INDEX(g,i,j,k,ng,nx,ny) ((g)+((ng)*(i))+((ng)*(nx)*(j))+((ng)*(nx)*(ny)*(k)))
+#define scalar_flux_in(g,i,j,k) scalar_flux_in[SCALAR_FLUX_INDEX((g),(i),(j),(k),problem.ng,rankinfo.nx,rankinfo.ny)]
+
+
+    err = clEnqueueReadBuffer(context.queue, buffers.scalar_flux, CL_TRUE, 0, sizeof(double)*problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz, memory.scalar_flux_in, 0, NULL, NULL);
+    check_ocl(err, "reading scalar flux");
+    printf("%d: scalar flux %E\n", rank, memory.scalar_flux_in(0,0,0,0));
 
     free_halos(&problem, &halos);
     free_memory(&memory);
