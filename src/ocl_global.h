@@ -28,6 +28,7 @@ struct kernels
     cl_kernel inner_source;
     cl_kernel sweep_plane;
     cl_kernel reduce_flux;
+    cl_kernel reduce_flux_moments;
 };
 struct context
 {

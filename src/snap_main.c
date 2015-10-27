@@ -265,6 +265,7 @@ int main(int argc, char **argv)
 
                 // Compute the Scalar Flux
                 compute_scalar_flux(&problem, &rankinfo, &context, &buffers);
+                compute_scalar_flux_moments(&problem, &rankinfo, &context, &buffers);
 
                 // Get the new scalar flux back and check inner convergence
                 copy_back_scalar_flux(&problem, &rankinfo, &context, &buffers, memory.scalar_flux, CL_FALSE);

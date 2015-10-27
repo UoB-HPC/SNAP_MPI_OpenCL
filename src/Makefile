@@ -44,7 +44,8 @@ KERNEL_HEADER_FILES=\
 	kernels/outer_source.h \
 	kernels/inner_source.h \
 	kernels/sweep_plane.h \
-	kernels/reduce_flux.h
+	kernels/reduce_flux.h \
+	kernels/reduce_flux_moments.h
 
 ocl_init.c:	$(KERNEL_HEADER_FILES)
 	@touch ocl_init.c
