@@ -42,6 +42,7 @@ kernel void sweep_plane(
     global const double * restrict dd_k,
     global const double * restrict mu,
     global const double * restrict velocity_delta,
+    global const double * restrict mat_cross_section,
     global const double * restrict denominator,
     global const double * restrict angular_flux_in,
     global double * restrict flux_i,
@@ -98,11 +99,63 @@ kernel void sweep_plane(
         psi = 2.0 * psi - angular_flux_in(a,g,i,j,k);
     }
 
-    // TODO - Fixup
+    // Fixup
+    double zeros[4];
+    int num_ok = 4;
+    for (int fix = 0; fix < 4; fix++)
+    {
+        zeros[0] = (tmp_flux_i < 0.0) ? 0.0 : 1.0;
+        zeros[1] = (tmp_flux_j < 0.0) ? 0.0 : 1.0;
+        zeros[2] = (tmp_flux_k < 0.0) ? 0.0 : 1.0;
+        zeros[3] = (psi < 0.0)        ? 0.0 : 1.0;
+
+        if (num_ok == zeros[0] + zeros[1] + zeros[2] + zeros[3])
+            continue;
+
+        num_ok = zeros[0] + zeros[1] + zeros[2] + zeros[3];
+
+        // Recalculate psi
+        psi =
+            flux_i(a,g,j,k)*mu[a]*dd_i[0]*(1.0 + zeros[0]) +
+            flux_j(a,g,i,k)*dd_j[a]*(1.0 + zeros[1]) +
+            flux_k(a,g,i,j)*dd_k[a]*(1.0 + zeros[2]);
+
+        if (velocity_delta[g] != 0.0)
+        {
+            psi += velocity_delta[g] * angular_flux_in(a,g,i,j,k) * (1.0 + zeros[3]);
+        }
+
+        psi = 0.5 * psi + source_term;
+
+        double new_denominator =
+            mat_cross_section[g] +
+            mu[a] * dd_i[0] * zeros[0] +
+            dd_j[a] * zeros[1] +
+            dd_k[a] * zeros[2] +
+            velocity_delta[g] * zeros[3];
+        if (new_denominator > 1.0E-12)
+        {
+            psi /= new_denominator;
+        }
+        else
+        {
+            psi = 0.0;
+        }
+
+        tmp_flux_i = 2.0 * psi - flux_i(a,g,j,k);
+        tmp_flux_j = 2.0 * psi - flux_j(a,g,i,k);
+        tmp_flux_k = 2.0 * psi - flux_k(a,g,i,j);
+
+        if (velocity_delta[g] != 0.0)
+        {
+            psi = 2.0 * psi - angular_flux_in(a,g,i,j,k);
+        }
+
+    }
 
     // Write values to global memory
-    flux_i(a,g,j,k) = tmp_flux_i;
-    flux_j(a,g,i,k) = tmp_flux_j;
-    flux_k(a,g,i,j) = tmp_flux_k;
-    angular_flux_out(a,g,i,j,k) = psi;
+    flux_i(a,g,j,k) = tmp_flux_i * zeros[0];
+    flux_j(a,g,i,k) = tmp_flux_j * zeros[1];
+    flux_k(a,g,i,j) = tmp_flux_k * zeros[2];
+    angular_flux_out(a,g,i,j,k) = psi * zeros[3];
 }
