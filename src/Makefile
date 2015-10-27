@@ -49,3 +49,7 @@ KERNEL_HEADER_FILES=\
 ocl_init.c:	$(KERNEL_HEADER_FILES)
 	@touch ocl_init.c
 
+.PHONY: clean
+
+clean:
+	rm -f snap kernels/*.h
