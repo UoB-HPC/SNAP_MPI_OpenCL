@@ -11,6 +11,8 @@
 #include "source.h"
 #include "sweep.h"
 #include "scalar_flux.h"
+#include "convergence.h"
+
 
 #include "ocl_global.h"
 #include "ocl_buffers.h"
@@ -263,8 +265,9 @@ int main(int argc, char **argv)
                     compute_scalar_flux_moments(&problem, &rankinfo, &context, &buffers);
 
                 // Get the new scalar flux back and check inner convergence
-                copy_back_scalar_flux(&problem, &rankinfo, &context, &buffers, memory.scalar_flux, CL_FALSE);
-                // TODO - check convergence
+                copy_back_scalar_flux(&problem, &rankinfo, &context, &buffers, memory.scalar_flux, CL_TRUE);
+                bool innerdone = inner_convergence(&problem, &rankinfo, &memory);
+                printf("inner done: %d\n", innerdone);
 
             }
             //----------------------------------------------
