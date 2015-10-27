@@ -4,14 +4,14 @@
 #define SOURCE_INDEX(m,g,i,j,k,cmom,ng,nx,ny) ((m)+((cmom)*(g))+((cmom)*(ng)*(i))+((cmom)*(ng)*(nx)*(j))+((cmom)*(ng)*(nx)*(ny)*(k)))
 #define SCATTERING_MATRIX_INDEX(m,g1,g2,nmom,ng) ((m)+((nmom)*(g1))+((nmom)*(ng)*(g2)))
 #define SCALAR_FLUX_INDEX(g,i,j,k,ng,nx,ny) ((g)+((ng)*(i))+((ng)*(nx)*(j))+((ng)*(nx)*(ny)*(k)))
-#define SCALAR_FLUX_MOMENTS_INDEX(m,g,i,j,k,cmom_len,ng,nx,ny) ((m)+((cmom_len)*(g))+((cmom_len)*(ng)*(i))+((cmom_len)*(ng)*(nx)*(j))+((cmom_len)*(ng)*(nx)*(ny)*(k)))
+#define SCALAR_FLUX_MOMENTS_INDEX(m,g,i,j,k,cmom,ng,nx,ny) ((m)+((cmom-1)*(g))+((cmom-1)*(ng)*(i))+((cmom-1)*(ng)*(nx)*(j))+((cmom-1)*(ng)*(nx)*(ny)*(k)))
 
 
 #define outer_source(m,g,i,j,k) outer_source[SOURCE_INDEX((m),(g),(i),(j),(k),cmom,ng,nx,ny)]
 #define inner_source(m,g,i,j,k) inner_source[SOURCE_INDEX((m),(g),(i),(j),(k),cmom,ng,nx,ny)]
 #define scattering_matrix(m,g1,g2) scattering_matrix[SCATTERING_MATRIX_INDEX((m),(g1),(g2),nmom,ng)]
 #define scalar_flux(g,i,j,k) scalar_flux[SCALAR_FLUX_INDEX((g),(i),(j),(k),ng,nx,ny)]
-#define scalar_flux_moments(m,g,i,j,k) scalar_flux_moments[SCALAR_FLUX_MOMENTS_INDEX((m),(g),(i),(j),(k),cmom_len,ng,nx,ny)]
+#define scalar_flux_moments(m,g,i,j,k) scalar_flux_moments[SCALAR_FLUX_MOMENTS_INDEX((m),(g),(i),(j),(k),cmom,ng,nx,ny)]
 
 
 // 3D kernel, in local nx,ny,nz dimensions
@@ -30,9 +30,6 @@ kernel void calc_inner_source(
     global double * restrict inner_source
     )
 {
-    // Make sure cmom_len is cmom-1, but such that we index the scalar flux moments array properly
-    const unsigned int cmom_len = (cmom-1 == 0) ? 1 : cmom-1;
-
     const size_t i = get_global_id(0);
     const size_t j = get_global_id(1);
     const size_t k = get_global_id(2);

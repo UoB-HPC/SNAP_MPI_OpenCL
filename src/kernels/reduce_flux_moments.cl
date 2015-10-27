@@ -3,7 +3,7 @@
 
 
 #define ANGULAR_FLUX_INDEX(a,g,i,j,k,nang,ng,nx,ny) ((a)+((nang)*(g))+((nang)*(ng)*(i))+((nang)*(ng)*(nx)*(j))+((nang)*(ng)*(nx)*(ny)*(k)))
-#define SCALAR_FLUX_MOMENTS_INDEX(m,g,i,j,k,cmom_len,ng,nx,ny) ((m)+((cmom_len)*(g))+((cmom_len)*(ng)*(i))+((cmom_len)*(ng)*(nx)*(j))+((cmom_len)*(ng)*(nx)*(ny)*(k)))
+#define SCALAR_FLUX_MOMENTS_INDEX(m,g,i,j,k,cmom,ng,nx,ny) ((m)+((cmom-1)*(g))+((cmom-1)*(ng)*(i))+((cmom-1)*(ng)*(nx)*(j))+((cmom-1)*(ng)*(nx)*(ny)*(k)))
 #define SCAT_COEFF_INDEX(a,l,o,nang,cmom) ((a)+((nang)*(l))+((nang)*(cmom)*o))
 
 #define angular_flux_in_0(a,g,i,j,k) angular_flux_in_0[ANGULAR_FLUX_INDEX((a),(g),(i),(j),(k),nang,ng,nx,ny)]
@@ -23,7 +23,7 @@
 #define angular_flux_out_6(a,g,i,j,k) angular_flux_out_6[ANGULAR_FLUX_INDEX((a),(g),(i),(j),(k),nang,ng,nx,ny)]
 #define angular_flux_out_7(a,g,i,j,k) angular_flux_out_7[ANGULAR_FLUX_INDEX((a),(g),(i),(j),(k),nang,ng,nx,ny)]
 
-#define scalar_flux_moments(l,g,i,j,k) scalar_flux_moments[SCALAR_FLUX_MOMENTS_INDEX((l),(g),(i),(j),(k),cmom_len,ng,nx,ny)]
+#define scalar_flux_moments(l,g,i,j,k) scalar_flux_moments[SCALAR_FLUX_MOMENTS_INDEX((l),(g),(i),(j),(k),cmom,ng,nx,ny)]
 #define scat_coeff(a,l,o) scat_coeff[SCAT_COEFF_INDEX((a),(l),(o),nang,cmom)]
 
 
@@ -64,9 +64,6 @@ kernel void reduce_flux_moments(
     local double * restrict local_scalar
     )
 {
-    // Make sure cmom_len is cmom-1, but such that we index the scalar flux moments array properly
-    const unsigned int cmom_len = (cmom-1 == 0) ? 1 : cmom-1;
-
     const size_t a = get_local_id(0);
     const size_t g = get_group_id(0);
 

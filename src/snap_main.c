@@ -104,13 +104,6 @@ int main(int argc, char **argv)
     init_planes(&planes, &num_planes, &rankinfo);
     copy_planes(planes, num_planes, &context, &buffers);
 
-    // Save the scalar_flux_moments buffer size for repeated zero'ing every timestep
-    size_t scalar_moments_buffer_size;
-    if (problem.cmom-1 == 0)
-        scalar_moments_buffer_size = problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz;
-    else
-        scalar_moments_buffer_size = (problem.cmom-1)*problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz;
-
     // Zero out the angular flux buffers
     for (int oct = 0; oct < 8; oct++)
     {
@@ -133,7 +126,8 @@ int main(int argc, char **argv)
     {
         // Zero out the scalar flux and flux moments
         zero_buffer(&context, buffers.scalar_flux, problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz);
-        zero_buffer(&context, buffers.scalar_flux_moments, scalar_moments_buffer_size);
+        if (problem.cmom-1 > 0)
+            zero_buffer(&context, buffers.scalar_flux_moments, (problem.cmom-1)*problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz);
 
         // Swap angluar flux pointers (not for the first timestep)
         if (t > 0)
@@ -265,7 +259,8 @@ int main(int argc, char **argv)
 
                 // Compute the Scalar Flux
                 compute_scalar_flux(&problem, &rankinfo, &context, &buffers);
-                compute_scalar_flux_moments(&problem, &rankinfo, &context, &buffers);
+                if (problem.cmom-1 > 0)
+                    compute_scalar_flux_moments(&problem, &rankinfo, &context, &buffers);
 
                 // Get the new scalar flux back and check inner convergence
                 copy_back_scalar_flux(&problem, &rankinfo, &context, &buffers, memory.scalar_flux, CL_FALSE);
@@ -324,6 +319,13 @@ int main(int argc, char **argv)
 
     copy_back_scalar_flux(&problem, &rankinfo, &context, &buffers, memory.scalar_flux, CL_TRUE);
     printf("%d: scalar flux %E\n", rank, memory.scalar_flux(0,0,0,0));
+
+    if (problem.cmom-1 > 0)
+    {
+        err = clEnqueueReadBuffer(context.queue, buffers.scalar_flux_moments, CL_TRUE, 0, sizeof(double)*(problem.cmom-1)*problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz, memory.scalar_flux_moments, 0, NULL, NULL);
+        check_ocl(err, "Copying back flux moments");
+        printf("%d: scalar flux moments %E\n", rank, memory.scalar_flux_moments[0]);
+    }
 
     free_halos(&problem, &halos);
     free_memory(&memory);
