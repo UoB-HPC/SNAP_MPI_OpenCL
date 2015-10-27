@@ -119,6 +119,8 @@ int main(int argc, char **argv)
     setup_time = wtime() - setup_time;
     printf("Setup took %lfs\n", setup_time);
 
+    bool innerdone, outerdone;
+
     double simulation_time = wtime();
 
     //----------------------------------------------
@@ -266,8 +268,9 @@ int main(int argc, char **argv)
 
                 // Get the new scalar flux back and check inner convergence
                 copy_back_scalar_flux(&problem, &rankinfo, &context, &buffers, memory.scalar_flux, CL_TRUE);
-                bool innerdone = inner_convergence(&problem, &rankinfo, &memory);
-                printf("inner done: %d\n", innerdone);
+                innerdone = inner_convergence(&problem, &rankinfo, &memory);
+                if (innerdone)
+                    break;
 
             }
             //----------------------------------------------
@@ -276,7 +279,13 @@ int main(int argc, char **argv)
 
             // Check outer convergence
             // We don't need to copy back the new scalar flux again as it won't have changed from the last inner
-            // TODO - check convergence
+            double max_outer_diff;
+            outerdone = outer_convergence(&problem, &rankinfo, &memory, &max_outer_diff);
+            if (rankinfo.rank == 0)
+                printf("Outer done? %d - diff %lf\n", outerdone, max_outer_diff);
+            if (outerdone && innerdone)
+                break;
+
         }
         //----------------------------------------------
         // End of Outers
