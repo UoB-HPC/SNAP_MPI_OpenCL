@@ -28,7 +28,7 @@ bool inner_convergence(
                 }
 
     // Do an AllReduce for each group to work out global maximum difference
-    bool result = false;
+    bool result = true;
     for (unsigned int g = 0; g < problem->ng; g++)
     {
         double recv;
