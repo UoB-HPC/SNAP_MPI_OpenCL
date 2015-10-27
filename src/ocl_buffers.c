@@ -175,3 +175,14 @@ void zero_buffer(struct context * context, cl_mem buffer, size_t size)
         1, 0, &size, NULL, 0, NULL, NULL);
     check_ocl(err, "Enqueueing buffer zero kernel");
 }
+
+void swap_angular_flux_buffers(struct buffers * buffers)
+{
+    for (int i = 0; i < 8; i++)
+    {
+        cl_mem tmp;
+        tmp = buffers->angular_flux_in[i];
+        buffers->angular_flux_in[i] = buffers->angular_flux_out[i];
+        buffers->angular_flux_out[i] = tmp;
+    }
+}

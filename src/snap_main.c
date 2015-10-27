@@ -135,6 +135,10 @@ int main(int argc, char **argv)
         zero_buffer(&context, buffers.scalar_flux, problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz);
         zero_buffer(&context, buffers.scalar_flux_moments, scalar_moments_buffer_size);
 
+        // Swap angluar flux pointers (not for the first timestep)
+        if (t > 0)
+            swap_angular_flux_buffers(&buffers);
+
         //----------------------------------------------
         // Outers
         //----------------------------------------------
@@ -279,8 +283,6 @@ int main(int argc, char **argv)
         // End of Outers
         //----------------------------------------------
 
-        // Swap angluar flux pointers
-        
     }
     //----------------------------------------------
     // End of Timestep
