@@ -32,7 +32,7 @@ bool inner_convergence(
     for (unsigned int g = 0; g < problem->ng; g++)
     {
         double recv;
-        MPI_Allreduce(diffs+g, &recv, 1, MPI_DOUBLE, MPI_MAX, snap_comms);
+        MPI_Allreduce(diffs+g, &recv, 1, MPI_DOUBLE, MPI_MAX, MPI_COMM_WORLD);
         diffs[g] = recv;
         result &= diffs[g] <= problem->epsi;
     }
@@ -67,7 +67,7 @@ bool outer_convergence(
 
     // Do an AllReduce to work out global maximum difference
     double recv;
-    MPI_Allreduce(max_diff, &recv, 1, MPI_DOUBLE, MPI_MAX, snap_comms);
+    MPI_Allreduce(max_diff, &recv, 1, MPI_DOUBLE, MPI_MAX, MPI_COMM_WORLD);
     *max_diff = recv;
     return *max_diff <= 100.0 * problem->epsi;
 }
