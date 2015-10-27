@@ -8,6 +8,7 @@
 #include "kernels/outer_source.h"
 #include "kernels/inner_source.h"
 #include "kernels/sweep_plane.h"
+#include "kernels/reduce_flux.h"
 
 const char * ocl_kernels[] = {
     calc_velocity_delta_ocl,
@@ -16,5 +17,6 @@ const char * ocl_kernels[] = {
     zero_buffer_ocl,
     outer_source_ocl,
     inner_source_ocl,
-	sweep_plane_ocl
+    sweep_plane_ocl,
+    reduce_flux_ocl
 };

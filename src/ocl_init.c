@@ -78,6 +78,8 @@ void init_ocl(struct context * context)
     check_ocl(err, "Creating inner source kernel");
     context->kernels.sweep_plane = clCreateKernel(context->program, "sweep_plane", &err);
     check_ocl(err, "Creating sweep plane kernel");
+    context->kernels.reduce_flux = clCreateKernel(context->program, "reduce_flux", &err);
+    check_ocl(err, "Creating scalar flux reduction kernel");
 
 }
 
