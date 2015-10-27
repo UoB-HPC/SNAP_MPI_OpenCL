@@ -145,7 +145,9 @@ int main(int argc, char **argv)
             calculate_denominator(&problem, &rankinfo, &context, &buffers);
 
             compute_outer_source(&problem, &rankinfo, &context, &buffers);
-            copy_back_scalar_flux(&problem, &rankinfo, &context, &buffers, memory.scalar_flux, CL_TRUE);
+
+            // Get the scalar flux back
+            copy_back_scalar_flux(&problem, &rankinfo, &context, &buffers, memory.old_outer_scalar_flux, CL_FALSE);
 
             //----------------------------------------------
             // Inners
@@ -153,6 +155,10 @@ int main(int argc, char **argv)
             for (unsigned int i = 0; i < problem.iitm; i++)
             {
                 compute_inner_source(&problem, &rankinfo, &context, &buffers);
+
+                // Get the scalar flux back
+                copy_back_scalar_flux(&problem, &rankinfo, &context, &buffers, memory.old_inner_scalar_flux, CL_FALSE);
+
 
                 // Sweep each octant in turn
                 int octant, istep, jstep, kstep;
@@ -256,16 +262,25 @@ int main(int argc, char **argv)
                 // Compute the Scalar Flux
                 compute_scalar_flux(&problem, &rankinfo, &context, &buffers);
 
+                // Get the new scalar flux back and check inner convergence
+                copy_back_scalar_flux(&problem, &rankinfo, &context, &buffers, memory.scalar_flux, CL_FALSE);
+                // TODO - check convergence
+
             }
             //----------------------------------------------
             // End of Inners
             //----------------------------------------------
+
+            // Check outer convergence
+            // We don't need to copy back the new scalar flux again as it won't have changed from the last inner
+            // TODO - check convergence
         }
         //----------------------------------------------
         // End of Outers
         //----------------------------------------------
 
-        // swap angluar flux pointers
+        // Swap angluar flux pointers
+        
     }
     //----------------------------------------------
     // End of Timestep

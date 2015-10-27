@@ -19,6 +19,8 @@ void allocate_memory(struct problem * problem, struct rankinfo * rankinfo, struc
     // Scalar flux
     // grid * ng
     memory->scalar_flux = malloc(sizeof(double)*rankinfo->nx*rankinfo->ny*rankinfo->nz*problem->ng);
+    memory->old_inner_scalar_flux = malloc(sizeof(double)*rankinfo->nx*rankinfo->ny*rankinfo->nz*problem->ng);
+    memory->old_outer_scalar_flux = malloc(sizeof(double)*rankinfo->nx*rankinfo->ny*rankinfo->nz*problem->ng);
 
     //Scalar flux moments
     memory->scalar_flux_moments = malloc(sizeof(double)*(problem->cmom-1)*problem->ng*rankinfo->nx*rankinfo->ny*rankinfo->nz);
@@ -41,6 +43,8 @@ void free_memory(struct memory * memory)
     free(memory->flux_j);
     free(memory->flux_k);
     free(memory->scalar_flux);
+    free(memory->old_inner_scalar_flux);
+    free(memory->old_outer_scalar_flux);
     free(memory->scalar_flux_moments);
     free(memory->mu);
     free(memory->eta);

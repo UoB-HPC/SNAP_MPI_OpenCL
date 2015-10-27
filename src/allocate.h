@@ -53,6 +53,8 @@ struct memory
 	* Note, rankinfo spatial dimensions
 	*/
 	double *scalar_flux;
+	double *old_inner_scalar_flux;
+	double *old_outer_scalar_flux;
 	/**@}*/
 
 	/**@{*/
