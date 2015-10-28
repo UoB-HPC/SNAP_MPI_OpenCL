@@ -12,6 +12,7 @@
 #include "sweep.h"
 #include "scalar_flux.h"
 #include "convergence.h"
+#include "population.h"
 
 
 #include "ocl_global.h"
@@ -290,6 +291,13 @@ int main(int argc, char **argv)
         //----------------------------------------------
         // End of Outers
         //----------------------------------------------
+
+        // Calculate particle population and print out the value
+        double population;
+        calculate_population(&problem, &rankinfo, &memory, &population);
+        if (rankinfo.rank == 0)
+            printf("Time %d population: %E\n", t, population);
+
 
         // Exit the time loop early if outer not converged
         if (!outerdone)

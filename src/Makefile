@@ -30,7 +30,8 @@ snap: \
 	ocl_init.c \
 	ocl_buffers.c \
 	scalar_flux.c \
-	convergence.c
+	convergence.c \
+	population.c
 	$(MPI_COMPILER) $^ $(CFLAGS_$(COMPILER)) $(OCL) $(OPTIONS) -o $@
 
 kernels/%.h:	kernels/%.cl
