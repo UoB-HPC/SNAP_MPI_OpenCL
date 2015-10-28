@@ -116,13 +116,13 @@ void recv_boundaries(const int octant, const int istep, const int jstep, const i
         if (istep == -1)
         {
             mpi_err = MPI_Recv(memory->flux_i, problem->nang*problem->ng*rankinfo->ny*rankinfo->nz, MPI_DOUBLE,
-                rankinfo->xup, MPI_ANY_TAG, snap_comms, NULL);
+                rankinfo->xup, MPI_ANY_TAG, snap_comms, MPI_STATUS_IGNORE);
             check_mpi(mpi_err, "Receiving from upward x neighbour");
         }
         else
         {
             mpi_err = MPI_Recv(memory->flux_i, problem->nang*problem->ng*rankinfo->ny*rankinfo->nz, MPI_DOUBLE,
-                rankinfo->xdown, MPI_ANY_TAG, snap_comms, NULL);
+                rankinfo->xdown, MPI_ANY_TAG, snap_comms, MPI_STATUS_IGNORE);
             check_mpi(mpi_err, "Receiving from downward x neighbour");
         }
         // Copy flux_i to the device
@@ -142,13 +142,13 @@ void recv_boundaries(const int octant, const int istep, const int jstep, const i
         if (jstep == -1)
         {
             mpi_err = MPI_Recv(memory->flux_j, problem->nang*problem->ng*rankinfo->nx*rankinfo->nz, MPI_DOUBLE,
-                rankinfo->yup, MPI_ANY_TAG, snap_comms, NULL);
+                rankinfo->yup, MPI_ANY_TAG, snap_comms, MPI_STATUS_IGNORE);
             check_mpi(mpi_err, "Receiving from upward y neighbour");
         }
         else
         {
             mpi_err = MPI_Recv(memory->flux_j, problem->nang*problem->ng*rankinfo->nx*rankinfo->nz, MPI_DOUBLE,
-                rankinfo->ydown, MPI_ANY_TAG, snap_comms, NULL);
+                rankinfo->ydown, MPI_ANY_TAG, snap_comms, MPI_STATUS_IGNORE);
             check_mpi(mpi_err, "Receiving from downward y neighbour");
         }
         // Copy flux_i to the device
@@ -168,13 +168,13 @@ void recv_boundaries(const int octant, const int istep, const int jstep, const i
         if (kstep == -1)
         {
             mpi_err = MPI_Recv(memory->flux_k, problem->nang*problem->ng*rankinfo->nx*rankinfo->ny, MPI_DOUBLE,
-                rankinfo->zup, MPI_ANY_TAG, snap_comms, NULL);
+                rankinfo->zup, MPI_ANY_TAG, snap_comms, MPI_STATUS_IGNORE);
             check_mpi(mpi_err, "Receiving from upward z neighbour");
         }
         else
         {
             mpi_err = MPI_Recv(memory->flux_k, problem->nang*problem->ng*rankinfo->nx*rankinfo->ny, MPI_DOUBLE,
-                rankinfo->zdown, MPI_ANY_TAG, snap_comms, NULL);
+                rankinfo->zdown, MPI_ANY_TAG, snap_comms, MPI_STATUS_IGNORE);
             check_mpi(mpi_err, "Receiving from downward z neighbour");
         }
         // Copy flux_i to the device
