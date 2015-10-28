@@ -80,6 +80,8 @@ void init_ocl(struct context * context)
     check_ocl(err, "Creating sweep plane kernel");
     context->kernels.reduce_flux = clCreateKernel(context->program, "reduce_flux", &err);
     check_ocl(err, "Creating scalar flux reduction kernel");
+    context->kernels.reduce_flux_moments = clCreateKernel(context->program, "reduce_flux_moments", &err);
+    check_ocl(err, "Creating scalar flux moments reduction kernel");
 
 }
 
