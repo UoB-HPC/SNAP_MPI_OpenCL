@@ -50,9 +50,9 @@ int main(int argc, char **argv)
     if (rank == 0)
     {
         // Check for two files on CLI
-        if (argc != 3)
+        if (argc != 2)
         {
-            fprintf(stderr, "Usage: ./snap snap.in snap.out\n");
+            fprintf(stderr, "Usage: ./snap snap.in\n");
             exit(-1);
         }
         read_input(argv[1], &problem);
