@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "comms.h"
+#include "global.h"
 
 /** \brief Struct to hold the buffers
 *
