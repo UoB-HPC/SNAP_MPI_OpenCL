@@ -21,6 +21,3 @@ void calculate_population(
     int err = MPI_Reduce(&total, population, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
     check_mpi(err, "Population reduction");
 }
-
-
-
