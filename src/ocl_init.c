@@ -25,7 +25,7 @@ void init_ocl(struct context * context)
 
     // Get a GPU device
     cl_device_type type = CL_DEVICE_TYPE_GPU;
-    cl_int num_devices = 0;
+    cl_uint num_devices = 0;
     for (unsigned int i = 0; i < num_platforms; i++)
     {
         clGetDeviceIDs(platforms[i], type, 1, &context->device, &num_devices);
