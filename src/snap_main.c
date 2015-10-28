@@ -317,47 +317,10 @@ int main(int argc, char **argv)
     //----------------------------------------------
 
     err = clFinish(context.queue);
-    printf("%d\n", err);
+    check_ocl(err, "Finishing queue before simulation end");
 
     simulation_time = wtime() - simulation_time;
     printf("Simulation took %lfs\n", simulation_time);
-
-    err = clEnqueueReadBuffer(context.queue, buffers.angular_flux_out[0], CL_TRUE, 0, sizeof(double)*problem.nang*problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz, memory.angular_flux_out, 0, NULL, NULL);
-    err |= clEnqueueReadBuffer(context.queue, buffers.angular_flux_out[1], CL_TRUE, 0, sizeof(double)*problem.nang*problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz, memory.angular_flux_out+problem.nang*problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz, 0, NULL, NULL);
-    err |= clEnqueueReadBuffer(context.queue, buffers.angular_flux_out[2], CL_TRUE, 0, sizeof(double)*problem.nang*problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz, memory.angular_flux_out+(problem.nang*problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz)*2, 0, NULL, NULL);
-    err |= clEnqueueReadBuffer(context.queue, buffers.angular_flux_out[3], CL_TRUE, 0, sizeof(double)*problem.nang*problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz, memory.angular_flux_out+(problem.nang*problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz)*3, 0, NULL, NULL);
-    err |= clEnqueueReadBuffer(context.queue, buffers.angular_flux_out[4], CL_TRUE, 0, sizeof(double)*problem.nang*problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz, memory.angular_flux_out+(problem.nang*problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz)*4, 0, NULL, NULL);
-    err |= clEnqueueReadBuffer(context.queue, buffers.angular_flux_out[5], CL_TRUE, 0, sizeof(double)*problem.nang*problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz, memory.angular_flux_out+(problem.nang*problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz)*5, 0, NULL, NULL);
-    err |= clEnqueueReadBuffer(context.queue, buffers.angular_flux_out[6], CL_TRUE, 0, sizeof(double)*problem.nang*problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz, memory.angular_flux_out+(problem.nang*problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz)*6, 0, NULL, NULL);
-    err |= clEnqueueReadBuffer(context.queue, buffers.angular_flux_out[7], CL_TRUE, 0, sizeof(double)*problem.nang*problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz, memory.angular_flux_out+(problem.nang*problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz)*7, 0, NULL, NULL);
-    check_ocl(err, "reading octants");
-
-#define ANGULAR_FLUX_INDEX(a,g,i,j,k,o,nang,ng,nx,ny,nz) ((a)+((nang)*(g))+((nang)*(ng)*(i))+((nang)*(ng)*(nx)*(j))+((nang)*(ng)*(nx)*(ny)*(k))+((nang)*(ng)*(nx)*(ny)*(nz)*(o)))
-#define angular_flux_out(a,g,i,j,k,o) angular_flux_out[ANGULAR_FLUX_INDEX((a),(g),(i),(j),(k),(o),problem.nang,problem.ng,rankinfo.nx,rankinfo.ny,rankinfo.nz)]
-
-
-    printf("%d: oct: 1, first %E, last %E\n", rank, memory.angular_flux_out(0,0,rankinfo.nx-1,rankinfo.ny-1,rankinfo.nz-1,0), memory.angular_flux_out(0,0,0,0,0,0));
-    printf("%d: oct: 2, first %E, last %E\n", rank, memory.angular_flux_out(0,0,0,rankinfo.ny-1,rankinfo.nz-1,0), memory.angular_flux_out(0,0,rankinfo.nx-1,0,0,0));
-    printf("%d: oct: 3, first %E, last %E\n", rank, memory.angular_flux_out(0,0,rankinfo.nx-1,0,rankinfo.nz-1,0), memory.angular_flux_out(0,0,0,rankinfo.ny-1,0,0));
-    printf("%d: oct: 4, first %E, last %E\n", rank, memory.angular_flux_out(0,0,0,0,rankinfo.nz-1,0), memory.angular_flux_out(0,0,rankinfo.nx-1,rankinfo.ny-1,0,0));
-    printf("%d: oct: 5, first %E, last %E\n", rank, memory.angular_flux_out(0,0,rankinfo.nx-1,rankinfo.ny-1,0,0), memory.angular_flux_out(0,0,0,0,rankinfo.nz-1,0));
-    printf("%d: oct: 6, first %E, last %E\n", rank, memory.angular_flux_out(0,0,0,rankinfo.ny-1,0,0), memory.angular_flux_out(0,0,rankinfo.nx-1,0,rankinfo.nz-1,0));
-    printf("%d: oct: 7, first %E, last %E\n", rank, memory.angular_flux_out(0,0,rankinfo.nx-1,0,0,0), memory.angular_flux_out(0,0,0,rankinfo.ny-1,rankinfo.nz-1,0));
-    printf("%d: oct: 8, first %E, last %E\n", rank, memory.angular_flux_out(0,0,0,0,0,0), memory.angular_flux_out(0,0,rankinfo.nx-1,rankinfo.ny-1,rankinfo.nz-1,0));
-
-#define SCALAR_FLUX_INDEX(g,i,j,k,ng,nx,ny) ((g)+((ng)*(i))+((ng)*(nx)*(j))+((ng)*(nx)*(ny)*(k)))
-#define scalar_flux(g,i,j,k) scalar_flux[SCALAR_FLUX_INDEX((g),(i),(j),(k),problem.ng,rankinfo.nx,rankinfo.ny)]
-
-
-    copy_back_scalar_flux(&problem, &rankinfo, &context, &buffers, memory.scalar_flux, CL_TRUE);
-    printf("%d: scalar flux %E\n", rank, memory.scalar_flux(0,0,0,0));
-
-    if (problem.cmom-1 > 0)
-    {
-        err = clEnqueueReadBuffer(context.queue, buffers.scalar_flux_moments, CL_TRUE, 0, sizeof(double)*(problem.cmom-1)*problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz, memory.scalar_flux_moments, 0, NULL, NULL);
-        check_ocl(err, "Copying back flux moments");
-        printf("%d: scalar flux moments %E\n", rank, memory.scalar_flux_moments[0]);
-    }
 
     free_halos(&problem, &halos);
     free_memory(&memory);
