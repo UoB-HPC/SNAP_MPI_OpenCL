@@ -103,6 +103,12 @@ void allocate_buffers(
             NULL, &err);
         check_ocl(err, "Creating scalar flux moments buffer");
     }
+    else
+    {
+        // Still make the buffer so that the buffer object is valid, but as small as possible (1 byte)
+        buffers->scalar_flux_moments = clCreateBuffer(context->context, CL_MEM_READ_WRITE, 1, NULL, &err);
+        check_ocl(err, "Creating (small) scalar flux moments buffer");
+    }
 
     // Weights and cosines
     buffers->quad_weights = clCreateBuffer(context->context, CL_MEM_READ_ONLY, sizeof(double)*problem->nang, NULL, &err);
