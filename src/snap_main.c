@@ -296,7 +296,15 @@ int main(int argc, char **argv)
         double population;
         calculate_population(&problem, &rankinfo, &memory, &population);
         if (rankinfo.rank == 0)
-            printf("Time %d population: %E\n", t, population);
+        {
+            // Get exponent of outer convergence criteria
+            int places;
+            frexp(100.0 * problem.epsi, &places);
+            places = abs(floor(places / log2(10)));
+            char format[100];
+            sprintf(format, "Time %%d population: %%.%dlf\n", places);
+            printf(format, t, population);
+        }
 
 
         // Exit the time loop early if outer not converged
