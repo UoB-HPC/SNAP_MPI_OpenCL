@@ -114,6 +114,9 @@ int main(int argc, char **argv)
         zero_buffer(&context, buffers.angular_flux_out[oct], problem.nang*problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz);
     }
 
+    // Zero out the outer source, because later moments are +=
+    zero_buffer(&context, buffers.outer_source, problem.cmom*problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz);
+
     cl_int err = clFinish(context.queue);
     check_ocl(err, "Finish queue at end of setup");
 
