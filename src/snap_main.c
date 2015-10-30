@@ -121,7 +121,6 @@ int main(int argc, char **argv)
     check_ocl(err, "Finish queue at end of setup");
 
     setup_time = wtime() - setup_time;
-    printf("Setup took %lfs\n", setup_time);
 
     bool innerdone, outerdone;
 
@@ -132,6 +131,12 @@ int main(int argc, char **argv)
     //----------------------------------------------
     for (unsigned int t = 0; t < problem.nsteps; t++)
     {
+        if (rankinfo.rank == 0)
+        {
+            printf("***********************\n");
+            printf("Timestep %d\n", t);
+        }
+
         // Zero out the scalar flux and flux moments
         zero_buffer(&context, buffers.scalar_flux, problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz);
         if (problem.cmom-1 > 0)
@@ -286,7 +291,7 @@ int main(int argc, char **argv)
             double max_outer_diff;
             outerdone = outer_convergence(&problem, &rankinfo, &memory, &max_outer_diff) && innerdone;
             if (rankinfo.rank == 0)
-                printf("Outer done? %d - diff %lf\n", outerdone, max_outer_diff);
+                printf("Outer %d - diff %lf\n", o, max_outer_diff);
             if (outerdone)
                 break;
 
@@ -305,8 +310,9 @@ int main(int argc, char **argv)
             frexp(100.0 * problem.epsi, &places);
             places = abs(floor(places / log2(10)));
             char format[100];
-            sprintf(format, "Time %%d population: %%.%dlf\n", places);
-            printf(format, t, population);
+            sprintf(format, "Population: %%.%dlf\n", places);
+            printf(format, population);
+            printf("***********************\n");
         }
 
 
@@ -323,7 +329,15 @@ int main(int argc, char **argv)
     check_ocl(err, "Finishing queue before simulation end");
 
     simulation_time = wtime() - simulation_time;
+
+    printf("\n***********************\n");
+    printf(  "* Timing Report       *\n");
+    printf(  "***********************\n");
+
+    printf("Setup took %lfs\n", setup_time);
     printf("Simulation took %lfs\n", simulation_time);
+
+    printf( "***********************\n");
 
     free_halos(&problem, &halos);
     free_memory(&memory);
