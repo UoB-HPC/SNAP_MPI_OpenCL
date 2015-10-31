@@ -35,6 +35,9 @@
 /** \brief Print out starting information */
 void print_banner(void);
 
+/** \brief Print out the input paramters */
+void print_input(struct problem * problem);
+
 /** \brief Print out the timing report */
 void print_timing_report(struct timers * timers);
 
@@ -88,10 +91,14 @@ int main(int argc, char **argv)
     // Broadcast the global variables
     broadcast_problem(&problem, rank);
 
+    // Echo input file to screen
+    if (rank == 0)
+        print_input(&problem);
 
     // Set up communication neighbours
     struct rankinfo rankinfo;
     setup_comms(&problem, &rankinfo);
+
 
     // Initlise the OpenCL
     struct context context;
@@ -411,6 +418,51 @@ void print_banner(void)
     printf(" Run on %s\n", timestring);
     printf("\n");
 }
+
+void print_input(struct problem * problem)
+{
+    printf("\n****************************************\n");
+    printf(  "  Input parameters\n");
+    printf(  "****************************************\n");
+
+    printf(" Geometry\n");
+    printf("   %-30s %.3lf x %.3lf x %.3lf\n", "Problem size:", problem->lx, problem->ly, problem->lz);
+    printf("   %-30s %5u x %5u x %5u\n", "Cells:", problem->nx, problem->ny, problem->nz);
+    printf("   %-30s %.3lf x %.3lf x %.3lf\n", "Cell size:", problem->dx, problem->dy, problem->dz);
+    printf("\n");
+
+    printf(" Discrete Ordinates\n");
+    printf("   %-30s %u\n", "Angles per octant:", problem->nang);
+    printf("   %-30s %u\n", "Moments:", problem->nmom);
+    printf("   %-30s %u\n", "\"Computational\" moments:", problem->cmom);
+    printf("\n");
+
+    printf(" Energy groups\n");
+    printf("   %-30s %u\n", "Number of groups:", problem->ng);
+    printf("\n");
+
+    printf(" Timesteps\n");
+    printf("   %-30s %u\n", "Timesteps:", problem->nsteps);
+    printf("   %-30s %.3lf\n", "Simulation time:", problem->tf);
+    printf("   %-30s %.3lf\n", "Time delta:", problem->dt);
+    printf("\n");
+
+    printf(" Iterations\n");
+    printf("   %-30s %u\n", "Max outers per timestep:", problem->oitm);
+    printf("   %-30s %u\n", "Max inners per outer:", problem->iitm);
+
+    printf("   Stopping criteria\n");
+    printf("     %-28s %.2E\n", "Inner convergence:", problem->epsi);
+    printf("     %-28s %.2E\n", "Outer convergence:", 100.0*problem->epsi);
+    printf("\n");
+
+    printf(" MPI decomposition\n");
+    printf("   %-30s %u x %u x %u\n", "Rank layout:", problem->npex, problem->npey, problem->npez);
+    printf("   %-30s %u\n", "Chunk size:", problem->chunk);
+    printf("\n");
+
+}
+
 
 void print_timing_report(struct timers * timers)
 {
