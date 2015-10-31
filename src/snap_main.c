@@ -353,7 +353,7 @@ int main(int argc, char **argv)
             // Get exponent of outer convergence criteria
             int places;
             frexp(100.0 * problem.epsi, &places);
-            places = abs(floor(places / log2(10)));
+            places = ceil(fabs(places / log2(10)));
             char format[100];
             sprintf(format, "Population: %%.%dlf\n", places);
             printf(format, population);
