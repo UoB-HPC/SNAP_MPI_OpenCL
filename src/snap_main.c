@@ -41,6 +41,7 @@ void print_input(struct problem * problem);
 /** \brief Print out the timing report */
 void print_timing_report(struct timers * timers);
 
+#define STARS "********************************************************"
 
 /** \brief Main function, contains iteration loops */
 int main(int argc, char **argv)
@@ -421,9 +422,9 @@ void print_banner(void)
 
 void print_input(struct problem * problem)
 {
-    printf("\n****************************************\n");
+    printf("\n%s\n", STARS);
     printf(  "  Input parameters\n");
-    printf(  "****************************************\n");
+    printf(  "%s\n", STARS);
 
     printf(" Geometry\n");
     printf("   %-30s %.3lf x %.3lf x %.3lf\n", "Problem size:", problem->lx, problem->ly, problem->lz);
@@ -466,9 +467,9 @@ void print_input(struct problem * problem)
 
 void print_timing_report(struct timers * timers)
 {
-    printf("\n****************************************\n");
+    printf("\n%s\n", STARS);
     printf(  "  Timing Report\n");
-    printf(  "****************************************\n");
+    printf(  "%s\n", STARS);
 
     printf(" %-30s %6.3lfs\n", "Setup", timers->setup_time);
     if (profiling)
@@ -483,7 +484,7 @@ void print_timing_report(struct timers * timers)
         }
         printf(" %-30s %6.3lfs\n", "Total simulation", timers->simulation_time);
 
-        printf( "****************************************\n");
+        printf( "%s\n", STARS);
 
 }
 
