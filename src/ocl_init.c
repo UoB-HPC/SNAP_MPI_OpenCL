@@ -3,6 +3,7 @@
 #include "ocl_global.h"
 #include "ocl_kernels.h"
 
+#define MAX_DEVICES 8
 
 void check_ocl(const cl_int err, const char *msg)
 {
@@ -28,15 +29,23 @@ void init_ocl(struct context * context)
     // Get a GPU device
     cl_device_type type = CL_DEVICE_TYPE_GPU;
     cl_uint num_devices = 0;
+    cl_device_id devices[MAX_DEVICES];
     for (unsigned int i = 0; i < num_platforms; i++)
     {
-        clGetDeviceIDs(platforms[i], type, 1, &context->device, &num_devices);
+        clGetDeviceIDs(platforms[i], type, MAX_DEVICES, devices, &num_devices);
         if (num_devices == 1)
             break;
     }
     free(platforms);
     if (num_devices == 0)
         check_ocl(CL_DEVICE_NOT_FOUND, "Cannot find a GPU device");
+
+    // Just pick the first GPU device
+    context->device = devices[0];
+#ifdef __APPLE__
+    // If we on my MacBook we need the second GPU (the discrete one)
+    context->device = devices[1];
+#endif
 
     // Create a context and command queue for the device
     context->context = clCreateContext(0, 1, &context->device, NULL, NULL, &err);
