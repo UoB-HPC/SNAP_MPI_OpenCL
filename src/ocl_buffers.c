@@ -9,6 +9,7 @@ void check_device_memory_requirements(
     cl_int err;
     cl_ulong global;
     err = clGetDeviceInfo(context->device, CL_DEVICE_GLOBAL_MEM_SIZE, sizeof(cl_ulong), &global, NULL);
+    check_ocl(err, "Getting device memory size");
 
     cl_ulong total = 0;
     // Add up the memory requirements, in bytes.
