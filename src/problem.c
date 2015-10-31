@@ -153,6 +153,7 @@ void init_fixed_source(
     cl_int err;
     err = clEnqueueWriteBuffer(context->queue, buffers->fixed_source, CL_TRUE,
         0, sizeof(double)*problem->ng*rankinfo->nx*rankinfo->ny*rankinfo->nz, fixed_source, 0, NULL, NULL);
+    check_ocl(err, "Copying fixed source to device");
     free(fixed_source);
 }
 
