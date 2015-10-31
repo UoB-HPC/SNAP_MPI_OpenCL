@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <time.h>
 #include <mpi.h>
 
 #include "global.h"
@@ -31,6 +32,9 @@
 * The MPI scheme used is KBA, expending into hybrid-KBA.
 */
 
+/** \brief Print out starting information */
+void print_banner(void);
+
 /** \brief Print out the timing report */
 void print_timing_report(struct timers * timers);
 
@@ -57,6 +61,8 @@ int main(int argc, char **argv)
 
     if (rank == 0)
     {
+        print_banner();
+
         // Check for two files on CLI
         if (argc != 2)
         {
@@ -391,26 +397,41 @@ int main(int argc, char **argv)
     finish_comms();
 }
 
+void print_banner(void)
+{
+    printf("\n");
+    printf(" SNAP: SN (Discrete Ordinates) Application Proxy\n");
+    printf(" MPI+OpenCL port\n");
+    time_t rawtime;
+    struct tm * timeinfo;
+    char timestring[80];
+    time(&rawtime);
+    timeinfo = localtime(&rawtime);
+    strftime(timestring, 80, "%c", timeinfo);
+    printf(" Run on %s\n", timestring);
+    printf("\n");
+}
+
 void print_timing_report(struct timers * timers)
 {
-    printf("\n**************************************\n");
+    printf("\n****************************************\n");
     printf(  "  Timing Report\n");
-    printf(  "**************************************\n");
+    printf(  "****************************************\n");
 
-    printf(" %-30s %-3.3lfs\n", "Setup", timers->setup_time);
+    printf(" %-30s %6.3lfs\n", "Setup", timers->setup_time);
     if (profiling)
     {
-        printf(" %-30s %-3.3lfs\n", "Outer source", timers->outer_source_time);
-        printf(" %-30s %-3.3lfs\n", "Outer parameters", timers->outer_params_time);
-        printf(" %-30s %-3.3lfs\n", "Inner source", timers->inner_source_time);
-        printf(" %-30s %-3.3lfs\n", "Sweeps", timers->sweep_time);
-        printf(" %-30s %-3.3lfs\n", "Scalar flux reductions", timers->reduction_time);
-        printf(" %-30s %-3.3lfs\n", "Convergence checking", timers->convergence_time);
-        printf(" %-30s %-3.3lfs\n", "Other", timers->simulation_time - timers->outer_source_time - timers->outer_params_time - timers->inner_source_time - timers->sweep_time - timers->reduction_time - timers->convergence_time);
+        printf(" %-30s %6.3lfs\n", "Outer source", timers->outer_source_time);
+        printf(" %-30s %6.3lfs\n", "Outer parameters", timers->outer_params_time);
+        printf(" %-30s %6.3lfs\n", "Inner source", timers->inner_source_time);
+        printf(" %-30s %6.3lfs\n", "Sweeps", timers->sweep_time);
+        printf(" %-30s %6.3lfs\n", "Scalar flux reductions", timers->reduction_time);
+        printf(" %-30s %6.3lfs\n", "Convergence checking", timers->convergence_time);
+        printf(" %-30s %6.3lfs\n", "Other", timers->simulation_time - timers->outer_source_time - timers->outer_params_time - timers->inner_source_time - timers->sweep_time - timers->reduction_time - timers->convergence_time);
         }
-        printf(" %-30s %-3.3lfs\n", "Total simulation", timers->simulation_time);
+        printf(" %-30s %6.3lfs\n", "Total simulation", timers->simulation_time);
 
-        printf( "**************************************\n");
+        printf( "****************************************\n");
 
 }
 
