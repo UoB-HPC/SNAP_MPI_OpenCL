@@ -124,12 +124,14 @@ int main(int argc, char **argv)
     clerr = clFinish(context.queue);
     check_ocl(clerr, "Finish queue at end of setup");
 
-    timers.setup_time = wtime() - timers.setup_time;
+    if (rankinfo.rank == 0)
+        timers.setup_time = wtime() - timers.setup_time;
 
     bool innerdone, outerdone;
 
     // Timers
-    timers.simulation_time = wtime();
+    if (rankinfo.rank == 0)
+        timers.simulation_time = wtime();
 
     //----------------------------------------------
     // Timestep loop
@@ -177,7 +179,7 @@ int main(int argc, char **argv)
 
 
                 double sweep_tick;
-                if (profiling)
+                if (profiling && rankinfo.rank == 0)
                 {
                     // We must wait for the transfer to finish before we enqueue the next transfer,
                     // or MPI_Recv to get accurate timings
@@ -285,7 +287,7 @@ int main(int argc, char **argv)
                 }
                 send_boundaries(octant, istep, jstep, kstep, &problem, &rankinfo, &memory, &context, &buffers);
 
-                if (profiling)
+                if (profiling && rankinfo.rank == 0)
                 {
                     // The last send boundaries is either a blocking read of blocking MPI_Send,
                     // so we know everything in the queue is done
@@ -304,11 +306,12 @@ int main(int argc, char **argv)
 
                 innerdone = inner_convergence(&problem, &rankinfo, &memory);
 
-                if (profiling)
+                if (profiling && rankinfo.rank == 0)
                     timers.convergence_time += wtime() - conv_tick;
 
                 // Do any profiler updates for timings
-                inner_profiler(&timers, &problem);
+                if (rankinfo.rank == 0)
+                    inner_profiler(&timers, &problem);
 
                 if (innerdone)
                     break;
@@ -324,14 +327,15 @@ int main(int argc, char **argv)
             double conv_tick = wtime();
             outerdone = outer_convergence(&problem, &rankinfo, &memory, &max_outer_diff) && innerdone;
 
-            if (profiling)
+            if (profiling && rankinfo.rank == 0)
                 timers.convergence_time += wtime() - conv_tick;
 
             if (rankinfo.rank == 0)
                 printf("Outer %d - diff %lf\n", o, max_outer_diff);
 
             // Do any profiler updates for timings
-            outer_profiler(&timers);
+            if (rankinfo.rank == 0)
+                outer_profiler(&timers);
 
             if (outerdone)
                 break;
@@ -369,26 +373,30 @@ int main(int argc, char **argv)
     clerr = clFinish(context.queue);
     check_ocl(clerr, "Finishing queue before simulation end");
 
-    timers.simulation_time = wtime() - timers.simulation_time;
-
-    printf("\n***********************\n");
-    printf(  "* Timing Report       *\n");
-    printf(  "***********************\n");
-
-    printf("Setup took %lfs\n", timers.setup_time);
-    if (profiling)
+    if (rankinfo.rank == 0)
     {
-        printf("Outer source updates took %lfs\n", timers.outer_source_time);
-        printf("Outer parameter calcs took %lfs\n", timers.outer_params_time);
-        printf("Inner source updates took %lfs\n", timers.inner_source_time);
-        printf("Sweeps took %lfs\n", timers.sweep_time);
-        printf("Flux reductions took %lfs\n", timers.reduction_time);
-        printf("Convergence checking took %lfs\n", timers.convergence_time);
-        printf("Others took %lfs\n", timers.simulation_time - timers.outer_source_time - timers.outer_params_time - timers.inner_source_time - timers.sweep_time - timers.reduction_time - timers.convergence_time);
-    }
-    printf("Simulation took %lfs\n", timers.simulation_time);
+        timers.simulation_time = wtime() - timers.simulation_time;
 
-    printf( "***********************\n");
+        printf("\n***********************\n");
+        printf(  "* Timing Report       *\n");
+        printf(  "***********************\n");
+
+        printf("Setup took %lfs\n", timers.setup_time);
+        if (profiling)
+        {
+            printf("Outer source updates took %lfs\n", timers.outer_source_time);
+            printf("Outer parameter calcs took %lfs\n", timers.outer_params_time);
+            printf("Inner source updates took %lfs\n", timers.inner_source_time);
+            printf("Sweeps took %lfs\n", timers.sweep_time);
+            printf("Flux reductions took %lfs\n", timers.reduction_time);
+            printf("Convergence checking took %lfs\n", timers.convergence_time);
+            printf("Others took %lfs\n", timers.simulation_time - timers.outer_source_time - timers.outer_params_time - timers.inner_source_time - timers.sweep_time - timers.reduction_time - timers.convergence_time);
+        }
+        printf("Simulation took %lfs\n", timers.simulation_time);
+
+        printf( "***********************\n");
+
+    }
 
     free_halos(&problem, &halos);
     free_memory(&memory);
