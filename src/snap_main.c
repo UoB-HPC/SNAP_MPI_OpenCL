@@ -151,6 +151,13 @@ int main(int argc, char **argv)
     if (rankinfo.rank == 0)
         timers.simulation_time = wtime();
 
+    if (rankinfo.rank == 0)
+    {
+        printf("%s\n", STARS);
+        printf("  Iteration Monitor\n");
+        printf("%s\n", STARS);
+    }
+
     //----------------------------------------------
     // Timestep loop
     //----------------------------------------------
@@ -158,8 +165,8 @@ int main(int argc, char **argv)
     {
         if (rankinfo.rank == 0)
         {
-            printf("***********************\n");
-            printf("Timestep %d\n", t);
+            printf(" Timestep %d\n", t);
+            printf("   %-10s %-15s %-10s\n", "Outer", "Difference", "Inners");
         }
 
         // Zero out the scalar flux and flux moments
@@ -188,7 +195,8 @@ int main(int argc, char **argv)
             //----------------------------------------------
             // Inners
             //----------------------------------------------
-            for (unsigned int i = 0; i < problem.iitm; i++)
+            unsigned int i;
+            for (i = 0; i < problem.iitm; i++)
             {
                 compute_inner_source(&problem, &rankinfo, &context, &buffers);
 
@@ -349,7 +357,7 @@ int main(int argc, char **argv)
                 timers.convergence_time += wtime() - conv_tick;
 
             if (rankinfo.rank == 0)
-                printf("Outer %d - diff %lf\n", o, max_outer_diff);
+                printf("     %-9u %-15lf %-10u\n", o, max_outer_diff, i);
 
             // Do any profiler updates for timings
             if (rankinfo.rank == 0)
@@ -373,9 +381,10 @@ int main(int argc, char **argv)
             frexp(100.0 * problem.epsi, &places);
             places = ceil(fabs(places / log2(10)));
             char format[100];
-            sprintf(format, "Population: %%.%dlf\n", places);
+            sprintf(format, "   Population: %%.%dlf\n", places);
+            printf("\n");
             printf(format, population);
-            printf("***********************\n");
+            printf("\n");
         }
 
 
