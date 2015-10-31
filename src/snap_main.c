@@ -38,10 +38,13 @@ void print_banner(void);
 /** \brief Print out the input paramters */
 void print_input(struct problem * problem);
 
+/** \brief Print out OpenCL information */
+void print_opencl_info(struct context * context);
+
 /** \brief Print out the timing report */
 void print_timing_report(struct timers * timers, struct problem * problem, unsigned int total_iterations);
 
-
+#define MAX_INFO_STRING 256
 #define STARS "********************************************************"
 
 /** \brief Main function, contains iteration loops */
@@ -90,25 +93,25 @@ int main(int argc, char **argv)
     problem.dz = problem.lz / (double)problem.nz;
     problem.dt = problem.tf / (double)problem.nsteps;
 
-    // Broadcast the global variables
-    broadcast_problem(&problem, rank);
-
     // Echo input file to screen
     if (rank == 0)
         print_input(&problem);
+
+    // Broadcast the global variables
+    broadcast_problem(&problem, rank);
 
     // Set up communication neighbours
     struct rankinfo rankinfo;
     setup_comms(&problem, &rankinfo);
 
-
     // Initlise the OpenCL
     struct context context;
     init_ocl(&context);
+    if (rankinfo.rank == 0)
+        print_opencl_info(&context);
     struct buffers buffers;
     check_device_memory_requirements(&problem, &rankinfo, &context);
     allocate_buffers(&problem, &rankinfo, &context, &buffers);
-
 
     // Allocate the problem arrays
     struct memory memory;
@@ -440,7 +443,7 @@ void print_banner(void)
 void print_input(struct problem * problem)
 {
     printf("\n%s\n", STARS);
-    printf(  "  Input parameters\n");
+    printf(  "  Input Parameters\n");
     printf(  "%s\n", STARS);
 
     printf(" Geometry\n");
@@ -481,6 +484,29 @@ void print_input(struct problem * problem)
 
 }
 
+void print_opencl_info(struct context * context)
+{
+    cl_int err;
+    char info_string[MAX_INFO_STRING];
+
+    printf("\n%s\n", STARS);
+    printf("  OpenCL Information\n");
+    printf("%s\n", STARS);
+
+    // Print out device name
+    err = clGetDeviceInfo(context->device, CL_DEVICE_NAME, sizeof(info_string), info_string, NULL);
+    check_ocl(err, "Getting device name");
+    printf(" Device\n");
+    printf("   %s\n", info_string);
+    printf("\n");
+
+    // Driver version
+    err = clGetDeviceInfo(context->device, CL_DRIVER_VERSION, sizeof(info_string), info_string, NULL);
+    check_ocl(err, "Getting driver version");
+    printf(" Driver\n");
+    printf("   %s\n", info_string);
+    printf("\n");
+}
 
 void print_timing_report(struct timers * timers, struct problem * problem, unsigned int total_iterations)
 {
