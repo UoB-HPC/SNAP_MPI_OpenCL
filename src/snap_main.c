@@ -31,7 +31,6 @@
 * The MPI scheme used is KBA, expending into hybrid-KBA.
 */
 
-extern double wtime(void);
 
 int main(int argc, char **argv)
 {

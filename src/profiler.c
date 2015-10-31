@@ -1,6 +1,13 @@
 
 #include "profiler.h"
 
+double wtime(void)
+{
+    struct timeval t;
+    gettimeofday(&t, NULL);
+    return t.tv_sec + t.tv_usec * 1.0E-6;
+}
+
 void outer_profiler(struct timers * timers)
 {
     if (!profiling)

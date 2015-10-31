@@ -1,6 +1,8 @@
 
 #pragma once
 
+#include <stdlib.h>
+#include <sys/time.h>
 #include <stdbool.h>
 #include "global.h"
 #include "ocl_global.h"
@@ -29,6 +31,9 @@ cl_event scalar_flux_moments_event;
 cl_event velocity_delta_event;
 cl_event denominator_event;
 
+double wtime(void);
+
 void outer_profiler(struct timers * timers);
 
 void inner_profiler(struct timers * timers, struct problem * problem);
+

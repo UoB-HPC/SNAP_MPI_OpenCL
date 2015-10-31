@@ -25,7 +25,6 @@ snap: \
 	comms.c \
 	problem.c \
 	source.c \
-	timer.c \
 	sweep.c \
 	ocl_init.c \
 	ocl_buffers.c \
