@@ -39,7 +39,8 @@ void print_banner(void);
 void print_input(struct problem * problem);
 
 /** \brief Print out the timing report */
-void print_timing_report(struct timers * timers);
+void print_timing_report(struct timers * timers, struct problem * problem, unsigned int total_iterations);
+
 
 #define STARS "********************************************************"
 
@@ -157,6 +158,8 @@ int main(int argc, char **argv)
         printf("  Iteration Monitor\n");
         printf("%s\n", STARS);
     }
+
+    unsigned int total_iterations = 0;
 
     //----------------------------------------------
     // Timestep loop
@@ -356,6 +359,8 @@ int main(int argc, char **argv)
             if (profiling && rankinfo.rank == 0)
                 timers.convergence_time += wtime() - conv_tick;
 
+            total_iterations += i;
+
             if (rankinfo.rank == 0)
                 printf("     %-9u %-15lf %-10u\n", o, max_outer_diff, i);
 
@@ -407,7 +412,7 @@ int main(int argc, char **argv)
     {
         timers.simulation_time = wtime() - timers.simulation_time;
 
-        print_timing_report(&timers);
+        print_timing_report(&timers, &problem, total_iterations);
     }
 
     free_halos(&problem, &halos);
@@ -477,7 +482,7 @@ void print_input(struct problem * problem)
 }
 
 
-void print_timing_report(struct timers * timers)
+void print_timing_report(struct timers * timers, struct problem * problem, unsigned int total_iterations)
 {
     printf("\n%s\n", STARS);
     printf(  "  Timing Report\n");
@@ -495,6 +500,12 @@ void print_timing_report(struct timers * timers)
         printf(" %-30s %6.3lfs\n", "Other", timers->simulation_time - timers->outer_source_time - timers->outer_params_time - timers->inner_source_time - timers->sweep_time - timers->reduction_time - timers->convergence_time);
         }
         printf(" %-30s %6.3lfs\n", "Total simulation", timers->simulation_time);
+
+        printf("\n");
+        printf(" %-30s %6.3lfns\n", "Grind time",
+            1.0E9 * timers->simulation_time /
+            (double)(problem->nx*problem->ny*problem->nz*problem->nang*8*problem->ng*total_iterations)
+            );
 
         printf( "%s\n", STARS);
 
