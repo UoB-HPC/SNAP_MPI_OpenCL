@@ -95,7 +95,6 @@ void allocate_buffers(
         NULL, &err);
     check_ocl(err, "Creating scalar flux buffer");
 
-    size_t scalar_moments_buffer_size;
     if (problem->cmom-1 > 0)
     {
         buffers->scalar_flux_moments = clCreateBuffer(context->context, CL_MEM_READ_WRITE,
