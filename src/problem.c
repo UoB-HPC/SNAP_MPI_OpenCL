@@ -269,7 +269,7 @@ void init_velocity_delta(
     err = clEnqueueNDRangeKernel(context->queue,
         context->kernels.calc_velocity_delta,
         1, 0, global, NULL,
-        0, NULL, NULL);
+        0, NULL, &velocity_delta_event);
     check_ocl(err, "Enqueue velocity delta calculation kernel");
 }
 
@@ -326,6 +326,6 @@ void calculate_denominator(
     err = clEnqueueNDRangeKernel(context->queue,
         context->kernels.calc_denominator,
         2, 0, global, NULL,
-        0, NULL, NULL);
+        0, NULL, &denominator_event);
     check_ocl(err, "Enqueue denominator kernel");
 }

@@ -11,6 +11,8 @@
 #include "ocl_global.h"
 #include "ocl_buffers.h"
 
+#include "profiler.h"
+
 /** \ingroup MEM
 * @{
 * \brief Index for source arrays */

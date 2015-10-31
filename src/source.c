@@ -27,7 +27,7 @@ void compute_outer_source(
     err = clEnqueueNDRangeKernel(context->queue,
         context->kernels.outer_source,
         3, 0, global, NULL,
-        0, NULL, NULL);
+        0, NULL, &outer_source_event);
     check_ocl(err, "Enqueue outer source kernel");
 }
 
@@ -57,6 +57,6 @@ void compute_inner_source(
     err = clEnqueueNDRangeKernel(context->queue,
         context->kernels.inner_source,
         3, 0, global, NULL,
-        0, NULL, NULL);
+        0, NULL, &inner_source_event);
     check_ocl(err, "Enqueue inner source kernel");
 }

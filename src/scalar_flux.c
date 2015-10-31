@@ -46,7 +46,7 @@ void compute_scalar_flux(
     err = clEnqueueNDRangeKernel(context->queue,
         context->kernels.reduce_flux,
         2, 0, global, local,
-        0, NULL, NULL);
+        0, NULL, &scalar_flux_event);
     check_ocl(err, "Enqueueing scalar flux reduction kernel");
 
 }
@@ -98,7 +98,7 @@ void compute_scalar_flux_moments(
     err = clEnqueueNDRangeKernel(context->queue,
         context->kernels.reduce_flux_moments,
         2, 0, global, local,
-        0, NULL, NULL);
+        0, NULL, &scalar_flux_moments_event);
     check_ocl(err, "Enqueueing scalar flux moments reduction kernel");
 
 }

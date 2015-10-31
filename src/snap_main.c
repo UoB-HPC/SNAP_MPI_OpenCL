@@ -1,8 +1,10 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include <mpi.h>
 
+#include "global.h"
 #include "comms.h"
 #include "input.h"
 #include "problem.h"
@@ -13,7 +15,7 @@
 #include "scalar_flux.h"
 #include "convergence.h"
 #include "population.h"
-
+#include "profiler.h"
 
 #include "ocl_global.h"
 #include "ocl_buffers.h"
@@ -36,7 +38,10 @@ int main(int argc, char **argv)
     int mpi_err = MPI_Init(&argc, &argv);
     check_mpi(mpi_err, "MPI_Init");
 
-    double setup_time = wtime();
+    cl_int clerr;
+
+    struct timers timers;
+    timers.setup_time = wtime();
 
     int rank, size;
     mpi_err = MPI_Comm_rank(MPI_COMM_WORLD, &rank);
@@ -117,14 +122,15 @@ int main(int argc, char **argv)
     // Zero out the outer source, because later moments are +=
     zero_buffer(&context, buffers.outer_source, problem.cmom*problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz);
 
-    cl_int err = clFinish(context.queue);
-    check_ocl(err, "Finish queue at end of setup");
+    clerr = clFinish(context.queue);
+    check_ocl(clerr, "Finish queue at end of setup");
 
-    setup_time = wtime() - setup_time;
+    timers.setup_time = wtime() - timers.setup_time;
 
     bool innerdone, outerdone;
 
-    double simulation_time = wtime();
+    // Timers
+    timers.simulation_time = wtime();
 
     //----------------------------------------------
     // Timestep loop
@@ -170,6 +176,16 @@ int main(int argc, char **argv)
                 // Get the scalar flux back
                 copy_back_scalar_flux(&problem, &rankinfo, &context, &buffers, memory.old_inner_scalar_flux, CL_FALSE);
 
+
+                double sweep_tick;
+                if (profiling)
+                {
+                    // We must wait for the transfer to finish before we enqueue the next transfer,
+                    // or MPI_Recv to get accurate timings
+                    clerr = clFinish(context.queue);
+                    check_ocl(clerr, "Finish queue just before sweep for profiling");
+                    sweep_tick = wtime();
+                }
 
                 // Sweep each octant in turn
                 int octant, istep, jstep, kstep;
@@ -270,6 +286,13 @@ int main(int argc, char **argv)
                 }
                 send_boundaries(octant, istep, jstep, kstep, &problem, &rankinfo, &memory, &context, &buffers);
 
+                if (profiling)
+                {
+                    // The last send boundaries is either a blocking read of blocking MPI_Send,
+                    // so we know everything in the queue is done
+                    timers.sweep_time += wtime() - sweep_tick;
+                }
+
                 // Compute the Scalar Flux
                 compute_scalar_flux(&problem, &rankinfo, &context, &buffers);
                 if (problem.cmom-1 > 0)
@@ -277,7 +300,17 @@ int main(int argc, char **argv)
 
                 // Get the new scalar flux back and check inner convergence
                 copy_back_scalar_flux(&problem, &rankinfo, &context, &buffers, memory.scalar_flux, CL_TRUE);
+
+                double conv_tick = wtime();
+
                 innerdone = inner_convergence(&problem, &rankinfo, &memory);
+
+                if (profiling)
+                    timers.convergence_time += wtime() - conv_tick;
+
+                // Do any profiler updates for timings
+                inner_profiler(&timers, &problem);
+
                 if (innerdone)
                     break;
 
@@ -289,9 +322,18 @@ int main(int argc, char **argv)
             // Check outer convergence
             // We don't need to copy back the new scalar flux again as it won't have changed from the last inner
             double max_outer_diff;
+            double conv_tick = wtime();
             outerdone = outer_convergence(&problem, &rankinfo, &memory, &max_outer_diff) && innerdone;
+
+            if (profiling)
+                timers.convergence_time += wtime() - conv_tick;
+
             if (rankinfo.rank == 0)
                 printf("Outer %d - diff %lf\n", o, max_outer_diff);
+
+            // Do any profiler updates for timings
+            outer_profiler(&timers);
+
             if (outerdone)
                 break;
 
@@ -325,17 +367,27 @@ int main(int argc, char **argv)
     // End of Timestep
     //----------------------------------------------
 
-    err = clFinish(context.queue);
-    check_ocl(err, "Finishing queue before simulation end");
+    clerr = clFinish(context.queue);
+    check_ocl(clerr, "Finishing queue before simulation end");
 
-    simulation_time = wtime() - simulation_time;
+    timers.simulation_time = wtime() - timers.simulation_time;
 
     printf("\n***********************\n");
     printf(  "* Timing Report       *\n");
     printf(  "***********************\n");
 
-    printf("Setup took %lfs\n", setup_time);
-    printf("Simulation took %lfs\n", simulation_time);
+    printf("Setup took %lfs\n", timers.setup_time);
+    if (profiling)
+    {
+        printf("Outer source updates took %lfs\n", timers.outer_source_time);
+        printf("Outer parameter calcs took %lfs\n", timers.outer_params_time);
+        printf("Inner source updates took %lfs\n", timers.inner_source_time);
+        printf("Sweeps took %lfs\n", timers.sweep_time);
+        printf("Flux reductions took %lfs\n", timers.reduction_time);
+        printf("Convergence checking took %lfs\n", timers.convergence_time);
+        printf("Others took %lfs\n", timers.simulation_time - timers.outer_source_time - timers.outer_params_time - timers.inner_source_time - timers.sweep_time - timers.reduction_time - timers.convergence_time);
+    }
+    printf("Simulation took %lfs\n", timers.simulation_time);
 
     printf( "***********************\n");
 

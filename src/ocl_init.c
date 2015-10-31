@@ -1,6 +1,8 @@
 
+#include "profiler.h"
 #include "ocl_global.h"
 #include "ocl_kernels.h"
+
 
 void check_ocl(const cl_int err, const char *msg)
 {
@@ -40,7 +42,10 @@ void init_ocl(struct context * context)
     context->context = clCreateContext(0, 1, &context->device, NULL, NULL, &err);
     check_ocl(err, "Creating context");
 
-    context->queue = clCreateCommandQueue(context->context, context->device, 0, &err);
+    if (profiling)
+        context->queue = clCreateCommandQueue(context->context, context->device, CL_QUEUE_PROFILING_ENABLE, &err);
+    else
+        context->queue = clCreateCommandQueue(context->context, context->device, 0, &err);
     check_ocl(err, "Creating command queue");
 
     // Create program

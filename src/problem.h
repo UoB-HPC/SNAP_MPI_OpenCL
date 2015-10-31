@@ -13,6 +13,8 @@
 #include "ocl_global.h"
 #include "ocl_buffers.h"
 
+#include "profiler.h"
+
 /** @defgroup MEM Memory access patterns
 * \brief Macros for indexing multi-dimensional arrays
 * @{*/
