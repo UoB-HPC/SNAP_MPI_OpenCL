@@ -371,6 +371,14 @@ int main(int argc, char **argv)
         // End of Outers
         //----------------------------------------------
 
+        // Exit the time loop early if outer not converged
+        if (!outerdone)
+        {
+            if (rankinfo.rank == 0)
+                printf(" * Stopping because not converged *\n");
+            break;
+        }
+
         // Calculate particle population and print out the value
         double population;
         calculate_population(&problem, &rankinfo, &memory, &population);
@@ -386,11 +394,6 @@ int main(int argc, char **argv)
             printf(format, population);
             printf("\n");
         }
-
-
-        // Exit the time loop early if outer not converged
-        if (!outerdone)
-            break;
 
     }
     //----------------------------------------------
