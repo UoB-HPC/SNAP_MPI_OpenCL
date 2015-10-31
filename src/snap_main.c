@@ -31,7 +31,11 @@
 * The MPI scheme used is KBA, expending into hybrid-KBA.
 */
 
+/** \brief Print out the timing report */
+void print_timing_report(struct timers * timers);
 
+
+/** \brief Main function, contains iteration loops */
 int main(int argc, char **argv)
 {
     int mpi_err = MPI_Init(&argc, &argv);
@@ -377,25 +381,7 @@ int main(int argc, char **argv)
     {
         timers.simulation_time = wtime() - timers.simulation_time;
 
-        printf("\n***********************\n");
-        printf(  "* Timing Report       *\n");
-        printf(  "***********************\n");
-
-        printf("Setup took %lfs\n", timers.setup_time);
-        if (profiling)
-        {
-            printf("Outer source updates took %lfs\n", timers.outer_source_time);
-            printf("Outer parameter calcs took %lfs\n", timers.outer_params_time);
-            printf("Inner source updates took %lfs\n", timers.inner_source_time);
-            printf("Sweeps took %lfs\n", timers.sweep_time);
-            printf("Flux reductions took %lfs\n", timers.reduction_time);
-            printf("Convergence checking took %lfs\n", timers.convergence_time);
-            printf("Others took %lfs\n", timers.simulation_time - timers.outer_source_time - timers.outer_params_time - timers.inner_source_time - timers.sweep_time - timers.reduction_time - timers.convergence_time);
-        }
-        printf("Simulation took %lfs\n", timers.simulation_time);
-
-        printf( "***********************\n");
-
+        print_timing_report(&timers);
     }
 
     free_halos(&problem, &halos);
@@ -404,3 +390,27 @@ int main(int argc, char **argv)
     release_context(&context);
     finish_comms();
 }
+
+void print_timing_report(struct timers * timers)
+{
+    printf("\n**************************************\n");
+    printf(  "  Timing Report\n");
+    printf(  "**************************************\n");
+
+    printf(" %-30s %-3.3lfs\n", "Setup", timers->setup_time);
+    if (profiling)
+    {
+        printf(" %-30s %-3.3lfs\n", "Outer source", timers->outer_source_time);
+        printf(" %-30s %-3.3lfs\n", "Outer parameters", timers->outer_params_time);
+        printf(" %-30s %-3.3lfs\n", "Inner source", timers->inner_source_time);
+        printf(" %-30s %-3.3lfs\n", "Sweeps", timers->sweep_time);
+        printf(" %-30s %-3.3lfs\n", "Scalar flux reductions", timers->reduction_time);
+        printf(" %-30s %-3.3lfs\n", "Convergence checking", timers->convergence_time);
+        printf(" %-30s %-3.3lfs\n", "Other", timers->simulation_time - timers->outer_source_time - timers->outer_params_time - timers->inner_source_time - timers->sweep_time - timers->reduction_time - timers->convergence_time);
+        }
+        printf(" %-30s %-3.3lfs\n", "Total simulation", timers->simulation_time);
+
+        printf( "**************************************\n");
+
+}
+
