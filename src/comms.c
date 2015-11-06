@@ -126,9 +126,11 @@ void recv_boundaries(const int z_pos, const int octant, const int istep, const i
             check_mpi(mpi_err, "Receiving from downward x neighbour");
         }
         // Copy flux_i to the device
-        cl_err = clEnqueueWriteBuffer(context->queue, buffers->flux_i, CL_TRUE, 0,
-            sizeof(double)*problem->nang*problem->ng*rankinfo->ny*rankinfo->nz, memory->flux_i,
-            0, NULL, NULL);
+        size_t i_offset = problem->nang*problem->ng*rankinfo->ny*z_pos;
+        cl_err = clEnqueueWriteBuffer(context->queue, buffers->flux_i, CL_FALSE,
+            sizeof(double)*i_offset,
+            sizeof(double)*problem->nang*problem->ng*rankinfo->ny*problem->chunk,
+            (memory->flux_i)+i_offset, 0, NULL, NULL);
         check_ocl(cl_err, "Copying flux i buffer to device");
     }
 
@@ -151,10 +153,12 @@ void recv_boundaries(const int z_pos, const int octant, const int istep, const i
                 rankinfo->ydown, MPI_ANY_TAG, snap_comms, MPI_STATUS_IGNORE);
             check_mpi(mpi_err, "Receiving from downward y neighbour");
         }
-        // Copy flux_i to the device
-        cl_err = clEnqueueWriteBuffer(context->queue, buffers->flux_j, CL_TRUE, 0,
-            sizeof(double)*problem->nang*problem->ng*rankinfo->nx*rankinfo->nz, memory->flux_j,
-            0, NULL, NULL);
+        // Copy flux_j to the device
+        size_t j_offset = problem->nang*problem->ng*rankinfo->nx*z_pos;
+        cl_err = clEnqueueWriteBuffer(context->queue, buffers->flux_j, CL_TRUE,
+            sizeof(double)*j_offset,
+            sizeof(double)*problem->nang*problem->ng*rankinfo->nx*rankinfo->nz,
+            (memory->flux_j)+j_offset, 0, NULL, NULL);
         check_ocl(cl_err, "Copying flux j buffer to device");
     }
 }
@@ -168,11 +172,20 @@ void send_boundaries(const int z_pos, const int octant, const int istep, const i
     cl_int cl_err;
 
     // Get the edges off the device
+    // I
+    size_t i_offset = problem->nang*problem->ng*rankinfo->ny*z_pos;
     cl_err = clEnqueueReadBuffer(context->queue, buffers->flux_i, CL_FALSE,
-        0, sizeof(double)*problem->nang*problem->ng*rankinfo->ny*rankinfo->nz, memory->flux_i, 0, NULL, NULL);
+        sizeof(double)*i_offset,
+        sizeof(double)*problem->nang*problem->ng*rankinfo->ny*problem->chunk,
+        (memory->flux_i)+i_offset, 0, NULL, NULL);
     check_ocl(cl_err, "Copying flux i buffer back to host");
+
+    // J
+    size_t j_offset = problem->nang*problem->ng*rankinfo->nx*z_pos;
     cl_err = clEnqueueReadBuffer(context->queue, buffers->flux_j, CL_TRUE,
-        0, sizeof(double)*problem->nang*problem->ng*rankinfo->nx*rankinfo->nz, memory->flux_j, 0, NULL, NULL);
+        sizeof(double)*j_offset,
+        sizeof(double)*problem->nang*problem->ng*rankinfo->nx*rankinfo->nz,
+        (memory->flux_j)+j_offset, 0, NULL, NULL);
     check_ocl(cl_err, "Copying flux j buffer back to host");
 
     // Send to neighbour with MPI_Send
