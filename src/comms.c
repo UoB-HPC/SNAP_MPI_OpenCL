@@ -105,10 +105,14 @@ void recv_boundaries(const int z_pos, const int octant, const int istep, const i
 
     // Check if pencil has an external boundary for this sweep direction
     // If so, set as vacuum
+
+    // X
     if ( (istep == -1 && rankinfo->iub == problem->nx)
         || (istep == 1 && rankinfo->ilb == 0))
     {
-        zero_buffer(context, buffers->flux_i, problem->nang*problem->ng*rankinfo->ny*rankinfo->nz);
+        size_t offset[] = {0, 0, 0};
+        size_t global[] = {problem->nang*problem->ng, rankinfo->ny, rankinfo->nz};
+        zero_buffer_3D(context, buffers->flux_i, offset, global);
     }
     // Otherwise, internal boundary - get data from MPI receives
     else
@@ -132,6 +136,7 @@ void recv_boundaries(const int z_pos, const int octant, const int istep, const i
         check_ocl(cl_err, "Copying flux i buffer to device");
     }
 
+    // Y
     if ( (jstep == -1 && rankinfo->jub == problem->ny)
         || (jstep == 1 && rankinfo->jlb == 0))
     {
@@ -157,32 +162,6 @@ void recv_boundaries(const int z_pos, const int octant, const int istep, const i
             0, NULL, NULL);
         check_ocl(cl_err, "Copying flux j buffer to device");
     }
-
-    if ( (kstep == -1 && rankinfo->kub == problem->nz)
-        || (kstep == 1 && rankinfo->klb == 0))
-    {
-        zero_buffer(context, buffers->flux_k, problem->nang*problem->ng*rankinfo->nx*rankinfo->ny);
-    }
-    else
-    {
-        if (kstep == -1)
-        {
-            mpi_err = MPI_Recv(memory->flux_k, problem->nang*problem->ng*rankinfo->nx*rankinfo->ny, MPI_DOUBLE,
-                rankinfo->zup, MPI_ANY_TAG, snap_comms, MPI_STATUS_IGNORE);
-            check_mpi(mpi_err, "Receiving from upward z neighbour");
-        }
-        else
-        {
-            mpi_err = MPI_Recv(memory->flux_k, problem->nang*problem->ng*rankinfo->nx*rankinfo->ny, MPI_DOUBLE,
-                rankinfo->zdown, MPI_ANY_TAG, snap_comms, MPI_STATUS_IGNORE);
-            check_mpi(mpi_err, "Receiving from downward z neighbour");
-        }
-        // Copy flux_i to the device
-        cl_err = clEnqueueWriteBuffer(context->queue, buffers->flux_k, CL_TRUE, 0,
-            sizeof(double)*problem->nang*problem->ng*rankinfo->nx*rankinfo->ny, memory->flux_k,
-            0, NULL, NULL);
-        check_ocl(cl_err, "Copying flux k buffer to device");
-    }
 }
 
 
@@ -194,15 +173,28 @@ void send_boundaries(const int z_pos, const int octant, const int istep, const i
     cl_int cl_err;
 
     // Get the edges off the device
-    cl_err = clEnqueueReadBuffer(context->queue, buffers->flux_i, CL_FALSE,
-        0, sizeof(double)*problem->nang*problem->ng*rankinfo->ny*rankinfo->nz, memory->flux_i, 0, NULL, NULL);
+    // I
+    size_t buffer_origin[] = {0, 0, z_pos};
+    size_t i_region[] = {sizeof(double)*problem->nang*problem->ng, rankinfo->ny, problem->chunk};
+    cl_err = clEnqueueReadBufferRect(context->queue, buffers->flux_i, CL_TRUE,
+        buffer_origin, buffer_origin,
+        i_region,
+        sizeof(double)*problem->nang*problem->ng, sizeof(double)*problem->nang*problem->ng*rankinfo->ny,
+        sizeof(double)*problem->nang*problem->ng, sizeof(double)*problem->nang*problem->ng*rankinfo->ny,
+        memory->flux_i, 0, NULL, NULL);
     check_ocl(cl_err, "Copying flux i buffer back to host");
-    cl_err = clEnqueueReadBuffer(context->queue, buffers->flux_j, CL_FALSE,
-        0, sizeof(double)*problem->nang*problem->ng*rankinfo->nx*rankinfo->nz, memory->flux_j, 0, NULL, NULL);
+
+    // J
+    size_t j_buffer_origin[] = {0, 0, z_pos};
+    size_t j_region[] = {sizeof(double)*problem->nang*problem->ng, rankinfo->nx, problem->chunk};
+    cl_err = clEnqueueReadBufferRect(context->queue, buffers->flux_j, CL_TRUE,
+        buffer_origin, buffer_origin,
+        j_region,
+        sizeof(double)*problem->nang*problem->ng, sizeof(double)*problem->nang*problem->ng*rankinfo->nx,
+        sizeof(double)*problem->nang*problem->ng, sizeof(double)*problem->nang*problem->ng*rankinfo->nx,
+        memory->flux_j, 0, NULL, NULL);
     check_ocl(cl_err, "Copying flux j buffer back to host");
-    cl_err = clEnqueueReadBuffer(context->queue, buffers->flux_k, CL_TRUE,
-        0, sizeof(double)*problem->nang*problem->ng*rankinfo->nx*rankinfo->ny, memory->flux_k, 0, NULL, NULL);
-    check_ocl(cl_err, "Copying flux k buffer back to host");
+
 
     // Send to neighbour with MPI_Send
     // X
@@ -230,19 +222,6 @@ void send_boundaries(const int z_pos, const int octant, const int istep, const i
         mpi_err = MPI_Send(memory->flux_j, problem->nang*problem->ng*rankinfo->nx*rankinfo->nz, MPI_DOUBLE,
                 rankinfo->yup, 0, snap_comms);
         check_mpi(mpi_err, "Sending to upward y neighbour");
-    }
-    // Z
-    if (kstep == -1 && rankinfo->zdown != rankinfo->rank)
-    {
-        mpi_err = MPI_Send(memory->flux_k, problem->nang*problem->ng*rankinfo->nx*rankinfo->ny, MPI_DOUBLE,
-                rankinfo->zdown, 0, snap_comms);
-        check_mpi(mpi_err, "Sending to downward z neighbour");
-    }
-    else if (kstep == 1 && rankinfo->zup != rankinfo->rank)
-    {
-        mpi_err = MPI_Send(memory->flux_k, problem->nang*problem->ng*rankinfo->nx*rankinfo->ny, MPI_DOUBLE,
-                rankinfo->zup, 0, snap_comms);
-        check_mpi(mpi_err, "Sending to upward z neighbour");
     }
 }
 
