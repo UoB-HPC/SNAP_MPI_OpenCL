@@ -184,7 +184,8 @@ void broadcast_problem(struct problem *problem, int rank)
         problem->nsteps,
         problem->npex,
         problem->npey,
-        problem->npez
+        problem->npez,
+        problem->chunk
     };
     double doubles[] = {
         problem->lx,
@@ -197,7 +198,7 @@ void broadcast_problem(struct problem *problem, int rank)
         problem->tf,
         problem->epsi
     };
-    MPI_Bcast(ints, 12, MPI_UNSIGNED, 0, MPI_COMM_WORLD);
+    MPI_Bcast(ints, 13, MPI_UNSIGNED, 0, MPI_COMM_WORLD);
     MPI_Bcast(doubles, 9, MPI_DOUBLE, 0, MPI_COMM_WORLD);
     if (rank != 0)
     {
@@ -213,6 +214,7 @@ void broadcast_problem(struct problem *problem, int rank)
         problem->npex = ints[9];
         problem->npey = ints[10];
         problem->npez = ints[11];
+        problem->chunk = ints[12];
 
         problem->lx = doubles[0];
         problem->ly = doubles[1];
