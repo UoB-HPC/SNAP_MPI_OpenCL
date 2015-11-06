@@ -134,12 +134,12 @@ int main(int argc, char **argv)
     // Zero out the angular flux buffers
     for (int oct = 0; oct < 8; oct++)
     {
-        zero_buffer(&context, buffers.angular_flux_in[oct], problem.nang*problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz);
-        zero_buffer(&context, buffers.angular_flux_out[oct], problem.nang*problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz);
+        zero_buffer(&context, buffers.angular_flux_in[oct], 0, problem.nang*problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz);
+        zero_buffer(&context, buffers.angular_flux_out[oct], 0, problem.nang*problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz);
     }
 
     // Zero out the outer source, because later moments are +=
-    zero_buffer(&context, buffers.outer_source, problem.cmom*problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz);
+    zero_buffer(&context, buffers.outer_source, 0, problem.cmom*problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz);
 
     clerr = clFinish(context.queue);
     check_ocl(clerr, "Finish queue at end of setup");
@@ -174,9 +174,9 @@ int main(int argc, char **argv)
         }
 
         // Zero out the scalar flux and flux moments
-        zero_buffer(&context, buffers.scalar_flux, problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz);
+        zero_buffer(&context, buffers.scalar_flux, 0, problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz);
         if (problem.cmom-1 > 0)
-            zero_buffer(&context, buffers.scalar_flux_moments, (problem.cmom-1)*problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz);
+            zero_buffer(&context, buffers.scalar_flux_moments, 0, (problem.cmom-1)*problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz);
 
         // Swap angluar flux pointers (not for the first timestep)
         if (t > 0)
@@ -225,7 +225,7 @@ int main(int argc, char **argv)
                         for (int kstep = -1; kstep < 2; kstep += 2)
                         {
                             // Zero the z buffer every octant - we just do KBA
-                            zero_buffer(&context, buffers.flux_k, problem.nang*problem.ng*rankinfo.nx*rankinfo.ny);
+                            zero_buffer(&context, buffers.flux_k, 0, problem.nang*problem.ng*rankinfo.nx*rankinfo.ny);
 
                             unsigned int z_pos = 0;
                             recv_boundaries(z_pos, octant, istep, jstep, kstep, &problem, &rankinfo, &memory, &context, &buffers);

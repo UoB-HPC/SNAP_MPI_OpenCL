@@ -171,14 +171,14 @@ void allocate_buffers(
 }
 
 
-void zero_buffer(struct context * context, cl_mem buffer, size_t size)
+void zero_buffer(struct context * context, cl_mem buffer, size_t offset, size_t size)
 {
     cl_int err;
     err = clSetKernelArg(context->kernels.zero_buffer, 0, sizeof(cl_mem), &buffer);
     check_ocl(err, "Setting buffer zero kernel argument");
     err = clEnqueueNDRangeKernel(context->queue,
         context->kernels.zero_buffer,
-        1, 0, &size, NULL, 0, NULL, NULL);
+        1, &offset, &size, NULL, 0, NULL, NULL);
     check_ocl(err, "Enqueueing buffer zero kernel");
 }
 

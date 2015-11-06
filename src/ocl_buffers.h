@@ -66,7 +66,7 @@ void check_device_memory_requirements(struct problem * problem, struct rankinfo 
 void allocate_buffers(struct problem * problem, struct rankinfo * rankinfo, struct context * context, struct buffers * buffers);
 
 /** \brief Launch a kernel to zero the (1D) buffer (non-blocking) */
-void zero_buffer(struct context * context, cl_mem buffer, size_t size);
+void zero_buffer(struct context * context, cl_mem buffer, size_t offset, size_t size);
 
 /** \brief Swap the angular flux pointers around (in <-> out) */
 void swap_angular_flux_buffers(struct buffers * buffers);
