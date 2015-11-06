@@ -24,7 +24,6 @@ struct kernels
     cl_kernel calc_dd_coeff;
     cl_kernel calc_denominator;
     cl_kernel zero_buffer;
-    cl_kernel zero_buffer_3D;
     cl_kernel outer_source;
     cl_kernel inner_source;
     cl_kernel sweep_plane;
