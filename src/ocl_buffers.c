@@ -182,15 +182,15 @@ void zero_buffer(struct context * context, cl_mem buffer, size_t size)
     check_ocl(err, "Enqueueing buffer zero kernel");
 }
 
-void zero_buffer_2D(struct context * context, cl_mem buffer, size_t * offset, size_t * size)
+void zero_buffer_3D(struct context * context, cl_mem buffer, size_t * offset, size_t * size)
 {
     cl_int err;
-    err = clSetKernelArg(context->kernels.zero_buffer_2D, 0, sizeof(cl_mem), &buffer);
-    check_ocl(err, "Setting 2D buffer zero kernel argument");
+    err = clSetKernelArg(context->kernels.zero_buffer_3D, 0, sizeof(cl_mem), &buffer);
+    check_ocl(err, "Setting 3D buffer zero kernel argument");
     err = clEnqueueNDRangeKernel(context->queue,
-        context->kernels.zero_buffer_2D,
-        2, offset, size, NULL, 0, NULL, NULL);
-    check_ocl(err, "Enqueueing 2D buffer zero kernel");
+        context->kernels.zero_buffer_3D,
+        3, offset, size, NULL, 0, NULL, NULL);
+    check_ocl(err, "Enqueueing 3D buffer zero kernel");
 }
 
 

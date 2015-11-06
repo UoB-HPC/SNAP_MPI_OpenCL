@@ -86,8 +86,8 @@ void init_ocl(struct context * context)
     check_ocl(err, "Creating denominator kernel");
     context->kernels.zero_buffer = clCreateKernel(context->program, "zero_buffer", &err);
     check_ocl(err, "Creating buffer zeroing kernel");
-    context->kernels.zero_buffer_2D = clCreateKernel(context->program, "zero_buffer_2D", &err);
-    check_ocl(err, "Creating 2D buffer zeroing kernel");
+    context->kernels.zero_buffer_3D = clCreateKernel(context->program, "zero_buffer_3D", &err);
+    check_ocl(err, "Creating 3D buffer zeroing kernel");
     context->kernels.outer_source = clCreateKernel(context->program, "calc_outer_source", &err);
     check_ocl(err, "Creating outer source kernel");
     context->kernels.inner_source = clCreateKernel(context->program, "calc_inner_source", &err);

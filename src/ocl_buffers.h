@@ -68,8 +68,8 @@ void allocate_buffers(struct problem * problem, struct rankinfo * rankinfo, stru
 /** \brief Launch a kernel to zero the (1D) buffer (non-blocking) */
 void zero_buffer(struct context * context, cl_mem buffer, size_t size);
 
-/** \brief Launch a kernel to zero a 2D buffer (non-blocking) */
-void zero_buffer_2D(struct context * context, cl_mem buffer, size_t * offset, size_t * size);
+/** \brief Launch a kernel to zero a 3D buffer (non-blocking) */
+void zero_buffer_3D(struct context * context, cl_mem buffer, size_t * offset, size_t * size);
 
 /** \brief Swap the angular flux pointers around (in <-> out) */
 void swap_angular_flux_buffers(struct buffers * buffers);
