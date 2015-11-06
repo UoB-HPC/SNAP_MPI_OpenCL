@@ -96,7 +96,7 @@ void calculate_neighbours(MPI_Comm comms,  struct problem * problem, struct rank
 }
 
 
-void recv_boundaries(const int octant, const int istep, const int jstep, const int kstep,
+void recv_boundaries(const int z_pos, const int octant, const int istep, const int jstep, const int kstep,
     struct problem * problem, struct rankinfo * rankinfo,
     struct memory * memory, struct context * context, struct buffers * buffers)
 {
@@ -186,7 +186,7 @@ void recv_boundaries(const int octant, const int istep, const int jstep, const i
 }
 
 
-void send_boundaries(const int octant, const int istep, const int jstep, const int kstep,
+void send_boundaries(const int z_pos, const int octant, const int istep, const int jstep, const int kstep,
     struct problem * problem, struct rankinfo * rankinfo,
     struct memory * memory, struct context * context, struct buffers * buffers)
 {
