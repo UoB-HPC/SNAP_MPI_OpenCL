@@ -10,7 +10,6 @@
 #include "input.h"
 #include "problem.h"
 #include "allocate.h"
-#include "halos.h"
 #include "source.h"
 #include "sweep.h"
 #include "scalar_flux.h"
@@ -116,8 +115,7 @@ int main(int argc, char **argv)
     // Allocate the problem arrays
     struct memory memory;
     allocate_memory(&problem, &rankinfo, &memory);
-    struct halo halos;
-    allocate_halos(&problem, &rankinfo, &halos);
+
 
     // Set up problem
     init_quadrature_weights(&problem, &context, &buffers);
@@ -347,7 +345,6 @@ int main(int argc, char **argv)
         print_timing_report(&timers, &problem, total_iterations);
     }
 
-    free_halos(&problem, &halos);
     free_memory(&memory);
 
     release_context(&context);
