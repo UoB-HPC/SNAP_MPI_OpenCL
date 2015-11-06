@@ -221,103 +221,19 @@ int main(int argc, char **argv)
                 }
 
                 // Sweep each octant in turn
-                int octant, istep, jstep, kstep;
-
-                // Octant 1
-                octant = 0;
-                istep = -1;
-                jstep = -1;
-                kstep = -1;
-                recv_boundaries(octant, istep, jstep, kstep, &problem, &rankinfo, &memory, &context, &buffers);
-                for (unsigned int p = 0; p < num_planes; p++)
-                {
-                    sweep_plane(octant, istep, jstep, kstep, p, planes, &problem, &rankinfo, &context, &buffers);
-                }
-                send_boundaries(octant, istep, jstep, kstep, &problem, &rankinfo, &memory, &context, &buffers);
-
-                // Octant 2
-                octant = 1;
-                istep = +1;
-                jstep = -1;
-                kstep = -1;
-                recv_boundaries(octant, istep, jstep, kstep, &problem, &rankinfo, &memory, &context, &buffers);
-                for (unsigned int p = 0; p < num_planes; p++)
-                {
-                    sweep_plane(octant, istep, jstep, kstep, p, planes, &problem, &rankinfo, &context, &buffers);
-                }
-                send_boundaries(octant, istep, jstep, kstep, &problem, &rankinfo, &memory, &context, &buffers);
-
-                // Octant 3
-                octant = 2;
-                istep = -1;
-                jstep = +1;
-                kstep = -1;
-                recv_boundaries(octant, istep, jstep, kstep, &problem, &rankinfo, &memory, &context, &buffers);
-                for (unsigned int p = 0; p < num_planes; p++)
-                {
-                    sweep_plane(octant, istep, jstep, kstep, p, planes, &problem, &rankinfo, &context, &buffers);
-                }
-                send_boundaries(octant, istep, jstep, kstep, &problem, &rankinfo, &memory, &context, &buffers);
-
-                // Octant 4
-                octant = 3;
-                istep = +1;
-                jstep = +1;
-                kstep = -1;
-                recv_boundaries(octant, istep, jstep, kstep, &problem, &rankinfo, &memory, &context, &buffers);
-                for (unsigned int p = 0; p < num_planes; p++)
-                {
-                    sweep_plane(octant, istep, jstep, kstep, p, planes, &problem, &rankinfo, &context, &buffers);
-                }
-                send_boundaries(octant, istep, jstep, kstep, &problem, &rankinfo, &memory, &context, &buffers);
-
-                // Octant 5
-                octant = 4;
-                istep = -1;
-                jstep = -1;
-                kstep = +1;
-                recv_boundaries(octant, istep, jstep, kstep, &problem, &rankinfo, &memory, &context, &buffers);
-                for (unsigned int p = 0; p < num_planes; p++)
-                {
-                    sweep_plane(octant, istep, jstep, kstep, p, planes, &problem, &rankinfo, &context, &buffers);
-                }
-                send_boundaries(octant, istep, jstep, kstep, &problem, &rankinfo, &memory, &context, &buffers);
-
-                // Octant 6
-                octant = 5;
-                istep = +1;
-                jstep = -1;
-                kstep = +1;
-                recv_boundaries(octant, istep, jstep, kstep, &problem, &rankinfo, &memory, &context, &buffers);
-                for (unsigned int p = 0; p < num_planes; p++)
-                {
-                    sweep_plane(octant, istep, jstep, kstep, p, planes, &problem, &rankinfo, &context, &buffers);
-                }
-                send_boundaries(octant, istep, jstep, kstep, &problem, &rankinfo, &memory, &context, &buffers);
-
-                // Octant 7
-                octant = 6;
-                istep = -1;
-                jstep = +1;
-                kstep = +1;
-                recv_boundaries(octant, istep, jstep, kstep, &problem, &rankinfo, &memory, &context, &buffers);
-                for (unsigned int p = 0; p < num_planes; p++)
-                {
-                    sweep_plane(octant, istep, jstep, kstep, p, planes, &problem, &rankinfo, &context, &buffers);
-                }
-                send_boundaries(octant, istep, jstep, kstep, &problem, &rankinfo, &memory, &context, &buffers);
-
-                // Octant 8
-                octant = 7;
-                istep = +1;
-                jstep = +1;
-                kstep = +1;
-                recv_boundaries(octant, istep, jstep, kstep, &problem, &rankinfo, &memory, &context, &buffers);
-                for (unsigned int p = 0; p < num_planes; p++)
-                {
-                    sweep_plane(octant, istep, jstep, kstep, p, planes, &problem, &rankinfo, &context, &buffers);
-                }
-                send_boundaries(octant, istep, jstep, kstep, &problem, &rankinfo, &memory, &context, &buffers);
+                int octant = 0;
+                for (int istep = -1; istep < 2; istep += 2)
+                    for (int jstep = -1; jstep < 2; jstep += 2)
+                        for (int kstep = -1; kstep < 2; kstep += 2)
+                        {
+                            recv_boundaries(octant, istep, jstep, kstep, &problem, &rankinfo, &memory, &context, &buffers);
+                            for (unsigned int p = 0; p < num_planes; p++)
+                            {
+                                sweep_plane(octant, istep, jstep, kstep, p, planes, &problem, &rankinfo, &context, &buffers);
+                            }
+                            send_boundaries(octant, istep, jstep, kstep, &problem, &rankinfo, &memory, &context, &buffers);
+                            octant += 1;
+                        }
 
                 if (profiling && rankinfo.rank == 0)
                 {

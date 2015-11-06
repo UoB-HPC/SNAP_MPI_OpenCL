@@ -74,15 +74,15 @@ void calculate_scattering_coefficients(
     // Allocate temporary on host for scattering coefficients
     double *scat_coeff = malloc(sizeof(double)*problem->nang*problem->cmom*8);
     // (mu*eta*xi)^l starting at 0
-    for (int kd = 0; kd < 2; kd++)
+    for (int id = 0; id < 2; id++)
     {
-        double ks = (kd == 1) ? 1.0 : -1.0;
+        double is = (id == 1) ? 1.0 : -1.0;
         for (int jd = 0; jd < 2; jd++)
         {
             double js = (jd == 1) ? 1.0 : -1.0;
-            for (int id = 0; id < 2; id++)
+            for (int kd = 0; kd < 2; kd++)
             {
-                double is = (id == 1) ? 1.0 : -1.0;
+                double ks = (kd == 1) ? 1.0 : -1.0;
                 int oct = 4*kd + 2*jd + id;
                 // Init first moment
                 for (unsigned int a = 0; a < problem->nang; a++)
