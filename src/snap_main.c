@@ -226,12 +226,25 @@ int main(int argc, char **argv)
                     for (int jstep = -1; jstep < 2; jstep += 2)
                         for (int kstep = -1; kstep < 2; kstep += 2)
                         {
-                            recv_boundaries(octant, istep, jstep, kstep, &problem, &rankinfo, &memory, &context, &buffers);
-                            for (unsigned int p = 0; p < num_planes; p++)
+                            // Zero the z buffer every octant - we just do KBA
+                            zero_buffer(&context, buffers.flux_k, problem.nang*problem.ng*rankinfo.nx*rankinfo.ny);
+
+                            unsigned int z_pos = 0;
+                            recv_boundaries(z_pos, octant, istep, jstep, kstep, &problem, &rankinfo, &memory, &context, &buffers);
+
+                            // Complete the first XY-plane apart from the final corner cells
+                            unsigned int p;
+                            for (p = 0; p < rankinfo.nx+rankinfo.ny - 2; p++)
                             {
                                 sweep_plane(octant, istep, jstep, kstep, p, planes, &problem, &rankinfo, &context, &buffers);
                             }
-                            send_boundaries(octant, istep, jstep, kstep, &problem, &rankinfo, &memory, &context, &buffers);
+                            // Then enqueue chunk number of planes between communications
+                            // until we finish the octant off
+                            for (; p < num_planes; p++)
+                            {
+                                sweep_plane(octant, istep, jstep, kstep, p, planes, &problem, &rankinfo, &context, &buffers);
+                            }
+                            send_boundaries(z_pos, octant, istep, jstep, kstep, &problem, &rankinfo, &memory, &context, &buffers);
                             octant += 1;
                         }
 
