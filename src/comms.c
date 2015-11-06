@@ -105,14 +105,10 @@ void recv_boundaries(const int z_pos, const int octant, const int istep, const i
 
     // Check if pencil has an external boundary for this sweep direction
     // If so, set as vacuum
-
-    // X
     if ( (istep == -1 && rankinfo->iub == problem->nx)
         || (istep == 1 && rankinfo->ilb == 0))
     {
-        size_t offset[] = {0, 0, 0};
-        size_t global[] = {problem->nang*problem->ng, rankinfo->ny, rankinfo->nz};
-        zero_buffer_3D(context, buffers->flux_i, offset, global);
+        zero_buffer(context, buffers->flux_i, problem->nang*problem->ng*rankinfo->ny*rankinfo->nz);
     }
     // Otherwise, internal boundary - get data from MPI receives
     else
@@ -141,7 +137,6 @@ void recv_boundaries(const int z_pos, const int octant, const int istep, const i
         check_ocl(cl_err, "Copying flux i buffer to device");
     }
 
-    // Y
     if ( (jstep == -1 && rankinfo->jub == problem->ny)
         || (jstep == 1 && rankinfo->jlb == 0))
     {
@@ -183,27 +178,12 @@ void send_boundaries(const int z_pos, const int octant, const int istep, const i
     cl_int cl_err;
 
     // Get the edges off the device
-    // I
-    size_t buffer_origin[] = {0, 0, z_pos};
-    size_t i_region[] = {sizeof(double)*problem->nang*problem->ng, rankinfo->ny, problem->chunk};
-    cl_err = clEnqueueReadBufferRect(context->queue, buffers->flux_i, CL_TRUE,
-        buffer_origin, buffer_origin,
-        i_region,
-        sizeof(double)*problem->nang*problem->ng, sizeof(double)*problem->nang*problem->ng*rankinfo->ny,
-        sizeof(double)*problem->nang*problem->ng, sizeof(double)*problem->nang*problem->ng*rankinfo->ny,
-        memory->flux_i, 0, NULL, NULL);
+    cl_err = clEnqueueReadBuffer(context->queue, buffers->flux_i, CL_FALSE,
+        0, sizeof(double)*problem->nang*problem->ng*rankinfo->ny*rankinfo->nz, memory->flux_i, 0, NULL, NULL);
     check_ocl(cl_err, "Copying flux i buffer back to host");
-
-    // J
-    size_t j_region[] = {sizeof(double)*problem->nang*problem->ng, rankinfo->nx, problem->chunk};
-    cl_err = clEnqueueReadBufferRect(context->queue, buffers->flux_j, CL_TRUE,
-        buffer_origin, buffer_origin,
-        j_region,
-        sizeof(double)*problem->nang*problem->ng, sizeof(double)*problem->nang*problem->ng*rankinfo->nx,
-        sizeof(double)*problem->nang*problem->ng, sizeof(double)*problem->nang*problem->ng*rankinfo->nx,
-        memory->flux_j, 0, NULL, NULL);
+    cl_err = clEnqueueReadBuffer(context->queue, buffers->flux_j, CL_FALSE,
+        0, sizeof(double)*problem->nang*problem->ng*rankinfo->nx*rankinfo->nz, memory->flux_j, 0, NULL, NULL);
     check_ocl(cl_err, "Copying flux j buffer back to host");
-
 
     // Send to neighbour with MPI_Send
     // X
