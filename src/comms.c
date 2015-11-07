@@ -163,7 +163,6 @@ void recv_boundaries(int z_pos, const int octant, const int istep, const int jst
     }
     else
     {
-        size_t j_offset = problem->nang*problem->ng*rankinfo->nx*z_pos;
         if (jstep == -1)
         {
             mpi_err = MPI_Recv(memory->flux_j+j_offset, problem->nang*problem->ng*rankinfo->nx*problem->chunk, MPI_DOUBLE,
