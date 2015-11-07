@@ -128,7 +128,7 @@ int main(int argc, char **argv)
 
     struct plane* planes;
     unsigned int num_planes;
-    init_planes(&planes, &num_planes, &rankinfo);
+    init_planes(&planes, &num_planes, &problem, &rankinfo);
     copy_planes(planes, num_planes, &context, &buffers);
 
     // Zero out the angular flux buffers

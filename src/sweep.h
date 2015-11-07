@@ -18,8 +18,8 @@ struct plane
     struct cell_id * cell_ids;
 };
 
-
-void init_planes(struct plane** planes, unsigned int *num_planes, struct rankinfo * rankinfo);
+/** \brief Create a list of cell indexes in the planes in the XY plane determined by chunk */
+void init_planes(struct plane** planes, unsigned int *num_planes, struct problem * problem, struct rankinfo * rankinfo);
 
 void copy_planes(const struct plane * planes, const unsigned int num_planes, struct context * context, struct buffers * buffers);
 
