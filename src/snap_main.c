@@ -227,22 +227,34 @@ int main(int argc, char **argv)
                             // Zero the z buffer every octant - we just do KBA
                             zero_buffer(&context, buffers.flux_k, 0, problem.nang*problem.ng*rankinfo.nx*rankinfo.ny);
 
-                            unsigned int z_pos = 0;
-                            recv_boundaries(z_pos, octant, istep, jstep, kstep, &problem, &rankinfo, &memory, &context, &buffers);
+                            // Receive your first XY plane and/or boundary values
+                            recv_boundaries(0, octant, istep, jstep, kstep, &problem, &rankinfo, &memory, &context, &buffers);
 
-                            // Complete the first XY-plane apart from the final corner cells
+                            // Complete the first XY-plane apart from the final corner cell
                             unsigned int p;
                             for (p = 0; p < rankinfo.nx+rankinfo.ny - 2; p++)
                             {
                                 sweep_plane(octant, istep, jstep, kstep, p, planes, &problem, &rankinfo, &context, &buffers);
                             }
-                            // Then enqueue chunk number of planes between communications
-                            // until we finish the octant off
-                            for (; p < num_planes; p++)
+
+                            for (unsigned int z_pos = 0; z_pos < rankinfo.nz; z_pos += problem.chunk)
                             {
-                                sweep_plane(octant, istep, jstep, kstep, p, planes, &problem, &rankinfo, &context, &buffers);
+                                if (z_pos != 0)
+                                {
+                                    // Receive the next plane, but we already have the first one from above
+                                    recv_boundaries(z_pos, octant, istep, jstep, kstep, &problem, &rankinfo, &memory, &context, &buffers);
+                                }
+
+                                // Sweep a chunk == chunk more planes
+                                for (unsigned int c = 0; c <  problem.chunk; c++)
+                                {
+                                    sweep_plane(octant, istep, jstep, kstep, p, planes, &problem, &rankinfo, &context, &buffers);
+                                    p++;
+                                }
+
+                                send_boundaries(z_pos, octant, istep, jstep, kstep, &problem, &rankinfo, &memory, &context, &buffers);
                             }
-                            send_boundaries(z_pos, octant, istep, jstep, kstep, &problem, &rankinfo, &memory, &context, &buffers);
+
                             octant += 1;
                         }
 

@@ -96,7 +96,7 @@ void calculate_neighbours(MPI_Comm comms,  struct problem * problem, struct rank
 }
 
 
-void recv_boundaries(const int z_pos, const int octant, const int istep, const int jstep, const int kstep,
+void recv_boundaries(int z_pos, const int octant, const int istep, const int jstep, const int kstep,
     struct problem * problem, struct rankinfo * rankinfo,
     struct memory * memory, struct context * context, struct buffers * buffers)
 {
@@ -105,15 +105,26 @@ void recv_boundaries(const int z_pos, const int octant, const int istep, const i
 
     // Check if pencil has an external boundary for this sweep direction
     // If so, set as vacuum
+    size_t i_offset;
+    if (kstep == -1)
+    {
+        // Correct XY plane position for sweep direction
+        int stride = problem->nang*problem->ng*rankinfo->ny;
+        i_offset = (rankinfo->nz-problem->chunk-z_pos) * stride;
+    }
+    else
+    {
+        i_offset = problem->nang*problem->ng*rankinfo->ny*z_pos;
+    }
+
     if ( (istep == -1 && rankinfo->iub == problem->nx)
         || (istep == 1 && rankinfo->ilb == 0))
     {
-        zero_buffer(context, buffers->flux_i, problem->nang*problem->ng*rankinfo->ny*z_pos, problem->nang*problem->ng*rankinfo->ny*problem->chunk);
+        zero_buffer(context, buffers->flux_i, i_offset, problem->nang*problem->ng*rankinfo->ny*problem->chunk);
     }
     // Otherwise, internal boundary - get data from MPI receives
     else
     {
-        size_t i_offset = problem->nang*problem->ng*rankinfo->ny*z_pos;
         if (istep == -1)
         {
             mpi_err = MPI_Recv(memory->flux_i+i_offset, problem->nang*problem->ng*rankinfo->ny*problem->chunk, MPI_DOUBLE,
@@ -134,10 +145,21 @@ void recv_boundaries(const int z_pos, const int octant, const int istep, const i
         check_ocl(cl_err, "Copying flux i buffer to device");
     }
 
+    size_t j_offset;
+    if (kstep == -1)
+    {
+        // Correct XY plane position for sweep direction
+        int stride = problem->nang*problem->ng*rankinfo->nx;
+        j_offset = (rankinfo->nz-problem->chunk-z_pos) * stride;
+    }
+    else
+    {
+        j_offset = problem->nang*problem->ng*rankinfo->nx*z_pos;
+    }
     if ( (jstep == -1 && rankinfo->jub == problem->ny)
         || (jstep == 1 && rankinfo->jlb == 0))
     {
-        zero_buffer(context, buffers->flux_j, problem->nang*problem->ng*rankinfo->nx*z_pos, problem->nang*problem->ng*rankinfo->nx*problem->chunk);
+        zero_buffer(context, buffers->flux_j, j_offset, problem->nang*problem->ng*rankinfo->nx*problem->chunk);
     }
     else
     {
@@ -157,23 +179,34 @@ void recv_boundaries(const int z_pos, const int octant, const int istep, const i
         // Copy flux_j to the device
         cl_err = clEnqueueWriteBuffer(context->queue, buffers->flux_j, CL_TRUE,
             sizeof(double)*j_offset,
-            sizeof(double)*problem->nang*problem->ng*rankinfo->nx*rankinfo->nz,
+            sizeof(double)*problem->nang*problem->ng*rankinfo->nx*problem->chunk,
             (memory->flux_j)+j_offset, 0, NULL, NULL);
         check_ocl(cl_err, "Copying flux j buffer to device");
     }
 }
 
 
-void send_boundaries(const int z_pos, const int octant, const int istep, const int jstep, const int kstep,
+void send_boundaries(int z_pos, const int octant, const int istep, const int jstep, const int kstep,
     struct problem * problem, struct rankinfo * rankinfo,
     struct memory * memory, struct context * context, struct buffers * buffers)
 {
     int mpi_err;
     cl_int cl_err;
 
+
     // Get the edges off the device
     // I
-    size_t i_offset = problem->nang*problem->ng*rankinfo->ny*z_pos;
+    size_t i_offset;
+    if (kstep == -1)
+    {
+        // Correct XY plane position for sweep direction
+        int stride = problem->nang*problem->ng*rankinfo->ny;
+        i_offset = (rankinfo->nz-problem->chunk-z_pos) * stride;
+    }
+    else
+    {
+        i_offset = problem->nang*problem->ng*rankinfo->ny*z_pos;
+    }
     cl_err = clEnqueueReadBuffer(context->queue, buffers->flux_i, CL_FALSE,
         sizeof(double)*i_offset,
         sizeof(double)*problem->nang*problem->ng*rankinfo->ny*problem->chunk,
@@ -181,10 +214,20 @@ void send_boundaries(const int z_pos, const int octant, const int istep, const i
     check_ocl(cl_err, "Copying flux i buffer back to host");
 
     // J
-    size_t j_offset = problem->nang*problem->ng*rankinfo->nx*z_pos;
+    size_t j_offset;
+    if (kstep == -1)
+    {
+        // Correct XY plane position for sweep direction
+        int stride = problem->nang*problem->ng*rankinfo->nx;
+        j_offset = (rankinfo->nz-problem->chunk-z_pos) * stride;
+    }
+    else
+    {
+        j_offset = problem->nang*problem->ng*rankinfo->nx*z_pos;
+    }
     cl_err = clEnqueueReadBuffer(context->queue, buffers->flux_j, CL_TRUE,
         sizeof(double)*j_offset,
-        sizeof(double)*problem->nang*problem->ng*rankinfo->nx*rankinfo->nz,
+        sizeof(double)*problem->nang*problem->ng*rankinfo->nx*problem->chunk,
         (memory->flux_j)+j_offset, 0, NULL, NULL);
     check_ocl(cl_err, "Copying flux j buffer back to host");
 
