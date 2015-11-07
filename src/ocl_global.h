@@ -40,8 +40,8 @@ struct context
     struct kernels kernels;
 };
 
-
-void check_ocl(const cl_int err, const char *msg);
+void check_ocl_error(const cl_int err, const char *msg, const int line, const char * file);
+#define check_ocl(err, msg) check_ocl_error((err),(msg),__LINE__,__FILE__)
 
 /** \brief Initilise the OpenCL device, context, command queue and program */
 void init_ocl(struct context * context);
