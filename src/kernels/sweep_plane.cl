@@ -36,6 +36,7 @@ kernel void sweep_plane(
     const int jstep,
     const int kstep,
     const unsigned int oct,
+    const unsigned int z_pos,
     global const struct cell_id * plane,
     global const double * restrict source,
     global const double * restrict scat_coeff,
@@ -58,9 +59,9 @@ kernel void sweep_plane(
     const size_t g = get_global_id(0) / nang;
 
     // Read cell index from plane buffer
-    const size_t i = (istep > 0) ? plane[get_global_id(1)].i : nx - plane[get_global_id(1)].i - 1;
-    const size_t j = (jstep > 0) ? plane[get_global_id(1)].j : ny - plane[get_global_id(1)].j - 1;
-    const size_t k = (kstep > 0) ? plane[get_global_id(1)].k : nz - plane[get_global_id(1)].k - 1;
+    const size_t i = (istep > 0) ? plane[get_global_id(1)].i         : nx - plane[get_global_id(1)].i         - 1;
+    const size_t j = (jstep > 0) ? plane[get_global_id(1)].j         : ny - plane[get_global_id(1)].j         - 1;
+    const size_t k = (kstep > 0) ? plane[get_global_id(1)].k + z_pos : nz - plane[get_global_id(1)].k - z_pos - 1;
 
     //
     // Compute the angular flux (psi)
