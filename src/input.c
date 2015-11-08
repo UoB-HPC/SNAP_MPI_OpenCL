@@ -14,6 +14,9 @@ void read_input(char *file, struct problem *problem)
     size_t read;
     size_t len = 0;
 
+    // Set multigpu to false in case it's not in the file
+    problem->multigpu = false;
+
     // Read the lines in the file
     while ((read = getline(&line, &len, fp)) != -1)
     {
