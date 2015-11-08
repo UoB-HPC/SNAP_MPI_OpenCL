@@ -166,6 +166,11 @@ void read_input(char *file, struct problem *problem)
                 i++;
             problem->chunk = atoi(line+i);
         }
+        else if (strncmp(line+i, "multigpu", strlen("multigpu")) == 0)
+        {
+            i += strlen("multigpu");
+            problem->multigpu = true;
+        }
     }
     free(line);
 }
@@ -185,7 +190,8 @@ void broadcast_problem(struct problem *problem, int rank)
         problem->npex,
         problem->npey,
         problem->npez,
-        problem->chunk
+        problem->chunk,
+        problem->multigpu
     };
     double doubles[] = {
         problem->lx,
@@ -198,7 +204,7 @@ void broadcast_problem(struct problem *problem, int rank)
         problem->tf,
         problem->epsi
     };
-    MPI_Bcast(ints, 13, MPI_UNSIGNED, 0, MPI_COMM_WORLD);
+    MPI_Bcast(ints, 14, MPI_UNSIGNED, 0, MPI_COMM_WORLD);
     MPI_Bcast(doubles, 9, MPI_DOUBLE, 0, MPI_COMM_WORLD);
     if (rank != 0)
     {
@@ -215,6 +221,7 @@ void broadcast_problem(struct problem *problem, int rank)
         problem->npey = ints[10];
         problem->npez = ints[11];
         problem->chunk = ints[12];
+        problem->multigpu = ints[13];
 
         problem->lx = doubles[0];
         problem->ly = doubles[1];

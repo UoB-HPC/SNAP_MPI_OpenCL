@@ -38,6 +38,7 @@
 * - npey: MPI decomposition: number of processors in y direction
 * - npez: MPI decomposition: number of processors in z direction
 * - chunk: Number of x-y planes to calculate before communication
+* - multigpu: Specifies if there is more than one GPU per physical node (optional)
 */
 void read_input(char *file, struct problem *problem);
 

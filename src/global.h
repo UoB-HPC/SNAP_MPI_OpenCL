@@ -5,6 +5,7 @@
 * \brief Structures containing problem sizes and MPI information
 */
 
+#include <stdbool.h>
 
 /** \brief Problem dimensions
 *
@@ -64,6 +65,9 @@ struct problem
 
     /** \brief KBA chunk size */
     unsigned int chunk;
+
+    /** \brief Global variable to determine if there are multiple GPUs per node (if so we have to get GPUs VERY carefully) */
+    bool multigpu;
 };
 
 
