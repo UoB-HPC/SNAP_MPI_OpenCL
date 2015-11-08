@@ -10,7 +10,7 @@ void check_ocl_error(const cl_int err, const char *msg, const int line, const ch
     if (err != CL_SUCCESS)
     {
         fprintf(stderr, "OpenCL Error in %s line %d: %d. %s\n", file, line, err, msg);
-        exit(err);
+        exit(EXIT_FAILURE);
     }
 }
 

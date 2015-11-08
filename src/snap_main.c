@@ -74,13 +74,13 @@ int main(int argc, char **argv)
         if (argc != 2)
         {
             fprintf(stderr, "Usage: ./snap snap.in\n");
-            exit(-1);
+            exit(EXIT_FAILURE);
         }
         read_input(argv[1], &problem);
         if ((problem.npex * problem.npey * problem.npez) != size)
         {
             fprintf(stderr, "Input error: wanted %d ranks but executing with %d\n", problem.npex*problem.npey*problem.npez, size);
-            exit(-1);
+            exit(EXIT_FAILURE);
         }
         check_decomposition(&problem);
 
@@ -344,6 +344,8 @@ int main(int argc, char **argv)
 
     release_context(&context);
     finish_comms();
+
+    return EXIT_SUCCESS;
 }
 
 void print_banner(void)

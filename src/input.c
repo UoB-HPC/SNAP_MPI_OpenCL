@@ -8,7 +8,7 @@ void read_input(char *file, struct problem *problem)
     if (fp == NULL)
     {
         fprintf(stderr, "Error: Could not open file %s\n", file);
-        exit(-1);
+        exit(EXIT_FAILURE);
     }
     char *line = NULL;
     size_t read;
@@ -277,6 +277,6 @@ void check_decomposition(struct problem * input)
     }
 
     if (err)
-        exit(-1);
+        exit(EXIT_FAILURE);
 }
 

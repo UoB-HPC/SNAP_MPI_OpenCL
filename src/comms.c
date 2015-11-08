@@ -6,7 +6,7 @@ void check_mpi(const int err, const char *msg)
     if (err != MPI_SUCCESS)
     {
         fprintf(stderr, "MPI Error: %d. %s\n", err, msg);
-        exit(err);
+        exit(EXIT_FAILURE);
     }
 }
 
