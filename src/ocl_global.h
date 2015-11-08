@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 
 #ifdef __APPLE__
 #include <OpenCL/cl.h>
@@ -63,7 +64,7 @@ void check_ocl_error(const cl_int err, const char *msg, const int line, const ch
 /** @}*/
 
 /** \brief Initilise the OpenCL device, context, command queue and program */
-void init_ocl(struct context * context);
+void init_ocl(struct context * context, const bool multigpu, const int rank);
 
 /** \brief Release the OpenCL objects held in the context structure */
 void release_context(struct context * context);

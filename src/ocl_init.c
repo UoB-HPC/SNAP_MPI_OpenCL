@@ -3,7 +3,7 @@
 #include "ocl_global.h"
 #include "ocl_kernels.h"
 
-#define MAX_DEVICES 8
+#define MAX_DEVICES 16
 
 void check_ocl_error(const cl_int err, const char *msg, const int line, const char * file)
 {
@@ -14,7 +14,7 @@ void check_ocl_error(const cl_int err, const char *msg, const int line, const ch
     }
 }
 
-void init_ocl(struct context * context)
+void init_ocl(struct context * context, const bool multigpu, const int rank)
 {
     cl_int err;
 
@@ -40,12 +40,21 @@ void init_ocl(struct context * context)
     if (num_devices == 0)
         check_ocl(CL_DEVICE_NOT_FOUND, "Cannot find a GPU device");
 
-    // Just pick the first GPU device
-    context->device = devices[0];
-#ifdef __APPLE__
-    // If we on my MacBook we need the second GPU (the discrete one)
-    context->device = devices[1];
-#endif
+
+    if (!multigpu)
+    {
+        // Just pick the first GPU device
+        context->device = devices[0];
+    #ifdef __APPLE__
+        // If we on my MacBook we need the second GPU (the discrete one)
+        context->device = devices[1];
+    #endif
+    }
+    else
+    {
+        // NOTE THIS ONLY WORKS FOR CRAY CS-STORM NODES
+        context->device = devices[rank];
+    }
 
     // Create a context and command queue for the device
     context->context = clCreateContext(0, 1, &context->device, NULL, NULL, &err);

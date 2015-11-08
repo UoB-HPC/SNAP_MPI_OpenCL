@@ -101,7 +101,7 @@ int main(int argc, char **argv)
 
     // Initlise the OpenCL
     struct context context;
-    init_ocl(&context);
+    init_ocl(&context, problem.multigpu, rankinfo.rank);
     if (rankinfo.rank == 0)
         print_opencl_info(&context);
     struct buffers buffers;
