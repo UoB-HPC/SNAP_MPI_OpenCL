@@ -8,54 +8,64 @@
 #include "ocl_global.h"
 #include "global.h"
 
+/** \brief Struct to contain all the OpenCL buffers */
 struct buffers
 {
-    // Angular flux - two copies for time dependence, each ocant in own buffer
+    /** @{ \brief
+    Angular flux - two copies for time dependence, each ocant in own buffer
+    */
     cl_mem angular_flux_in[8];
     cl_mem angular_flux_out[8];
+    /** @} */
 
-    // Edge flux arrays
+    /** @{
+    \brief Edge flux arrays */
     cl_mem flux_i, flux_j, flux_k;
+    /** @} */
 
-    // Scalar flux arrays
+    /** @{ \brief Scalar flux arrays */
     cl_mem scalar_flux;
     cl_mem scalar_flux_moments;
+    /** @} */
 
-    // Quadrature weights
+    /** \brief Quadrature weights */
     cl_mem quad_weights;
 
-    // Cosine coefficients
+    /** @{ \brief Cosine coefficients */
     cl_mem mu, eta, xi;
+    /** @} */
 
-    // Scattering coefficient
+    /** \brief Scattering coefficient */
     cl_mem scat_coeff;
 
-    // Material cross section
+    /** \brief Material cross section */
     cl_mem mat_cross_section;
 
-    // Source terms
+    /** @{ \brief Source terms */
     cl_mem fixed_source;
     cl_mem outer_source;
     cl_mem inner_source;
+    /** @} */
 
-    // Scattering terms
+    /** \brief Scattering terms */
     cl_mem scattering_matrix;
 
-    // Diamond diference co-efficients
+    /** @{ \brief Diamond diference co-efficients */
     cl_mem dd_i, dd_j, dd_k;
+    /** @} */
 
-    // Mock velocities array
+    /** \brief Mock velocities array */
     cl_mem velocities;
 
-    // Time absorption coefficient
+    /** \brief Time absorption coefficient */
     cl_mem velocity_delta;
 
-    // Transport denominator
+    /** \brief Transport denominator */
     cl_mem denominator;
 
-    // Lists of cell indicies in each plane
-    // Each buffer is an array of the i,j,k indicies for cells within that plane
-    // One buffer per plane
+    /** \brief Lists of cell indicies in each plane
+    Each buffer is an array of the i,j,k indicies for cells within that plane
+    One buffer per plane */
     cl_mem *planes;
 };
 

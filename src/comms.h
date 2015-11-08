@@ -1,6 +1,10 @@
 
 #pragma once
 
+/** \file
+* \brief Communication routines (setup and sweep data transfer)
+*/
+
 #include <mpi.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -11,13 +15,19 @@
 #include "ocl_buffers.h"
 
 
-// Cartesian communicator
+/** \brief Cartesian communicator */
 MPI_Comm snap_comms;
 
+/** \brief Check MPI error codes */
 void check_mpi(const int err, const char *msg);
+
+/** \brief Setup cartesian communicator and find your MPI rank */
 void setup_comms(struct problem * problem, struct rankinfo * rankinfo);
+
+/** \brief Just call MPI_Finalize */
 void finish_comms(void);
 
+/** \brief Discover the ranks of your neighbours */
 void calculate_neighbours(MPI_Comm comms,  struct problem * problem, struct rankinfo * rankinfo);
 
 /** \brief Receive chunk number of XY planes starting at position z_pos */

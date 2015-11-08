@@ -1,6 +1,10 @@
 
 #pragma once
 
+/** \file
+* \brief Calculate particle population
+*/
+
 #include "global.h"
 #include "problem.h"
 #include "allocate.h"

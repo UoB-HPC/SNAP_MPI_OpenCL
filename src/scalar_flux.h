@@ -1,6 +1,10 @@
 
 #pragma once
 
+/** \file
+* \brief Scalar flux reduction routines
+*/
+
 #include <math.h>
 
 #include "global.h"

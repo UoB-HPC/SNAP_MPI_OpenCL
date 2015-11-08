@@ -447,7 +447,7 @@ void print_timing_report(struct timers * timers, struct problem * problem, unsig
         printf(" %-30s %6.3lfs\n", "Scalar flux reductions", timers->reduction_time);
         printf(" %-30s %6.3lfs\n", "Convergence checking", timers->convergence_time);
         printf(" %-30s %6.3lfs\n", "Other", timers->simulation_time - timers->outer_source_time - timers->outer_params_time - timers->inner_source_time - timers->sweep_time - timers->reduction_time - timers->convergence_time);
-        }
+    }
         printf(" %-30s %6.3lfs\n", "Total simulation", timers->simulation_time);
 
         printf("\n");

@@ -1,6 +1,10 @@
 
 #pragma once
 
+/** \file
+* \brief Convergence checking routines (computed on the host)
+*/
+
 #include <stdbool.h>
 #include <math.h>
 #include <float.h>

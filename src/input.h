@@ -4,7 +4,10 @@
 /** \file
 * \brief Handles reading in problem data from file
 */
+
+/** \brief Define a macro so getline() is declared in stdlib.h */
 #define _POSIX_C_SOURCE 200809L
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -17,24 +20,24 @@
 /** \brief Read the input data from a file and populare the problem structure
 *
 * Note: should only be called by master rank.
-* \param nx Number of cells in x direction
-* \param ny Number of cells in y direction
-* \param nz Number of cells in z direction
-* \param lx Physical size in x direction
-* \param ly Physical size in y direction
-* \param lz Physical size in z direction
-* \param ng Number of energy groups
-* \param nang Number of angles per octant
-* \param nmom Number of moments
-* \param iitm Maximum number of inner iterations per outer
-* \param oitm Maximum number of outer iterations per timestep
-* \param nsteps Number of timesteps
-* \param tf Physical time to simulate
-* \param epsi Convergence criteria
-* \param npex MPI decomposition: number of processors in x direction
-* \param npey MPI decomposition: number of processors in y direction
-* \param npez MPI decomposition: number of processors in z direction
-* \param chunk Number of x-y planes to calculate before communication
+* - nx: Number of cells in x direction
+* - ny: Number of cells in y direction
+* - nz: Number of cells in z direction
+* - lx: Physical size in x direction
+* - ly: Physical size in y direction
+* - lz: Physical size in z direction
+* - ng: Number of energy groups
+* - nang: Number of angles per octant
+* - nmom: Number of moments
+* - iitm: Maximum number of inner iterations per outer
+* - oitm: Maximum number of outer iterations per timestep
+* - nsteps: Number of timesteps
+* - tf: Physical time to simulate
+* - epsi: Convergence criteria
+* - npex: MPI decomposition: number of processors in x direction
+* - npey: MPI decomposition: number of processors in y direction
+* - npez: MPI decomposition: number of processors in z direction
+* - chunk: Number of x-y planes to calculate before communication
 */
 void read_input(char *file, struct problem *problem);
 
