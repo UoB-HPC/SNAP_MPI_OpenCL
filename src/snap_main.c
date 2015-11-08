@@ -22,13 +22,9 @@
 
 /** \mainpage
 * SNAP-MPI is a cut down version of the SNAP mini-app which allows us to
-* investigate MPI decomposition schemes with various node-level implementations.
-* In particular, this code will allow:
-* \li Flat MPI
-* \li Hybrid MPI+OpenMP (For CPU and larger core counts)
-* \li OpenCL
+* investigate MPI decomposition schemes with OpenCL for node-level computation.
 *
-* The MPI scheme used is KBA, expending into hybrid-KBA.
+* The MPI scheme used is KBA, expanding into hybrid-KBA.
 */
 
 /** \brief Print out starting information */
