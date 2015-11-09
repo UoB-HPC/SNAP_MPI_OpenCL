@@ -230,6 +230,8 @@ void send_boundaries(int z_pos, const int octant, const int istep, const int jst
         (memory->flux_j)+j_offset, 0, NULL, NULL);
     check_ocl(cl_err, "Copying flux j buffer back to host");
 
+    double tick = wtime();
+
     // Send to neighbour with MPI_Send
     // X
     if (istep == -1 && rankinfo->xdown != rankinfo->rank)
@@ -257,6 +259,7 @@ void send_boundaries(int z_pos, const int octant, const int istep, const int jst
                 rankinfo->yup, 0, snap_comms);
         check_mpi(mpi_err, "Sending to upward y neighbour");
     }
+    sweep_mpi_time += wtime() - tick;
 }
 
 

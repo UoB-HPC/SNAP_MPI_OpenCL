@@ -14,6 +14,8 @@
 #include "ocl_global.h"
 #include "ocl_buffers.h"
 
+#include "profiler.h"
+
 
 /** \brief Cartesian communicator */
 MPI_Comm snap_comms;
