@@ -42,6 +42,7 @@ struct timers
 };
 
 extern double sweep_mpi_time;
+extern double sweep_mpi_recv_time;
 
 
 /** @{ \brief OpenCL Events used to later read compute timings if profiling is on */

@@ -21,6 +21,7 @@
 #include "ocl_buffers.h"
 
 double sweep_mpi_time = 0.0;
+double sweep_mpi_recv_time = 0.0;
 
 /** \mainpage
 * SNAP-MPI is a cut down version of the SNAP mini-app which allows us to
@@ -230,7 +231,7 @@ int main(int argc, char **argv)
                             {
                                 double tick = wtime();
                                 recv_boundaries(z_pos, octant, istep, jstep, kstep, &problem, &rankinfo, &memory, &context, &buffers);
-                                sweep_mpi_time += wtime() - tick;
+                                sweep_mpi_recv_time += wtime() - tick;
                                 for (unsigned int p = 0; p < num_planes; p++)
                                 {
                                     sweep_plane(z_pos, octant, istep, jstep, kstep, p, planes, &problem, &rankinfo, &context, &buffers);
@@ -444,8 +445,9 @@ void print_timing_report(struct timers * timers, struct problem * problem, unsig
         printf(" %-30s %6.3lfs\n", "Outer parameters", timers->outer_params_time);
         printf(" %-30s %6.3lfs\n", "Inner source", timers->inner_source_time);
         printf(" %-30s %6.3lfs\n", "Sweeps", timers->sweep_time);
-        printf("   %-28s %6.3lfs\n", "MPI time", sweep_mpi_time);
-        printf("   %-28s %6.3lfs\n", "Compute time", timers->sweep_time-sweep_mpi_time);
+        printf("   %-28s %6.3lfs\n", "MPI Send time", sweep_mpi_time);
+        printf("   %-28s %6.3lfs\n", "MPI Recv time", sweep_mpi_recv_time);
+        printf("   %-28s %6.3lfs\n", "Compute time", timers->sweep_time-sweep_mpi_time-sweep_mpi_recv_time);
         printf(" %-30s %6.3lfs\n", "Scalar flux reductions", timers->reduction_time);
         printf(" %-30s %6.3lfs\n", "Convergence checking", timers->convergence_time);
         printf(" %-30s %6.3lfs\n", "Other", timers->simulation_time - timers->outer_source_time - timers->outer_params_time - timers->inner_source_time - timers->sweep_time - timers->reduction_time - timers->convergence_time);
