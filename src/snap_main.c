@@ -239,6 +239,9 @@ int main(int argc, char **argv)
                                 send_boundaries(z_pos, octant, istep, jstep, kstep, &problem, &rankinfo, &memory, &context, &buffers);
                             }
 
+                            if (profiling && rankinfo.rank == 0)
+                                chunk_profiler(&timers);
+
                             octant += 1;
                         }
 
@@ -447,7 +450,8 @@ void print_timing_report(struct timers * timers, struct problem * problem, unsig
         printf(" %-30s %6.3lfs\n", "Sweeps", timers->sweep_time);
         printf("   %-28s %6.3lfs\n", "MPI Send time", sweep_mpi_time);
         printf("   %-28s %6.3lfs\n", "MPI Recv time", sweep_mpi_recv_time);
-        printf("   %-28s %6.3lfs\n", "Compute time", timers->sweep_time-sweep_mpi_time-sweep_mpi_recv_time);
+        printf("   %-28s %6.3lfs\n", "PCIe transfer time", timers->sweep_transfer_time);
+        printf("   %-28s %6.3lfs\n", "Compute time", timers->sweep_time-sweep_mpi_time-sweep_mpi_recv_time-timers->sweep_transfer_time);
         printf(" %-30s %6.3lfs\n", "Scalar flux reductions", timers->reduction_time);
         printf(" %-30s %6.3lfs\n", "Convergence checking", timers->convergence_time);
         printf(" %-30s %6.3lfs\n", "Other", timers->simulation_time - timers->outer_source_time - timers->outer_params_time - timers->inner_source_time - timers->sweep_time - timers->reduction_time - timers->convergence_time);

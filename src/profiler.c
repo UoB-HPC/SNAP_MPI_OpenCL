@@ -66,3 +66,54 @@ void inner_profiler(struct timers * timers, struct problem * problem)
         timers->reduction_time += (double)(tock - tick) * 1.0E-9;
     }
 }
+
+
+void chunk_profiler(struct timers * timers)
+{
+    if (!profiling)
+        return;
+
+    cl_int err;
+
+    // Times are in nanoseconds
+    cl_ulong tick, tock;
+
+    // Get recv writes
+    if (flux_i_write_event)
+    {
+        err = clGetEventProfilingInfo(flux_i_write_event, CL_PROFILING_COMMAND_START, sizeof(cl_ulong), &tick, NULL);
+        check_ocl(err, "Getting flux i write start time");
+        err = clGetEventProfilingInfo(flux_i_write_event, CL_PROFILING_COMMAND_END, sizeof(cl_ulong), &tock, NULL);
+        check_ocl(err, "Getting flux i write stop time");
+        timers->sweep_transfer_time += (double)(tock - tick) * 1.0E-9;
+    }
+
+    if (flux_j_write_event)
+    {
+        err = clGetEventProfilingInfo(flux_j_write_event, CL_PROFILING_COMMAND_START, sizeof(cl_ulong), &tick, NULL);
+        check_ocl(err, "Getting flux j write start time");
+        err = clGetEventProfilingInfo(flux_j_write_event, CL_PROFILING_COMMAND_END, sizeof(cl_ulong), &tock, NULL);
+        check_ocl(err, "Getting flux j write stop time");
+        timers->sweep_transfer_time += (double)(tock - tick) * 1.0E-9;
+    }
+
+    // Get send reads
+    if (flux_i_read_event)
+    {
+        err = clGetEventProfilingInfo(flux_i_read_event, CL_PROFILING_COMMAND_START, sizeof(cl_ulong), &tick, NULL);
+        check_ocl(err, "Getting flux i read start time");
+        err = clGetEventProfilingInfo(flux_i_read_event, CL_PROFILING_COMMAND_END, sizeof(cl_ulong), &tock, NULL);
+        check_ocl(err, "Getting flux i read stop time");
+        timers->sweep_transfer_time += (double)(tock - tick) * 1.0E-9;
+    }
+
+    if (flux_j_read_event)
+    {
+        err = clGetEventProfilingInfo(flux_j_read_event, CL_PROFILING_COMMAND_START, sizeof(cl_ulong), &tick, NULL);
+        check_ocl(err, "Getting flux j read start time");
+        err = clGetEventProfilingInfo(flux_j_read_event, CL_PROFILING_COMMAND_END, sizeof(cl_ulong), &tock, NULL);
+        check_ocl(err, "Getting flux j read stop time");
+        timers->sweep_transfer_time += (double)(tock - tick) * 1.0E-9;
+    }
+}
+

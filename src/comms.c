@@ -142,7 +142,7 @@ void recv_boundaries(int z_pos, const int octant, const int istep, const int jst
         cl_err = clEnqueueWriteBuffer(context->queue, buffers->flux_i, CL_TRUE,
             sizeof(double)*i_offset,
             sizeof(double)*problem->nang*problem->ng*rankinfo->ny*problem->chunk,
-            (memory->flux_i)+i_offset, 0, NULL, NULL);
+            (memory->flux_i)+i_offset, 0, NULL, &flux_i_write_event);
         check_ocl(cl_err, "Copying flux i buffer to device");
         sweep_mpi_recv_time -= wtime() - tick;
     }
@@ -182,7 +182,7 @@ void recv_boundaries(int z_pos, const int octant, const int istep, const int jst
         cl_err = clEnqueueWriteBuffer(context->queue, buffers->flux_j, CL_TRUE,
             sizeof(double)*j_offset,
             sizeof(double)*problem->nang*problem->ng*rankinfo->nx*problem->chunk,
-            (memory->flux_j)+j_offset, 0, NULL, NULL);
+            (memory->flux_j)+j_offset, 0, NULL, &flux_j_write_event);
         check_ocl(cl_err, "Copying flux j buffer to device");
         sweep_mpi_recv_time -= wtime() - tick;
     }
@@ -213,7 +213,7 @@ void send_boundaries(int z_pos, const int octant, const int istep, const int jst
     cl_err = clEnqueueReadBuffer(context->queue, buffers->flux_i, CL_FALSE,
         sizeof(double)*i_offset,
         sizeof(double)*problem->nang*problem->ng*rankinfo->ny*problem->chunk,
-        (memory->flux_i)+i_offset, 0, NULL, NULL);
+        (memory->flux_i)+i_offset, 0, NULL, &flux_i_read_event);
     check_ocl(cl_err, "Copying flux i buffer back to host");
 
     // J
@@ -231,7 +231,7 @@ void send_boundaries(int z_pos, const int octant, const int istep, const int jst
     cl_err = clEnqueueReadBuffer(context->queue, buffers->flux_j, CL_TRUE,
         sizeof(double)*j_offset,
         sizeof(double)*problem->nang*problem->ng*rankinfo->nx*problem->chunk,
-        (memory->flux_j)+j_offset, 0, NULL, NULL);
+        (memory->flux_j)+j_offset, 0, NULL, &flux_j_read_event);
     check_ocl(cl_err, "Copying flux j buffer back to host");
 
     double tick = wtime();

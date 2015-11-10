@@ -28,6 +28,9 @@ struct timers
     /** \brief Total time sweeping (the sweep kernel and MPI calls) */
     double sweep_time;
 
+    /** \brief Total time transfering data over PCIe during sweep */
+    double sweep_transfer_time;
+
     /** \brief Total time calculating scalar flux and scalar flux moments */
     double reduction_time;
 
@@ -55,6 +58,11 @@ cl_event scalar_flux_moments_event;
 cl_event velocity_delta_event;
 cl_event denominator_event;
 
+cl_event flux_i_read_event;
+cl_event flux_j_read_event;
+cl_event flux_i_write_event;
+cl_event flux_j_write_event;
+
 /** @} */
 
 /** \brief Get the current wallclock time */
@@ -65,3 +73,7 @@ void outer_profiler(struct timers * timers);
 
 /** \brief Update the timers every inner */
 void inner_profiler(struct timers * timers, struct problem * problem);
+
+/** \brief Update the timers every chunk with transfer times */
+void chunk_profiler(struct timers * timers);
+
