@@ -91,12 +91,12 @@ int main(int argc, char **argv)
     problem.dz = problem.lz / (double)problem.nz;
     problem.dt = problem.tf / (double)problem.nsteps;
 
+    // Broadcast the global variables
+    broadcast_problem(&problem, rank);
+
     // Echo input file to screen
     if (rank == 0)
         print_input(&problem);
-
-    // Broadcast the global variables
-    broadcast_problem(&problem, rank);
 
     // Set up communication neighbours
     struct rankinfo rankinfo;
