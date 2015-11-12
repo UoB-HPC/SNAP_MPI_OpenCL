@@ -128,13 +128,13 @@ void recv_boundaries(int z_pos, const int octant, const int istep, const int jst
         if (istep == -1)
         {
             mpi_err = MPI_Recv(memory->flux_i+i_offset, problem->nang*problem->ng*rankinfo->ny*problem->chunk, MPI_DOUBLE,
-                rankinfo->xup, MPI_ANY_TAG, snap_comms, MPI_STATUS_IGNORE);
+                rankinfo->xup, MPI_ANY_TAG, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
             check_mpi(mpi_err, "Receiving from upward x neighbour");
         }
         else
         {
             mpi_err = MPI_Recv(memory->flux_i+i_offset, problem->nang*problem->ng*rankinfo->ny*problem->chunk, MPI_DOUBLE,
-                rankinfo->xdown, MPI_ANY_TAG, snap_comms, MPI_STATUS_IGNORE);
+                rankinfo->xdown, MPI_ANY_TAG, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
             check_mpi(mpi_err, "Receiving from downward x neighbour");
         }
         // Copy flux_i to the device
@@ -168,13 +168,13 @@ void recv_boundaries(int z_pos, const int octant, const int istep, const int jst
         if (jstep == -1)
         {
             mpi_err = MPI_Recv(memory->flux_j+j_offset, problem->nang*problem->ng*rankinfo->nx*problem->chunk, MPI_DOUBLE,
-                rankinfo->yup, MPI_ANY_TAG, snap_comms, MPI_STATUS_IGNORE);
+                rankinfo->yup, MPI_ANY_TAG, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
             check_mpi(mpi_err, "Receiving from upward y neighbour");
         }
         else
         {
             mpi_err = MPI_Recv(memory->flux_j+j_offset, problem->nang*problem->ng*rankinfo->nx*problem->chunk, MPI_DOUBLE,
-                rankinfo->ydown, MPI_ANY_TAG, snap_comms, MPI_STATUS_IGNORE);
+                rankinfo->ydown, MPI_ANY_TAG, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
             check_mpi(mpi_err, "Receiving from downward y neighbour");
         }
         // Copy flux_j to the device
@@ -241,26 +241,26 @@ void send_boundaries(int z_pos, const int octant, const int istep, const int jst
     if (istep == -1 && rankinfo->xdown != rankinfo->rank)
     {
         mpi_err = MPI_Send(memory->flux_i+i_offset, problem->nang*problem->ng*rankinfo->ny*problem->chunk, MPI_DOUBLE,
-                rankinfo->xdown, 0, snap_comms);
+                rankinfo->xdown, 0, MPI_COMM_WORLD);
         check_mpi(mpi_err, "Sending to downward x neighbour");
     }
     else if (istep == 1 && rankinfo->xup != rankinfo->rank)
     {
         mpi_err = MPI_Send(memory->flux_i+i_offset, problem->nang*problem->ng*rankinfo->ny*problem->chunk, MPI_DOUBLE,
-                rankinfo->xup, 0, snap_comms);
+                rankinfo->xup, 0, MPI_COMM_WORLD);
         check_mpi(mpi_err, "Sending to upward x neighbour");
     }
     // Y
     if (jstep == -1 && rankinfo->ydown != rankinfo->rank)
     {
         mpi_err = MPI_Send(memory->flux_j+j_offset, problem->nang*problem->ng*rankinfo->nx*problem->chunk, MPI_DOUBLE,
-                rankinfo->ydown, 0, snap_comms);
+                rankinfo->ydown, 0, MPI_COMM_WORLD);
         check_mpi(mpi_err, "Sending to downward y neighbour");
     }
     else if (jstep == 1 && rankinfo->yup != rankinfo->rank)
     {
         mpi_err = MPI_Send(memory->flux_j+j_offset, problem->nang*problem->ng*rankinfo->nx*problem->chunk, MPI_DOUBLE,
-                rankinfo->yup, 0, snap_comms);
+                rankinfo->yup, 0, MPI_COMM_WORLD);
         check_mpi(mpi_err, "Sending to upward y neighbour");
     }
     sweep_mpi_time += wtime() - tick;
