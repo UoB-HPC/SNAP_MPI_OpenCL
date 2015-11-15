@@ -138,13 +138,11 @@ void recv_boundaries(int z_pos, const int octant, const int istep, const int jst
             check_mpi(mpi_err, "Receiving from downward x neighbour");
         }
         // Copy flux_i to the device
-        double tick = wtime();
-        cl_err = clEnqueueWriteBuffer(context->queue, buffers->flux_i, CL_TRUE,
+        cl_err = clEnqueueWriteBuffer(context->queue, buffers->flux_i, CL_FALSE,
             sizeof(double)*i_offset,
             sizeof(double)*problem->nang*problem->ng*rankinfo->ny*problem->chunk,
             (memory->flux_i)+i_offset, 0, NULL, &flux_i_write_event);
         check_ocl(cl_err, "Copying flux i buffer to device");
-        sweep_mpi_recv_time -= wtime() - tick;
     }
 
     size_t j_offset;
@@ -178,13 +176,11 @@ void recv_boundaries(int z_pos, const int octant, const int istep, const int jst
             check_mpi(mpi_err, "Receiving from downward y neighbour");
         }
         // Copy flux_j to the device
-        double tick = wtime();
-        cl_err = clEnqueueWriteBuffer(context->queue, buffers->flux_j, CL_TRUE,
+        cl_err = clEnqueueWriteBuffer(context->queue, buffers->flux_j, CL_FALSE,
             sizeof(double)*j_offset,
             sizeof(double)*problem->nang*problem->ng*rankinfo->nx*problem->chunk,
             (memory->flux_j)+j_offset, 0, NULL, &flux_j_write_event);
         check_ocl(cl_err, "Copying flux j buffer to device");
-        sweep_mpi_recv_time -= wtime() - tick;
     }
 }
 
