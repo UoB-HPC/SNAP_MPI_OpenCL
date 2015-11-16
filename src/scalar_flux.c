@@ -114,7 +114,7 @@ void copy_back_scalar_flux(
     )
 {
     cl_int err;
-    err = clEnqueueReadBuffer(context->queue, buffers->scalar_flux, blocking,
+    err = clEnqueueReadBuffer(context->copy_queue, buffers->scalar_flux, blocking,
         0, sizeof(double)*problem->ng*rankinfo->nx*rankinfo->ny*rankinfo->nz, scalar_flux,
         0, NULL, NULL);
     check_ocl(err, "Copying back scalar flux");

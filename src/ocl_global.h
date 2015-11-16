@@ -46,8 +46,11 @@ struct context
     /** \brief The device */
     cl_device_id device;
 
-    /** \brief The command queue */
+    /** \brief The (compute) command queue */
     cl_command_queue queue;
+
+    /** \brief The (copy) command queue used for copying back scalar flux only */
+    cl_command_queue copy_queue;
 
     /** \brief The program */
     cl_program program;

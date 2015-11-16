@@ -205,7 +205,10 @@ int main(int argc, char **argv)
 
                 // Get the scalar flux back
                 copy_back_scalar_flux(&problem, &rankinfo, &context, &buffers, memory.old_inner_scalar_flux, CL_FALSE);
-
+                // Put a marker on the copy queue
+                cl_event inner_copy_event;
+                clerr = clEnqueueMarker(context.copy_queue, &inner_copy_event);
+                check_ocl(clerr, "Putting marker on copy queue");
 
                 double sweep_tick;
                 if (profiling && rankinfo.rank == 0)
@@ -252,10 +255,21 @@ int main(int argc, char **argv)
                     timers.sweep_time += wtime() - sweep_tick;
                 }
 
+                // Put barrier on compute queue so we don't update the scalar flux until we know it's back on the host
+                clerr = clEnqueueWaitForEvents(context.queue, 1, &inner_copy_event);
+                check_ocl(clerr, "Enqueue wait on compute queue");
+
                 // Compute the Scalar Flux
                 compute_scalar_flux(&problem, &rankinfo, &context, &buffers);
                 if (problem.cmom-1 > 0)
                     compute_scalar_flux_moments(&problem, &rankinfo, &context, &buffers);
+
+                // Put a marker on the compute queue
+                cl_event scalar_compute_event;
+                clerr = clEnqueueMarker(context.queue, &scalar_compute_event);
+                check_ocl(clerr, "Enqueue marker on compute queue");
+                clerr = clEnqueueWaitForEvents(context.copy_queue, 1, &scalar_compute_event);
+                check_ocl(clerr, "Enqueue ait on copy queue");
 
                 // Get the new scalar flux back and check inner convergence
                 copy_back_scalar_flux(&problem, &rankinfo, &context, &buffers, memory.scalar_flux, CL_TRUE);

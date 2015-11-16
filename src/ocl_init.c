@@ -61,10 +61,19 @@ void init_ocl(struct context * context, const bool multigpu, const int rank)
     check_ocl(err, "Creating context");
 
     if (profiling)
+    {
         context->queue = clCreateCommandQueue(context->context, context->device, CL_QUEUE_PROFILING_ENABLE, &err);
+        check_ocl(err, "Creating command queue");
+        context->copy_queue = clCreateCommandQueue(context->context, context->device, CL_QUEUE_PROFILING_ENABLE, &err);
+        check_ocl(err, "Creating copy command queue");
+    }
     else
+    {
         context->queue = clCreateCommandQueue(context->context, context->device, 0, &err);
-    check_ocl(err, "Creating command queue");
+        check_ocl(err, "Creating command queue");
+        context->copy_queue = clCreateCommandQueue(context->context, context->device, 0, &err);
+        check_ocl(err, "Creating copy command queue");
+    }
 
     // Create program
     context->program = clCreateProgramWithSource(context->context, sizeof(ocl_kernels)/sizeof(char*), ocl_kernels, NULL, &err);
