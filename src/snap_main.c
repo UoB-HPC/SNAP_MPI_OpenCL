@@ -286,7 +286,10 @@ int main(int argc, char **argv)
                     inner_profiler(&timers, &problem);
 
                 if (innerdone)
+                {
+                    i += 1;
                     break;
+                }
 
             }
             //----------------------------------------------
