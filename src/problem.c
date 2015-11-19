@@ -83,7 +83,7 @@ void calculate_scattering_coefficients(
             for (int kd = 0; kd < 2; kd++)
             {
                 double ks = (kd == 1) ? 1.0 : -1.0;
-                int oct = 4*kd + 2*jd + id;
+                int oct = 4*id + 2*jd + kd;
                 // Init first moment
                 for (unsigned int a = 0; a < problem->nang; a++)
                     scat_coeff[SCAT_COEFF_INDEX(a,0,oct,problem->nang,problem->cmom)] = 1.0;
