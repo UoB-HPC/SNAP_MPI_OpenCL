@@ -28,12 +28,12 @@ bool inner_convergence(
                 }
 
     // Do an AllReduce for each group to work out global maximum difference
+    double recv[problem->ng];
+    MPI_Allreduce(diffs, recv, problem->ng, MPI_DOUBLE, MPI_MAX, MPI_COMM_WORLD);
     bool result = true;
     for (unsigned int g = 0; g < problem->ng; g++)
     {
-        double recv;
-        MPI_Allreduce(diffs+g, &recv, 1, MPI_DOUBLE, MPI_MAX, MPI_COMM_WORLD);
-        diffs[g] = recv;
+        diffs[g] = recv[g];
         result &= diffs[g] <= problem->epsi;
     }
     return result;
