@@ -13,8 +13,8 @@ void check_device_memory_requirements(
 
     cl_ulong total = 0;
     // Add up the memory requirements, in bytes.
-    total += problem->nang*problem->ng*rankinfo->nx*rankinfo->ny*rankinfo->nz;
-    total += problem->nang*problem->ng*rankinfo->nx*rankinfo->ny*rankinfo->nz;
+    total += problem->nang*problem->ng*rankinfo->nx*rankinfo->ny*rankinfo->nz*8;
+    total += problem->nang*problem->ng*rankinfo->nx*rankinfo->ny*rankinfo->nz*8;
     total += problem->nang*problem->ng*rankinfo->ny*rankinfo->nz;
     total += problem->nang*problem->ng*rankinfo->nx*rankinfo->nz;
     total += problem->nang*problem->ng*rankinfo->nx*rankinfo->ny;
