@@ -54,6 +54,7 @@ int main(int argc, char **argv)
     cl_int clerr;
 
     struct timers timers;
+    zero_timers(&timers);
     timers.setup_time = wtime();
 
     int rank, size;

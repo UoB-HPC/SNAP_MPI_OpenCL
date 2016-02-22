@@ -77,3 +77,4 @@ void inner_profiler(struct timers * timers, struct problem * problem);
 /** \brief Update the timers every chunk with transfer times */
 void chunk_profiler(struct timers * timers);
 
+void zero_timers(struct timers * timers);
