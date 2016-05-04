@@ -3,7 +3,7 @@
 
 static double tolr=1.0E-12;
 
-bool inner_convergence(
+int inner_convergence(
     const struct problem * problem,
     const struct rankinfo * rankinfo,
     const struct memory * memory
@@ -30,11 +30,11 @@ bool inner_convergence(
     // Do an AllReduce for each group to work out global maximum difference
     double recv[problem->ng];
     MPI_Allreduce(diffs, recv, problem->ng, MPI_DOUBLE, MPI_MAX, MPI_COMM_WORLD);
-    bool result = true;
+    int result = 0;
     for (unsigned int g = 0; g < problem->ng; g++)
     {
         diffs[g] = recv[g];
-        result &= diffs[g] <= problem->epsi;
+        result += (diffs[g] >= problem->epsi)?1:0;
     }
     return result;
 }

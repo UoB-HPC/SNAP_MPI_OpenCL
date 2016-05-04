@@ -202,6 +202,7 @@ int main(int argc, char **argv)
             //----------------------------------------------
             // Inners
             //----------------------------------------------
+            inner_iterations += problem.ng;
             unsigned int i;
             for (i = 0; i < problem.iitm; i++)
             {
@@ -280,8 +281,9 @@ int main(int argc, char **argv)
 
                 double conv_tick = wtime();
 
-                innerdone = inner_convergence(&problem, &rankinfo, &memory);
-
+                int inners_left = inner_convergence(&problem, &rankinfo, &memory);
+                innerdone = inners_left?false:true;
+                inner_iterations += inners_left;
                 if (profiling && rankinfo.rank == 0)
                     timers.convergence_time += wtime() - conv_tick;
 
@@ -295,7 +297,6 @@ int main(int argc, char **argv)
                     break;
                 }
             }
-            inner_iterations += i*problem.ng;
             //----------------------------------------------
             // End of Inners
             //----------------------------------------------
@@ -313,7 +314,7 @@ int main(int argc, char **argv)
             outer_iterations++;
 
             if (rankinfo.rank == 0)
-                printf("     %-9u %-15lf %-10u\n", o, max_outer_diff, i);
+                printf("     %-9u %-15.4e %-10u\n", o, max_outer_diff, i);
 
             // Do any profiler updates for timings
             if (rankinfo.rank == 0)
