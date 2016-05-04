@@ -176,6 +176,8 @@ int main(int argc, char **argv)
         zero_buffer(&context, buffers.scalar_flux, 0, problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz);
         if (problem.cmom-1 > 0)
             zero_buffer(&context, buffers.scalar_flux_moments, 0, (problem.cmom-1)*problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz);
+        clerr = clFinish(context.queue);
+        check_ocl(clerr, "Force clFinish");
 
         // Swap angluar flux pointers (not for the first timestep)
         if (t > 0)
