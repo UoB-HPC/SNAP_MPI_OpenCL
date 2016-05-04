@@ -166,6 +166,8 @@ int main(int argc, char **argv)
     //----------------------------------------------
     for (unsigned int t = 0; t < problem.nsteps; t++)
     {
+        unsigned int outer_iterations = 0;
+        unsigned int inner_iterations = 0;
         if (rankinfo.rank == 0)
         {
             printf(" Timestep %d\n", t);
@@ -292,8 +294,8 @@ int main(int argc, char **argv)
                     i += 1;
                     break;
                 }
-
             }
+            inner_iterations += i*problem.ng;
             //----------------------------------------------
             // End of Inners
             //----------------------------------------------
@@ -308,6 +310,7 @@ int main(int argc, char **argv)
                 timers.convergence_time += wtime() - conv_tick;
 
             total_iterations += i;
+            outer_iterations++;
 
             if (rankinfo.rank == 0)
                 printf("     %-9u %-15lf %-10u\n", o, max_outer_diff, i);
@@ -330,6 +333,14 @@ int main(int argc, char **argv)
             if (rankinfo.rank == 0)
                 printf(" * Stopping because not converged *\n");
             break;
+        }
+
+        // Print loop statistics for comparison purposes
+        if (rankinfo.rank == 0)
+        {
+            printf("\n");
+            printf("  Timestep= %4d   No. Outers= %4d    No. Inners= %4d\n"
+                   ,t,outer_iterations,inner_iterations);
         }
 
         // Calculate particle population and print out the value
