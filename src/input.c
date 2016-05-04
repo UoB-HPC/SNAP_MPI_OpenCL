@@ -17,6 +17,9 @@ void read_input(char *file, struct problem *problem)
     // Set multigpu to false in case it's not in the file
     problem->multigpu = false;
 
+    // Set default npex to be compatible with fortren input decks
+    problem->npex = 1;
+
     // Read the lines in the file
     while ((read = getline(&line, &len, fp)) != -1)
     {
@@ -161,9 +164,9 @@ void read_input(char *file, struct problem *problem)
                 i++;
             problem->npez = atoi(line+i);
         }
-        else if (strncmp(line+i, "chunk", strlen("chunk")) == 0)
+        else if (strncmp(line+i, "ichunk", strlen("ichunk")) == 0)
         {
-            i += strlen("chunk");
+            i += strlen("ichunk");
             // Cycle to after the equals
             while (isspace(line[i]) || line[i] == '=')
                 i++;
