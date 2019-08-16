@@ -167,6 +167,8 @@ int main(int argc, char **argv)
     //----------------------------------------------
     for (unsigned int t = 0; t < problem.nsteps; t++)
     {
+        unsigned int outer_iterations = 0;
+        unsigned int inner_iterations = 0;
         if (rankinfo.rank == 0)
         {
             printf(" Timestep %d\n", t);
@@ -177,6 +179,8 @@ int main(int argc, char **argv)
         zero_buffer(&context, buffers.scalar_flux, 0, problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz);
         if (problem.cmom-1 > 0)
             zero_buffer(&context, buffers.scalar_flux_moments, 0, (problem.cmom-1)*problem.ng*rankinfo.nx*rankinfo.ny*rankinfo.nz);
+        clerr = clFinish(context.queue);
+        check_ocl(clerr, "Force clFinish");
 
         // Swap angluar flux pointers (not for the first timestep)
         if (t > 0)
@@ -199,6 +203,7 @@ int main(int argc, char **argv)
             //----------------------------------------------
             // Inners
             //----------------------------------------------
+            inner_iterations += problem.ng;
             unsigned int i;
             for (i = 0; i < problem.iitm; i++)
             {
@@ -277,8 +282,9 @@ int main(int argc, char **argv)
 
                 double conv_tick = wtime();
 
-                innerdone = inner_convergence(&problem, &rankinfo, &memory);
-
+                int inners_left = inner_convergence(&problem, &rankinfo, &memory);
+                innerdone = inners_left?false:true;
+                inner_iterations += inners_left;
                 if (profiling && rankinfo.rank == 0)
                     timers.convergence_time += wtime() - conv_tick;
 
@@ -291,7 +297,6 @@ int main(int argc, char **argv)
                     i += 1;
                     break;
                 }
-
             }
             //----------------------------------------------
             // End of Inners
@@ -307,9 +312,10 @@ int main(int argc, char **argv)
                 timers.convergence_time += wtime() - conv_tick;
 
             total_iterations += i;
+            outer_iterations++;
 
             if (rankinfo.rank == 0)
-                printf("     %-9u %-15lf %-10u\n", o, max_outer_diff, i);
+                printf("     %-9u %-15.4e %-10u\n", o, max_outer_diff, i);
 
             // Do any profiler updates for timings
             if (rankinfo.rank == 0)
@@ -329,6 +335,14 @@ int main(int argc, char **argv)
             if (rankinfo.rank == 0)
                 printf(" * Stopping because not converged *\n");
             break;
+        }
+
+        // Print loop statistics for comparison purposes
+        if (rankinfo.rank == 0)
+        {
+            printf("\n");
+            printf("  Timestep= %4d   No. Outers= %4d    No. Inners= %4d\n"
+                   ,t,outer_iterations,inner_iterations);
         }
 
         // Calculate particle population and print out the value
